@@ -24,7 +24,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   [`&.${inputBaseClasses.root}`]: {
     fontSize: 16,
     color: theme.palette.text.primary,
-    fontFamily: 'Roboto',
+    fontFamily: 'SF Pro',
     fontWeight: 400,
     backgroundColor: theme.palette.background.default,
     paddingLeft: 20,

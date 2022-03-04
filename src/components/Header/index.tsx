@@ -6,7 +6,7 @@ import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
 import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
-import antimatter from '../../assets/svg/chain_swap.svg'
+import antimatter from '../../assets/svg/antimatter.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
@@ -24,16 +24,19 @@ interface Tab extends TabContent {
 
 export const Tabs: Tab[] = [
   {
-    title: 'Test',
-    subTab: [
-      { title: 'Test1', route: routes.test1 },
-      { title: 'Test2', route: routes.test2 }
-    ]
+    title: 'Dual Investment',
+    link: 'https://app.antimatter.finance/#/option_trading'
   },
-
-  { title: 'Test3', route: routes.test3 },
+  { title: 'Account', route: routes.account },
   { title: 'DAO', link: 'https://dao.antimatter.finance/#/' },
-  { title: 'Docs', link: 'https://docs.antimatter.finance/' }
+  { title: 'Docs', link: 'https://docs.antimatter.finance/' },
+  {
+    title: 'Labs',
+    subTab: [
+      { title: 'BULL & BEAR Option', link: 'https://app.antimatter.finance/#/option_trading' },
+      { title: 'Nonfungible Finance', link: 'https://nonfungible.finance/#/' }
+    ]
+  }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -109,6 +112,7 @@ const Filler = styled('div')(({ theme }) => ({
 }))
 
 const MainLogo = styled(NavLink)(({ theme }) => ({
+  marginTop: 5,
   '& img': {
     width: 180.8,
     height: 34.7
@@ -143,7 +147,7 @@ export default function Header() {
       <Filler />
       <StyledAppBar>
         <Box display="flex" alignItems="center">
-          <MainLogo id={'antimatter'} to={'/'}>
+          <MainLogo id={'antimatter'} to={routes.home}>
             <Image src={antimatter} alt={'antimatter'} />
           </MainLogo>
           <HideOnMobile breakpoint="md">
@@ -159,10 +163,7 @@ export default function Header() {
                       height: 'auto',
                       paddingBottom: '30px',
                       borderBottom: '2px solid transparent',
-                      borderColor: theme =>
-                        subTab.some(tab => tab.route && pathname.includes(tab.route))
-                          ? theme.palette.text.primary
-                          : 'transparnet',
+                      borderColor: 'transparnet',
                       display: 'inline'
                     }}
                     key={title + idx}
@@ -171,7 +172,7 @@ export default function Header() {
                       key={title + idx}
                       placeholder={title}
                       autoFocus={false}
-                      width={title === 'Test' ? '70px' : undefined}
+                      width={title === 'Invest' ? '70px' : undefined}
                       style={{
                         height: '16px'
                       }}

@@ -54,6 +54,7 @@ export default function Select(props: Props) {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         sx={{
+          fontWeight: '400!important',
           borderRadius: 0,
           padding: 0,
           color: theme => theme.palette.text.primary,

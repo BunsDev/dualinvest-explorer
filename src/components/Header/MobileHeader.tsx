@@ -134,7 +134,7 @@ function Accordion({ children, placeholder }: { children: React.ReactNode; place
   return (
     <>
       <Box sx={navLinkSx} display="flex" alignItems="center" gap={12} onClick={handleClick}>
-        {placeholder}{' '}
+        {placeholder}
         <ExpandMore
           sx={{
             transform: isOpen ? 'rotate(180deg)' : ''

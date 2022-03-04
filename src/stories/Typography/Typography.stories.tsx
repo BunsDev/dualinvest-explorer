@@ -11,7 +11,7 @@ export default {
 } as ComponentMeta<typeof MuiTypography>
 
 const DefaultTemplate: ComponentStory<typeof Typography> = ({ children, ...args }: any) => (
-  <Typography {...args}>{children ?? 'Default    fontSize: 16px, fontFamily: Roboto'}</Typography>
+  <Typography {...args}>{children ?? 'Default    fontSize: 16px, fontFamily: SF Pro'}</Typography>
 )
 
 export const Default = DefaultTemplate.bind({})
