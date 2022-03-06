@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
@@ -12,6 +12,14 @@ import Table from 'components/Table'
 import LogoText from 'components/LogoText'
 import DummyLogo from 'assets/svg/binance.svg'
 import StatusTag from 'components/StatusTag'
+import ButtonTabs from 'components/Tabs/ButtonTabs'
+
+enum TableTab {
+  Day,
+  Week
+}
+
+const TableTabs = ['24H', '7Days']
 
 const TableHeader = [
   'Product Type',
@@ -26,6 +34,7 @@ const TableHeader = [
 
 export default function Home() {
   const theme = useTheme()
+  const [tab, setTab] = useState(TableTab.Day)
 
   const dataRows = useMemo(() => {
     return [
@@ -146,10 +155,11 @@ export default function Home() {
           </Box>
         </Card>
         <Card padding="28px 60px 68px">
-          <Box>
+          <Box display="flex" justifyContent="space-between">
             <Typography fontSize={18}>Top Products</Typography>
-            <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+            <ButtonTabs titles={TableTabs} current={tab} onChange={setTab} />
           </Box>
+          <Table fontSize="16px" header={TableHeader} rows={dataRows} />
         </Card>
       </Container>
     </Box>
