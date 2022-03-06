@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
@@ -7,9 +8,52 @@ import { ChainList } from 'constants/chain'
 import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
+import Table from 'components/Table'
+import LogoText from 'components/LogoText'
+import DummyLogo from 'assets/svg/binance.svg'
+import StatusTag from 'components/StatusTag'
+
+const TableHeader = [
+  'Product Type',
+  'Product ID',
+  'Order ID',
+  'Token',
+  'Exercise',
+  'APY',
+  'Amount of Investing in Progress',
+  'Status'
+]
 
 export default function Home() {
   const theme = useTheme()
+
+  const dataRows = useMemo(() => {
+    return [
+      [
+        <Typography key={0} color="#3861FB">
+          Recurring Strategy
+        </Typography>,
+        <Typography key={0} color="#3861FB">
+          23
+        </Typography>,
+        <Typography key={0} color="#3861FB">
+          23
+        </Typography>,
+        <LogoText key={0} logo={DummyLogo} text="BTC" />,
+        <Typography key={0}>Downward</Typography>,
+        <Typography key={0} color="#31B047">
+          140.21%
+        </Typography>,
+        <Box key={0} display="flex" alignItems="flex-end">
+          <Typography>
+            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+          </Typography>
+        </Box>,
+        <StatusTag key={0} type="pending" text="Progressing" />
+      ]
+    ]
+  }, [])
+
   return (
     <Box
       display="grid"
@@ -90,18 +134,22 @@ export default function Home() {
 
       <Container
         sx={{
-          maxWidth: theme.width.maxContent
+          maxWidth: theme.width.maxContent,
+          pt: 16
         }}
       >
-        <Card>
+        <Card padding="25px 18px" style={{ marginBottom: 18 }}>
           <Box display="flex" width="100%" gap={20}>
             <NumericalCard unit="$" value={'57,640'} subValue="Cumulative Investment Amount" border />
             <NumericalCard value={'114,375'} subValue="Total Namber Of Oders" border />
             <NumericalCard unit="Addresses" value={'367'} subValue="Cumulative Namber Of Users" border />
           </Box>
         </Card>
-        <Card>
-          <Box></Box>
+        <Card padding="28px 60px 68px">
+          <Box>
+            <Typography fontSize={18}>Top Products</Typography>
+            <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          </Box>
         </Card>
       </Container>
     </Box>
