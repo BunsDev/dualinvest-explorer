@@ -1,4 +1,5 @@
 export const routes = {
   account: '/account',
-  home: '/home'
+  home: '/home',
+  accountTab: '/account/:tab'
 }

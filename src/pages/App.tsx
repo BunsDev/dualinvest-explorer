@@ -11,6 +11,7 @@ import { ModalProvider } from 'context/ModalContext'
 import Footer from 'components/Footer'
 import { routes } from 'constants/routes'
 import Home from './Home'
+import Order from './Order'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -61,6 +62,7 @@ export default function App() {
                 <Switch>
                   <Route exact strict path={routes.home} component={Home} />
                   <Route exact strict path={routes.account} component={Account} />
+                  <Route exact strict path={routes.accountTab} component={Order} />
                   <Route path="/">
                     <Redirect to={routes.home} />
                   </Route>

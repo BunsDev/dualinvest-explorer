@@ -9,7 +9,8 @@ export default function LogoText({
   fontWeight,
   fontSize,
   gapSize,
-  size
+  size,
+  opacity
 }: {
   logo: string | JSX.Element
   text?: string | React.ReactNode
@@ -17,6 +18,7 @@ export default function LogoText({
   fontSize?: number
   gapSize?: 'small' | 'large'
   size?: string
+  opacity?: string
 }) {
   return (
     <Wrapper
@@ -33,7 +35,7 @@ export default function LogoText({
       }}
     >
       {typeof logo === 'string' ? <Image src={logo as string} alt={`${text} logo`} /> : logo}
-      <span>{text}</span>
+      <span style={{ opacity: opacity }}>{text}</span>
     </Wrapper>
   )
 }
