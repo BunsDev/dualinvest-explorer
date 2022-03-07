@@ -13,13 +13,13 @@ import LogoText from 'components/LogoText'
 import DummyLogo from 'assets/svg/binance.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
+import OutlineButton from 'components/Button/OutlineButton'
+import theme from 'theme'
 
-enum TableTab {
-  Day,
-  Week
+enum ChainOptions {
+  BSC,
+  AVAX
 }
-
-const TableTabs = ['24H', '7Days']
 
 const TableHeader = [
   'Product Type',
@@ -34,7 +34,7 @@ const TableHeader = [
 
 export default function Home() {
   const theme = useTheme()
-  const [tab, setTab] = useState(TableTab.Day)
+  const [tab, setTab] = useState(ChainOptions.BSC)
 
   const dataRows = useMemo(() => {
     return [
@@ -63,6 +63,17 @@ export default function Home() {
     ]
   }, [])
 
+  const tableTabs = useMemo(() => {
+    return [
+      <StyledOutlineButton key={0} onClick={() => setTab(ChainOptions.BSC)} selected={tab === ChainOptions.BSC}>
+        <LogoText logo={DummyLogo} text={'BSC Chain'} />
+      </StyledOutlineButton>,
+      <StyledOutlineButton key={0} onClick={() => setTab(ChainOptions.AVAX)} selected={tab === ChainOptions.AVAX}>
+        <LogoText logo={DummyLogo} text={'AVAX Chain'} />
+      </StyledOutlineButton>
+    ]
+  }, [tab])
+
   return (
     <Box
       display="grid"
@@ -85,53 +96,44 @@ export default function Home() {
               Explorer
             </Typography>
           </Box>
-          <Box display="flex" gap={10} position="relative" mt={21} width={670}>
-            <ChainSelect chainList={ChainList} selectedChain={ChainList[0]} width="fit-content" height="48px" />
-            <Input value="" placeholder="Search by Address/Order ID/Product ID" width={670} height={48} />
-            <Button width="67px" height="48px" onClick={() => {}} style={{ position: 'absolute', right: 0 }}>
+          <Box display="flex" gap={8} position="relative" mt={21} width={670}>
+            <ChainSelect chainList={ChainList} selectedChain={ChainList[0]} width="180px" height="60px" />
+            <Input value="" placeholder="Search by Address/Order ID/Product ID" width={680} height={60} />
+            <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
               <SearchIcon />
+              <Typography>Search</Typography>
             </Button>
           </Box>
           <Box display="flex" gap="37px" mt={46}>
-            <OutlinedCard padding="19px 22px 18px" width={226}>
-              <Box display="grid" gap={12}>
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported</Typography>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography fontSize={16} fontWeight={700}>
-                    BTC
-                  </Typography>
-                  <Typography fontSize={16} fontWeight={700}>
-                    USDT
-                  </Typography>
-                  <Typography fontSize={16} fontWeight={700}>
-                    ETH
-                  </Typography>
+            <OutlinedCard padding="17px 20px" width={332}>
+              <Box display="flex" justifyContent="space-between">
+                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>
+                <Box display="flex" gap={12}>
+                  <LogoText logo={DummyLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={DummyLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={DummyLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
             </OutlinedCard>
 
-            <OutlinedCard padding="19px 22px 18px" width={226}>
-              <Box display="grid" gap={12}>
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported</Typography>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography fontSize={16} fontWeight={700}>
-                    BSC Chain
-                  </Typography>
-                  <Typography fontSize={16} fontWeight={700}>
-                    AVAX Chain
-                  </Typography>
+            <OutlinedCard padding="17px 20px" width={332}>
+              <Box display="flex" justifyContent="space-between">
+                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
+                <Box display="flex" gap={12}>
+                  <LogoText logo={DummyLogo} text={'BSC Chain'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={DummyLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
             </OutlinedCard>
 
-            <OutlinedCard padding="19px 22px 18px" width={361}>
-              <Box display="grid" gap={12}>
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Live Structured Products</Typography>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography fontSize={16} fontWeight={700}>
+            <OutlinedCard padding="17px 20px" width={424}>
+              <Box display="flex" justifyContent="space-between">
+                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Live Structured Products:</Typography>
+                <Box display="flex" gap={12}>
+                  <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
                     Dual Investment
                   </Typography>
-                  <Typography fontSize={16} fontWeight={700}>
+                  <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
                     Recurring Strategy
                   </Typography>
                 </Box>
@@ -144,24 +146,59 @@ export default function Home() {
       <Container
         sx={{
           maxWidth: theme.width.maxContent,
-          pt: 16
+          pt: 80
         }}
       >
-        <Card padding="25px 18px" style={{ marginBottom: 18 }}>
-          <Box display="flex" width="100%" gap={20}>
-            <NumericalCard unit="$" value={'57,640'} subValue="Cumulative Investment Amount" border />
-            <NumericalCard value={'114,375'} subValue="Total Namber Of Oders" border />
-            <NumericalCard unit="Addresses" value={'367'} subValue="Cumulative Namber Of Users" border />
-          </Box>
-        </Card>
+        <Box display="flex" width="100%" gap={20} mb={41}>
+          <NumericalCard unit="$" value={'57,640'} title="Cumulative Investment Amount" fontSize="44px" border />
+          <NumericalCard value={'114,375'} title="Total Namber Of Oders" fontSize="44px" border />
+          <NumericalCard unit="Addresses" value={'367'} title="Cumulative Namber Of Users" fontSize="44px" border />
+        </Box>
         <Card padding="28px 60px 68px">
-          <Box display="flex" justifyContent="space-between">
-            <Typography fontSize={18}>Top Products</Typography>
-            <ButtonTabs titles={TableTabs} current={tab} onChange={setTab} />
+          <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
+          <Box display="flex" justifyContent="space-between" alignItems="center" mt={40}>
+            <Box display="flex" gap={8}>
+              <Typography fontSize={24} fontWeight={700}>
+                Top Products
+              </Typography>
+              <LogoText logo={DummyLogo} size="28px" text="BSC" fontSize={20} />
+            </Box>
+            <Typography fontSize={16}>24H</Typography>
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
         </Card>
       </Container>
     </Box>
+  )
+}
+
+function StyledOutlineButton({
+  children,
+  selected,
+  onClick
+}: {
+  children: React.ReactNode
+
+  selected?: boolean
+  onClick?: () => void
+}) {
+  return (
+    <OutlineButton
+      width="136px"
+      height="40px"
+      color={selected ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.1)'}
+      onClick={onClick}
+      style={{
+        background: theme.palette.background.paper
+      }}
+    >
+      <Typography
+        fontSize={16}
+        color={selected ? theme.palette.primary.main : theme.palette.text.primary}
+        sx={{ opacity: selected ? 1 : 0.5 }}
+      >
+        {children}
+      </Typography>
+    </OutlineButton>
   )
 }

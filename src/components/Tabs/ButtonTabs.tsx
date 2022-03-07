@@ -24,7 +24,7 @@ export default function ButtonTabs({
       onChange={handleOnChange}
       sx={{
         '& .MuiTabs-flexContainer': {
-          // gap: 10,
+          gap: 12,
           justifyContent: 'flex-start'
         },
         '& .MuiTabs-indicator': { display: 'none' }

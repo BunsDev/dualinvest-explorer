@@ -15,7 +15,7 @@ export default function LogoText({
   text?: string | React.ReactNode
   fontWeight?: number
   fontSize?: number
-  gapSize?: 'small' | 'large'
+  gapSize?: string | number
   size?: string
 }) {
   return (
@@ -26,7 +26,7 @@ export default function LogoText({
         fontWeight: fontWeight ?? 400,
         fontSize: fontSize ?? 16,
         '& > img, > svg': {
-          marginRight: gapSize === 'small' ? '4px' : '12px',
+          marginRight: gapSize || '12px',
           height: size ? size : '20px',
           width: size ? size : '20px'
         }

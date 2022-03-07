@@ -46,7 +46,7 @@ export default function StatusTag({
       justifyContent="center"
       bgcolor={bgcolor}
     >
-      <Typography fontSize={fontSize || 12} color={textColor}>
+      <Typography fontSize={fontSize || 14} color={textColor}>
         {text}
       </Typography>
     </Box>
