@@ -1,4 +1,6 @@
 export const routes = {
   account: '/account',
-  home: '/home'
+  home: '/home',
+  dualInvest: '/dual-invest',
+  recurringVault: '/recurring-vault'
 }
