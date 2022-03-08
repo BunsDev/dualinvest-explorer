@@ -24,7 +24,7 @@ export default function TextButton(props: Props) {
       disabled={disabled}
       sx={{
         textDecoration: underline ? 'underline' : 'none',
-        color: primary ? theme.palette.primary.main : theme.palette.primary.contrastText,
+        color: primary ? theme.palette.primary.main : theme.palette.text.primary,
         fontSize: fontSize || 16,
         fontWeight: fontWeight || 500,
         opacity: opacity || 1,
