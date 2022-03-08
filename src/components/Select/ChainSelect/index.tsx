@@ -14,7 +14,8 @@ export default function ChainSelect({
   selectedChain,
   width,
   active,
-  placeholder
+  placeholder,
+  height
 }: {
   label?: string
   disabled?: boolean
@@ -22,6 +23,7 @@ export default function ChainSelect({
   selectedChain: Chain | null
   onChange?: (chain: Chain | null) => void
   width?: string
+  height?: string
   active?: boolean
   placeholder?: string
 }) {
@@ -43,6 +45,7 @@ export default function ChainSelect({
         onChange={handleChange}
         placeholder={placeholder ?? 'Select Chain'}
         width={'100%'}
+        height={height}
         primary={active}
       >
         {chainList.map(option => (
