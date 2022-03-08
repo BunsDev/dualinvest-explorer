@@ -32,7 +32,7 @@ export const Tabs: Tab[] = [
   },
   { title: 'Account', route: routes.account },
   { title: 'Docs', link: 'https://docs.antimatter.finance/' },
-  { title: 'Explorer', route: 'routes.home' }
+  { title: 'Explorer', route: routes.home }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -73,7 +73,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     opacity: 0.5,
     marginRight: 48,
     paddingBottom: '30px',
-    borderBottom: '2px solid transparent',
+    borderBottom: '1px solid transparent',
     '&.active': {
       opacity: 1,
       borderColor: theme.palette.text.primary
