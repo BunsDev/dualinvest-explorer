@@ -5,10 +5,17 @@ import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.sv
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
+import FilteredBy from 'components/FilteredBy'
 
 export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
+  const data = {
+    ['Settlement Price:']: '140.25%',
+    ['Settlement Time:']: 'Sep 21, 2021 10:42 AM',
+    ['Product ID:']: '023',
+    ['TXID:']: '0x35500253DEB46fa8c2b271628c65DcF159206882'
+  }
 
   return (
     <Box
@@ -41,14 +48,21 @@ export default function Order() {
       <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
-            padding: '40px 24px',
+            padding: '40px 24px 20px',
             width: '100%'
           }}
           display="flex"
           flexDirection="row"
           justifyContent="space-between"
         >
-          <Typography sx={{ opacity: '0.5' }}>Order ID</Typography>
+          <Box display="flex" flexDirection="column">
+            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+              Order ID
+            </Typography>
+            <Typography fontWeight={'700'} fontSize={'24px'}>
+              #045
+            </Typography>
+          </Box>
           <Box
             sx={{
               width: '96px',
@@ -62,6 +76,28 @@ export default function Order() {
             <LogoText logo={BSCUrl} text={'BNB'} gapSize={'small'} fontSize={14} opacity={'0.5'} />
           </Box>
         </Box>
+        <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
+          <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
+            <Typography fontSize={16} fontWeight={700}>
+              Overview
+            </Typography>
+
+            {Object.keys(data).map((key, idx) => (
+              <Box key={idx} display="flex" justifyContent={'flex-start'}>
+                <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+                  {key}
+                </Typography>
+
+                <Typography fontWeight={400} fontSize={16}>
+                  {data[key as keyof typeof data]}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+        <Box>
+          <FilteredBy />
+        </Box>
       </Card>
 
       <Container
@@ -72,3 +108,50 @@ export default function Order() {
     </Box>
   )
 }
+
+/* function OrderStats({ orderDetails }: { orderDetails: orderStats | undefined }) {
+  const theme = useTheme()
+  const data = useMemo(
+    () => ({
+      ['APY']: prevDetails?.apy ?? '-',
+      ['Strike Price']: `${prevDetails?.strikePrice ?? '-'} USDT`,
+      ['Executed Price']: `${prevDetails?.deliveryPrice ?? '-'} USDT`,
+      ['Status']: prevDetails?.status ?? '-',
+      ['Your P&L']: prevDetails?.pnl ?? '-',
+      ['Date']: prevDetails
+        ? `From ${dayjs(prevDetails.ts).format('MMM DD, YYYY')} to ${dayjs(prevDetails.expiredAt).format(
+            'MMM DD, YYYY'
+          )}`
+        : '-'
+    }),
+    [prevDetails]
+  )
+  return (
+    <Card width={'100%'}>
+      <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
+        <Typography fontSize={24} fontWeight={700}>
+          Previous Cycle Statistics
+        </Typography>
+
+        {Object.keys(data).map((key, idx) => (
+          <Box key={idx} display="flex" justifyContent={'space-between'}>
+            <Typography fontSize={16} sx={{ opacity: 0.8 }}>
+              {key}
+            </Typography>
+
+            <Typography
+              fontWeight={key === 'APY' || (key === 'Status' && data.Status === 'Exercised') ? 400 : 500}
+              color={
+                key === 'APY' || (key === 'Status' && data.Status === 'Exercised')
+                  ? theme.palette.primary.main
+                  : theme.palette.text.primary
+              }
+            >
+              {data[key as keyof typeof data]}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Card>
+  )
+} */
