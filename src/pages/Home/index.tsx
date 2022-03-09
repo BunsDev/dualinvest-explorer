@@ -13,8 +13,7 @@ import LogoText from 'components/LogoText'
 import DummyLogo from 'assets/svg/binance.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import OutlineButton from 'components/Button/OutlineButton'
-import theme from 'theme'
+import TabButton from 'components/Button/TabButton'
 
 enum ChainOptions {
   BSC,
@@ -65,12 +64,12 @@ export default function Home() {
 
   const tableTabs = useMemo(() => {
     return [
-      <StyledOutlineButton key={0} onClick={() => setTab(ChainOptions.BSC)} selected={tab === ChainOptions.BSC}>
+      <TabButton key={0} onClick={() => setTab(ChainOptions.BSC)} selected={tab === ChainOptions.BSC}>
         <LogoText logo={DummyLogo} text={'BSC Chain'} />
-      </StyledOutlineButton>,
-      <StyledOutlineButton key={0} onClick={() => setTab(ChainOptions.AVAX)} selected={tab === ChainOptions.AVAX}>
+      </TabButton>,
+      <TabButton key={0} onClick={() => setTab(ChainOptions.AVAX)} selected={tab === ChainOptions.AVAX}>
         <LogoText logo={DummyLogo} text={'AVAX Chain'} />
-      </StyledOutlineButton>
+      </TabButton>
     ]
   }, [tab])
 
@@ -169,36 +168,5 @@ export default function Home() {
         </Card>
       </Container>
     </Box>
-  )
-}
-
-function StyledOutlineButton({
-  children,
-  selected,
-  onClick
-}: {
-  children: React.ReactNode
-
-  selected?: boolean
-  onClick?: () => void
-}) {
-  return (
-    <OutlineButton
-      width="136px"
-      height="40px"
-      color={selected ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.1)'}
-      onClick={onClick}
-      style={{
-        background: theme.palette.background.paper
-      }}
-    >
-      <Typography
-        fontSize={16}
-        color={selected ? theme.palette.primary.main : theme.palette.text.primary}
-        sx={{ opacity: selected ? 1 : 0.5 }}
-      >
-        {children}
-      </Typography>
-    </OutlineButton>
   )
 }

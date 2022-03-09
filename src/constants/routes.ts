@@ -1,5 +1,7 @@
 export const routes = {
   account: '/account',
   home: '/home',
-  accountTab: '/account/:tab'
+  explorerOrder: '/explorer/order',
+  explorerProduct: '/explorer/product',
+  explorerAddress: '/explorer/address'
 }

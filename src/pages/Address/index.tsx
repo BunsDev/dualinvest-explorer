@@ -8,48 +8,76 @@ import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
-import { useMemo } from 'react'
+import { ReactComponent as Matter } from 'assets/svg/antimatter.svg'
+import { useMemo, useState } from 'react'
 import Table from 'components/Table'
+import TabButton from 'components/Button/TabButton'
+import ButtonTabs from 'components/Tabs/ButtonTabs'
+
+enum TableOptions {
+  Positions,
+  History
+}
 
 const TableHeader = [
+  'Product Type',
+  'Product ID',
+  'Order ID',
   'Token',
-  'Invest Amount',
-  'Subscribed Time',
-  'APY',
-  'Settlement Time',
-  'Strike Price',
   'Exercise',
+  'APY',
+  'Amount of Investing in Progress',
   'Status'
 ]
 
-export default function Order() {
+export default function Address() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
+  const [tab, setTab] = useState(TableOptions.Positions)
+
   const data = {
-    ['Settlement Price:']: '140.25%',
-    ['Settlement Time:']: 'Sep 21, 2021 10:42 AM',
-    ['Product ID:']: '023',
-    ['TXID:']: '0x35500253DEB46fa8c2b271628c65DcF159206882'
+    ['Total Invest Amount']: '62800.00 USDT',
+    ['Amount of Investing in Progress']: '62800.00 USDT',
+    ['Positions']: '5'
   }
 
   const dataRows = useMemo(() => {
     return [
       [
+        <Typography key={0} color="#3861FB">
+          Recurring Strategy
+        </Typography>,
+        <Typography key={0} color="#3861FB">
+          23
+        </Typography>,
+        <Typography key={0} color="#3861FB">
+          23
+        </Typography>,
         <LogoText key={0} gapSize={'8px'} logo={BTC} text="BTC" />,
-        <Typography key={0}>12900 USDT</Typography>,
-        <Typography key={0}> Sep 21, 2021</Typography>,
-
+        <Typography key={0}>Downward</Typography>,
         <Typography key={0} color="#31B047">
           140.21%
         </Typography>,
-        <Typography key={0}> Sep 21, 2021 10:42 AM</Typography>,
-        <Typography key={0}>62800.00</Typography>,
-        <Typography key={0}>Downward</Typography>,
-        <Typography key={0}>--</Typography>,
+        <Box key={0} display="flex" alignItems="flex-end">
+          <Typography>
+            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+          </Typography>
+        </Box>,
         <StatusTag key={0} type="pending" text="Progressing" />
       ]
     ]
   }, [])
+
+  const tableTabs = useMemo(() => {
+    return [
+      <TabButton key={0} onClick={() => setTab(TableOptions.Positions)} selected={tab === TableOptions.Positions}>
+        Positions
+      </TabButton>,
+      <TabButton key={0} onClick={() => setTab(TableOptions.History)} selected={tab === TableOptions.History}>
+        History
+      </TabButton>
+    ]
+  }, [tab])
 
   return (
     <Box
@@ -87,14 +115,16 @@ export default function Order() {
           }}
           display="flex"
           flexDirection="row"
-          justifyContent="space-between"
+          justifyContent="flex-start"
         >
+          <Matter />
+
           <Box display="flex" flexDirection="column">
             <Typography sx={{ opacity: '0.5' }} fontSize={16}>
-              Order ID
+              Address
             </Typography>
             <Typography fontWeight={'700'} fontSize={'24px'}>
-              #045
+              0x3550...206882
             </Typography>
           </Box>
           <Box
@@ -102,7 +132,8 @@ export default function Order() {
               width: '96px',
               height: '40px',
               border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '10px'
+              borderRadius: '10px',
+              marginLeft: 'auto'
             }}
             display="flex"
             justifyContent={'space-evenly'}
@@ -132,6 +163,9 @@ export default function Order() {
         <Box>
           <FilteredBy />
         </Box>
+        <Box padding={'24px 24px 0px'}>
+          <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
+        </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
         </Box>
@@ -145,50 +179,3 @@ export default function Order() {
     </Box>
   )
 }
-
-/* function OrderStats({ orderDetails }: { orderDetails: orderStats | undefined }) {
-  const theme = useTheme()
-  const data = useMemo(
-    () => ({
-      ['APY']: prevDetails?.apy ?? '-',
-      ['Strike Price']: `${prevDetails?.strikePrice ?? '-'} USDT`,
-      ['Executed Price']: `${prevDetails?.deliveryPrice ?? '-'} USDT`,
-      ['Status']: prevDetails?.status ?? '-',
-      ['Your P&L']: prevDetails?.pnl ?? '-',
-      ['Date']: prevDetails
-        ? `From ${dayjs(prevDetails.ts).format('MMM DD, YYYY')} to ${dayjs(prevDetails.expiredAt).format(
-            'MMM DD, YYYY'
-          )}`
-        : '-'
-    }),
-    [prevDetails]
-  )
-  return (
-    <Card width={'100%'}>
-      <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
-        <Typography fontSize={24} fontWeight={700}>
-          Previous Cycle Statistics
-        </Typography>
-
-        {Object.keys(data).map((key, idx) => (
-          <Box key={idx} display="flex" justifyContent={'space-between'}>
-            <Typography fontSize={16} sx={{ opacity: 0.8 }}>
-              {key}
-            </Typography>
-
-            <Typography
-              fontWeight={key === 'APY' || (key === 'Status' && data.Status === 'Exercised') ? 400 : 500}
-              color={
-                key === 'APY' || (key === 'Status' && data.Status === 'Exercised')
-                  ? theme.palette.primary.main
-                  : theme.palette.text.primary
-              }
-            >
-              {data[key as keyof typeof data]}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-    </Card>
-  )
-} */

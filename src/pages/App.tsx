@@ -12,6 +12,8 @@ import Footer from 'components/Footer'
 import { routes } from 'constants/routes'
 import Home from './Home'
 import Order from './Order'
+import Product from './Product'
+import Address from './Address'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -62,7 +64,9 @@ export default function App() {
                 <Switch>
                   <Route exact strict path={routes.home} component={Home} />
                   <Route exact strict path={routes.account} component={Account} />
-                  <Route exact strict path={routes.accountTab} component={Order} />
+                  <Route exact strict path={routes.explorerOrder} component={Order} />
+                  <Route exact strict path={routes.explorerProduct} component={Product} />
+                  <Route exact strict path={routes.explorerAddress} component={Address} />
                   <Route path="/">
                     <Redirect to={routes.home} />
                   </Route>
