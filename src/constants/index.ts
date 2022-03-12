@@ -13,7 +13,8 @@ export const BAST_TOKEN: { [chainId in ChainId]: Token } = {
   [ChainId.RINKEBY]: new Token(ChainId.MAINNET, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'MATTER', 'Matter'),
   [ChainId.GÖRLI]: new Token(ChainId.MAINNET, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'MATTER', 'Matter'),
   [ChainId.KOVAN]: new Token(ChainId.MAINNET, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'MATTER', 'Matter'),
-  [ChainId.BSC]: new Token(ChainId.BSC, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'MATTER', 'Matter')
+  [ChainId.BSC]: new Token(ChainId.BSC, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'MATTER', 'Matter'),
+  [ChainId.AVAX]: new Token(ChainId.AVAX, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'MATTER', 'Matter')
 }
 
 export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
@@ -24,7 +25,8 @@ export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.RINKEBY]: '0xe774A104715ba1B99dEAB30ab33e1C99B0695270',
   [ChainId.KOVAN]: '',
   [ChainId.GÖRLI]: '',
-  [ChainId.BSC]: ''
+  [ChainId.BSC]: '',
+  [ChainId.AVAX]: ''
 }
 
 export const ANTIMATTER_GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'

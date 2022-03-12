@@ -1,8 +1,10 @@
 import { Chain } from 'models/chain'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
-import EthUrl from 'assets/svg/eth_logo.svg'
+// import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
+// import EthUrl from 'assets/svg/eth_logo.svg'
 import BSCUrl from 'assets/svg/binance.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
+import { ReactComponent as AVAX } from 'assets/svg/avax.svg'
+import AVAXUrl from 'assets/svg/avax.svg'
 
 export enum ChainId {
   MAINNET = 1,
@@ -10,7 +12,8 @@ export enum ChainId {
   RINKEBY = 4,
   GÖRLI = 5,
   KOVAN = 42,
-  BSC = 56
+  BSC = 56,
+  AVAX = 43114
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -20,30 +23,30 @@ export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
 export const IS_TEST_NET = !!(NETWORK_CHAIN_ID === ChainId.ROPSTEN)
 
 export const ChainList = [
-  {
-    icon: <ETH />,
-    logo: EthUrl,
-    symbol: 'Ropsten',
-    name: 'Ropsten Test Network',
-    id: ChainId.ROPSTEN,
-    hex: '0x3'
-  },
-  {
-    icon: <ETH />,
-    logo: EthUrl,
-    symbol: 'Rinkeby',
-    name: 'Rinkeby Testnet',
-    id: ChainId.RINKEBY,
-    hex: '0x4'
-  },
-  {
-    icon: <ETH />,
-    logo: EthUrl,
-    symbol: 'Kovan',
-    name: 'Kovan Testnet',
-    id: ChainId.KOVAN,
-    hex: '0x2a'
-  },
+  // {
+  //   icon: <ETH />,
+  //   logo: EthUrl,
+  //   symbol: 'Ropsten',
+  //   name: 'Ropsten Test Network',
+  //   id: ChainId.ROPSTEN,
+  //   hex: '0x3'
+  // },
+  // {
+  //   icon: <ETH />,
+  //   logo: EthUrl,
+  //   symbol: 'Rinkeby',
+  //   name: 'Rinkeby Testnet',
+  //   id: ChainId.RINKEBY,
+  //   hex: '0x4'
+  // },
+  // {
+  //   icon: <ETH />,
+  //   logo: EthUrl,
+  //   symbol: 'Kovan',
+  //   name: 'Kovan Testnet',
+  //   id: ChainId.KOVAN,
+  //   hex: '0x2a'
+  // },
   {
     icon: <BSC height={20} width={20} />,
     logo: BSCUrl,
@@ -51,6 +54,14 @@ export const ChainList = [
     name: 'Binance Smart Chain',
     id: ChainId.BSC,
     hex: '0x38'
+  },
+  {
+    icon: <AVAX />,
+    logo: AVAXUrl,
+    symbol: 'AVAX',
+    name: 'Avalanche',
+    id: ChainId.AVAX,
+    hex: '0xA86A'
   }
 ]
 
@@ -117,16 +128,27 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://kovan.infura.io/v3/'],
     blockExplorerUrls: ['https://kovan.etherscan.io/']
+  },
+  [ChainId.BSC]: {
+    chainId: '0x38',
+    chainName: 'Binance Smart Chain',
+    nativeCurrency: {
+      name: 'Binance Coin',
+      symbol: 'BNB',
+      decimals: 18
+    },
+    rpcUrls: ['https://bsc-dataseed.binance.org'],
+    blockExplorerUrls: ['https://bscscan.com']
+  },
+  [ChainId.AVAX]: {
+    chainId: '0xA86A',
+    chainName: 'Avalanche',
+    nativeCurrency: {
+      name: 'Avalanche Token',
+      symbol: 'AVAX',
+      decimals: 18
+    },
+    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+    blockExplorerUrls: ['https://cchain.explorer.avax.network']
   }
-  // [ChainId.BSC]: {
-  //   chainId: '0x38',
-  //   chainName: 'Binance Smart Chain',
-  //   nativeCurrency: {
-  //     name: 'Binance Coin',
-  //     symbol: 'BNB',
-  //     decimals: 18
-  //   },
-  //   rpcUrls: ['https://bsc-dataseed.binance.org'],
-  //   blockExplorerUrls: ['https://bscscan.com']
-  // }
 }
