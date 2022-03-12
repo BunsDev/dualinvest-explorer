@@ -8,17 +8,18 @@ import { ChainList } from 'constants/chain'
 import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
+import BTCLogo from 'assets/svg/btc_logo.svg'
 import Table from 'components/Table'
 import LogoText from 'components/LogoText'
-import DummyLogo from 'assets/svg/binance.svg'
+import BNBLogo from 'assets/svg/binance.svg'
+import AVAXLogo from 'assets/svg/avalanche.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import OutlineButton from 'components/Button/OutlineButton'
-import theme from 'theme'
+import TabButton from 'components/Button/TabButton'
 import TextButton from 'components/Button/TextButton'
 
 enum ChainOptions {
-  BSC,
+  BNB,
   AVAX
 }
 
@@ -35,7 +36,7 @@ const TableHeader = [
 
 export default function Home() {
   const theme = useTheme()
-  const [tab, setTab] = useState(ChainOptions.BSC)
+  const [tab, setTab] = useState(ChainOptions.BNB)
 
   const dataRows = useMemo(() => {
     return [
@@ -49,7 +50,7 @@ export default function Home() {
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
         </TextButton>,
-        <LogoText key={0} logo={DummyLogo} text="BTC" />,
+        <LogoText key={0} logo={BNBLogo} text="BTC" />,
         <Typography key={0}>Downward</Typography>,
         <Typography key={0} color="#31B047">
           140.21%
@@ -66,12 +67,12 @@ export default function Home() {
 
   const tableTabs = useMemo(() => {
     return [
-      <StyledOutlineButton key={0} onClick={() => setTab(ChainOptions.BSC)} selected={tab === ChainOptions.BSC}>
-        <LogoText logo={DummyLogo} text={'BSC Chain'} />
-      </StyledOutlineButton>,
-      <StyledOutlineButton key={0} onClick={() => setTab(ChainOptions.AVAX)} selected={tab === ChainOptions.AVAX}>
-        <LogoText logo={DummyLogo} text={'AVAX Chain'} />
-      </StyledOutlineButton>
+      <TabButton key={0} onClick={() => setTab(ChainOptions.BNB)} selected={tab === ChainOptions.BNB}>
+        <LogoText logo={BNBLogo} text={'BNB Chain'} />
+      </TabButton>,
+      <TabButton key={0} onClick={() => setTab(ChainOptions.AVAX)} selected={tab === ChainOptions.AVAX}>
+        <LogoText logo={AVAXLogo} text={'AVAX Chain'} />
+      </TabButton>
     ]
   }, [tab])
 
@@ -112,9 +113,9 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={DummyLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={DummyLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={DummyLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
             </OutlinedCard>
@@ -123,8 +124,8 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={DummyLogo} text={'BSC Chain'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={DummyLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BNBLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
             </OutlinedCard>
@@ -164,7 +165,7 @@ export default function Home() {
               <Typography fontSize={24} fontWeight={700}>
                 Top Products
               </Typography>
-              <LogoText logo={DummyLogo} size="28px" text="BSC" fontSize={20} />
+              <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
             </Box>
             <Typography fontSize={16}>24H</Typography>
           </Box>
@@ -172,36 +173,5 @@ export default function Home() {
         </Card>
       </Container>
     </Box>
-  )
-}
-
-function StyledOutlineButton({
-  children,
-  selected,
-  onClick
-}: {
-  children: React.ReactNode
-
-  selected?: boolean
-  onClick?: () => void
-}) {
-  return (
-    <OutlineButton
-      width="136px"
-      height="40px"
-      color={selected ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.1)'}
-      onClick={onClick}
-      style={{
-        background: theme.palette.background.paper
-      }}
-    >
-      <Typography
-        fontSize={16}
-        color={selected ? theme.palette.primary.main : theme.palette.text.primary}
-        sx={{ opacity: selected ? 1 : 0.5 }}
-      >
-        {children}
-      </Typography>
-    </OutlineButton>
   )
 }
