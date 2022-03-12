@@ -26,8 +26,8 @@ export const Tabs: Tab[] = [
   {
     title: 'Invest',
     subTab: [
-      { title: 'Dual Investment', route: routes.dualInvest },
-      { title: 'Recurring Strategy', route: routes.recurringVault }
+      { title: 'Dual Investment', link: '#' },
+      { title: 'Recurring Strategy', link: '#' }
     ]
   },
   { title: 'Account', route: routes.account },
