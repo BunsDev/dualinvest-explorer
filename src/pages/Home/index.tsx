@@ -17,6 +17,7 @@ import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import TabButton from 'components/Button/TabButton'
 import TextButton from 'components/Button/TextButton'
+import { Chain } from 'models/chain'
 
 enum ChainOptions {
   BNB,
@@ -37,6 +38,7 @@ const TableHeader = [
 export default function Home() {
   const theme = useTheme()
   const [tab, setTab] = useState(ChainOptions.BNB)
+  const [chain, setChain] = useState<Chain | null>(ChainList[0])
 
   const dataRows = useMemo(() => {
     return [
@@ -100,7 +102,13 @@ export default function Home() {
           </Box>
           <Box display="flex" gap={24} position="relative" mt={21} width="100%">
             <Box width="100%" display="flex" gap={8}>
-              <ChainSelect chainList={ChainList} selectedChain={ChainList[0]} width="180px" height="60px" />
+              <ChainSelect
+                chainList={ChainList}
+                selectedChain={chain}
+                onChange={setChain}
+                width="180px"
+                height="60px"
+              />
               <Input value="" placeholder="Search by Address/Order ID/Product ID" width={680} height={60} />
             </Box>
             <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
