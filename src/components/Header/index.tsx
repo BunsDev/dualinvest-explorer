@@ -30,7 +30,6 @@ export const Tabs: Tab[] = [
       { title: 'Recurring Strategy', link: '#' }
     ]
   },
-  { title: 'Account', route: routes.account },
   { title: 'Docs', link: 'https://docs.antimatter.finance/' },
   { title: 'Explorer', route: routes.home }
 ]

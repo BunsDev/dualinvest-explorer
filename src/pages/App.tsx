@@ -6,7 +6,6 @@ import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
 import Web3ReactManager from '../components/essential/Web3ReactManager'
 import WarningModal from '../components/Modal/WarningModal'
-import Account from './Account'
 import { ModalProvider } from 'context/ModalContext'
 import Footer from 'components/Footer'
 import { routes } from 'constants/routes'
@@ -63,7 +62,6 @@ export default function App() {
               <Web3ReactManager>
                 <Switch>
                   <Route exact strict path={routes.home} component={Home} />
-                  <Route exact strict path={routes.account} component={Account} />
                   <Route exact strict path={routes.explorerOrder} component={Order} />
                   <Route exact strict path={routes.explorerProduct} component={Product} />
                   <Route exact strict path={routes.explorerAddress} component={Address} />
