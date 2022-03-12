@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
-import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
+// import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
@@ -16,6 +16,7 @@ import AVAXLogo from 'assets/svg/avalanche.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import TabButton from 'components/Button/TabButton'
+import TextButton from 'components/Button/TextButton'
 
 enum ChainOptions {
   BNB,
@@ -40,15 +41,15 @@ export default function Home() {
   const dataRows = useMemo(() => {
     return [
       [
-        <Typography key={0} color="#3861FB">
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           Recurring Strategy
-        </Typography>,
-        <Typography key={0} color="#3861FB">
+        </TextButton>,
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
-        </Typography>,
-        <Typography key={0} color="#3861FB">
+        </TextButton>,
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
-        </Typography>,
+        </TextButton>,
         <LogoText key={0} logo={BNBLogo} text="BTC" />,
         <Typography key={0}>Downward</Typography>,
         <Typography key={0} color="#31B047">
@@ -92,20 +93,22 @@ export default function Home() {
           }}
         >
           <Box display="flex" gap={10} alignItems="center">
-            <Antimatter />
-            <Typography fontSize={24} fontWeight={400}>
-              Explorer
+            {/* <Antimatter /> */}
+            <Typography fontSize={44} fontWeight={700}>
+              Antimatter Explorer
             </Typography>
           </Box>
-          <Box display="flex" gap={8} position="relative" mt={21} width={670}>
-            <ChainSelect chainList={ChainList} selectedChain={ChainList[0]} width="180px" height="60px" />
-            <Input value="" placeholder="Search by Address/Order ID/Product ID" width={680} height={60} />
+          <Box display="flex" gap={24} position="relative" mt={21} width="100%">
+            <Box width="100%" display="flex" gap={8}>
+              <ChainSelect chainList={ChainList} selectedChain={ChainList[0]} width="180px" height="60px" />
+              <Input value="" placeholder="Search by Address/Order ID/Product ID" width={680} height={60} />
+            </Box>
             <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
               <SearchIcon />
               <Typography>Search</Typography>
             </Button>
           </Box>
-          <Box display="flex" gap="37px" mt={46}>
+          <Box display="flex" gap="12px" mt={46} width="100%">
             <OutlinedCard padding="17px 20px" width={332}>
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>

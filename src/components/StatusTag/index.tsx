@@ -3,13 +3,11 @@ import { Box, Typography } from '@mui/material'
 
 export default function StatusTag({
   type,
-  width,
   height,
   fontSize,
   text
 }: {
   type: 'success' | 'pending' | 'warning'
-  width?: string | number
   height?: string | number
   fontSize?: string | number
   text: string
@@ -39,12 +37,13 @@ export default function StatusTag({
   return (
     <Box
       borderRadius="22px"
-      width={width || 92}
+      width="fit-content"
       height={height || 36}
       display="flex"
       alignItems="center"
       justifyContent="center"
       bgcolor={bgcolor}
+      padding="0 11px"
     >
       <Typography fontSize={fontSize || 14} color={textColor}>
         {text}
