@@ -5,7 +5,7 @@ import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
-import Input from 'components/Input'
+// import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import BTCLogo from 'assets/svg/btc_logo.svg'
@@ -18,6 +18,7 @@ import ButtonTabs from 'components/Tabs/ButtonTabs'
 import TabButton from 'components/Button/TabButton'
 import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
+import SelectInput from 'components/Input/SelectInput'
 
 enum ChainOptions {
   BNB,
@@ -109,7 +110,7 @@ export default function Home() {
                 width="180px"
                 height="60px"
               />
-              <Input value="" placeholder="Search by Address/Order ID/Product ID" width={680} height={60} />
+              <SelectInput options={['Address', 'Order', 'Product']} selected="Address" value="" />
             </Box>
             <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
               <SearchIcon />

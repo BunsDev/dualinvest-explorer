@@ -3,7 +3,7 @@ import { Button, Fade, Menu } from '@mui/material'
 
 interface Props {
   children?: React.ReactNode
-  placeholder: string
+  placeholder?: string
   autoFocus?: boolean
   width?: string
   style?: React.CSSProperties
