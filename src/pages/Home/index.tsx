@@ -20,6 +20,12 @@ import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
 
+enum SearchOptions {
+  Address = 'Address',
+  Order = 'Order',
+  Product = 'Product'
+}
+
 enum ChainOptions {
   BNB,
   AVAX
@@ -40,6 +46,8 @@ export default function Home() {
   const theme = useTheme()
   const [tab, setTab] = useState(ChainOptions.BNB)
   const [chain, setChain] = useState<Chain | null>(ChainList[0])
+  const [searchOption, setSearchOption] = useState(SearchOptions.Address)
+  const [search, setSearch] = useState('')
 
   const dataRows = useMemo(() => {
     return [
@@ -110,11 +118,17 @@ export default function Home() {
                 width="180px"
                 height="60px"
               />
-              <SelectInput options={['Address', 'Order', 'Product']} selected="Address" value="" />
+              <SelectInput
+                options={['Address', 'Order', 'Product']}
+                selected={searchOption}
+                onChangeSelect={setSearchOption}
+                value={search}
+                onChangeInput={e => setSearch(e.target.value)}
+              />
             </Box>
             <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
               <SearchIcon />
-              <Typography>Search</Typography>
+              <Typography ml={10}>Search</Typography>
             </Button>
           </Box>
           <Box display="flex" gap="12px" mt={46} width="100%">

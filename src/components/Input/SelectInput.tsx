@@ -1,3 +1,4 @@
+import { ChangeEvent, useCallback } from 'react'
 import { Select, MenuItem, InputBase } from '@mui/material'
 import { inputBaseClasses } from '@mui/material/InputBase'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -6,14 +7,27 @@ import Divider from 'components/Divider'
 export default function SelectInput({
   options,
   selected,
-  value
+  value,
+  onChangeSelect,
+  onChangeInput
 }: {
   options: string[]
   selected?: string
   value: string
+  onChangeSelect?: (e: any) => void
+  onChangeInput?: (e: ChangeEvent<HTMLInputElement>) => void
 }) {
+  const handleSelectChange = useCallback(
+    e => {
+      const value = options.find(option => option === e.target.value) ?? null
+      onChangeSelect && onChangeSelect(value)
+    },
+    [options, onChangeSelect]
+  )
+
   return (
     <InputBase
+      onChange={onChangeInput}
       fullWidth
       sx={{
         [`&.${inputBaseClasses.root}`]: {
@@ -56,9 +70,10 @@ export default function SelectInput({
               }
             }}
             IconComponent={ExpandMoreIcon}
+            onChange={handleSelectChange}
           >
             {options.map((option, idx) => (
-              <MenuItem key={idx} value={option}>
+              <MenuItem key={idx} value={option} selected={selected === option}>
                 {option}
               </MenuItem>
             ))}
