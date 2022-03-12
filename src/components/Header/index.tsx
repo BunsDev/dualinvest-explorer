@@ -24,19 +24,15 @@ interface Tab extends TabContent {
 
 export const Tabs: Tab[] = [
   {
-    title: 'Dual Investment',
-    link: 'https://app.antimatter.finance/#/option_trading'
+    title: 'Invest',
+    subTab: [
+      { title: 'Dual Investment', route: routes.dualInvest },
+      { title: 'Recurring Strategy', route: routes.recurringVault }
+    ]
   },
   { title: 'Account', route: routes.account },
-  { title: 'DAO', link: 'https://dao.antimatter.finance/#/' },
   { title: 'Docs', link: 'https://docs.antimatter.finance/' },
-  {
-    title: 'Labs',
-    subTab: [
-      { title: 'BULL & BEAR Option', link: 'https://app.antimatter.finance/#/option_trading' },
-      { title: 'Nonfungible Finance', link: 'https://nonfungible.finance/#/' }
-    ]
-  }
+  { title: 'Explorer', route: routes.home }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -77,7 +73,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     opacity: 0.5,
     marginRight: 48,
     paddingBottom: '30px',
-    borderBottom: '2px solid transparent',
+    borderBottom: '1px solid transparent',
     '&.active': {
       opacity: 1,
       borderColor: theme.palette.text.primary
