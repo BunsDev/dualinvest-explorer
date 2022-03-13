@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
+import NoDataCard from 'components/Card/NoDataCard'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -9,13 +10,14 @@ import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
-import { ReactComponent as Matter } from 'assets/svg/antimatter.svg'
+import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
-import { shortenAddress } from 'utils'
+import { shortenAddress, isAddress } from 'utils'
+import Spinner from 'components/Spinner'
 
 enum TableOptions {
   Positions,
@@ -129,16 +131,19 @@ export default function Address() {
           flexDirection="row"
           justifyContent="flex-start"
         >
-          <Matter />
+          <Box display="flex" gap={20} alignItems="center">
+            <Matter />
 
-          <Box display="flex" flexDirection="column">
-            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
-              Address
-            </Typography>
-            <Typography fontWeight={'700'} fontSize={'24px'}>
-              {shortenAddress(address)}
-            </Typography>
+            <Box display="grid" gap={6}>
+              <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+                Address
+              </Typography>
+              <Typography fontWeight={'700'} fontSize={'24px'}>
+                {isAddress(address) ? shortenAddress(address) : 'Not Valid Address'}
+              </Typography>
+            </Box>
           </Box>
+
           <Box
             sx={{
               width: '96px',
@@ -180,6 +185,23 @@ export default function Address() {
         </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          {!orderList && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                width: '100%',
+                height: 350,
+                background: '#ffffff',
+                zIndex: 3,
+                borderRadius: 2
+              }}
+            >
+              <Spinner size={60} />
+            </Box>
+          )}
+          {orderList && orderList.length === 0 && <NoDataCard text={'You don’t have any positions'} />}
         </Box>
       </Card>
 
