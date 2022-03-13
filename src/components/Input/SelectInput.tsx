@@ -9,11 +9,13 @@ export default function SelectInput({
   selected,
   value,
   onChangeSelect,
-  onChangeInput
+  onChangeInput,
+  placeholder
 }: {
   options: string[]
   selected?: string
   value: string
+  placeholder: string
   onChangeSelect?: (e: any) => void
   onChangeInput?: (e: ChangeEvent<HTMLInputElement>) => void
 }) {
@@ -42,7 +44,7 @@ export default function SelectInput({
         }
       }}
       value={value}
-      placeholder="Search by Address/Order ID/Product ID"
+      placeholder={placeholder}
       startAdornment={
         <>
           <Select

@@ -119,6 +119,7 @@ export default function Home() {
                 height="60px"
               />
               <SelectInput
+                placeholder={`Search by ${searchOption}`}
                 options={['Address', 'Order', 'Product']}
                 selected={searchOption}
                 onChangeSelect={setSearchOption}
