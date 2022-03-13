@@ -13,6 +13,7 @@ import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
+import { useOrderRecords, InvestStatus, INVEST_TYPE } from 'hooks/useOrderData'
 
 enum TableOptions {
   Positions,
@@ -35,6 +36,19 @@ export default function Address() {
   const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Positions)
 
+  // const [page, setPage] = useState(1)
+  const statusArr = [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
+  const { orderList, pageParams } = useOrderRecords(
+    '0xb55c5e58ce4a5e9e247a266fd8fd3281c01e6be3',
+    INVEST_TYPE.recur,
+    'All',
+    statusArr,
+    1,
+    999999
+  )
+
+  console.log(orderList, pageParams)
+
   const data = {
     ['Total Invest Amount']: '62800.00 USDT',
     ['Amount of Investing in Progress']: '62800.00 USDT',
@@ -42,16 +56,18 @@ export default function Address() {
   }
 
   const dataRows = useMemo(() => {
-    return [
-      [
+    if (!orderList) return []
+
+    return orderList.map(order => {
+      return [
         <Typography key={0} color="#3861FB">
-          Recurring Strategy
+          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
         </Typography>,
         <Typography key={0} color="#3861FB">
-          23
+          {order.productId}
         </Typography>,
         <Typography key={0} color="#3861FB">
-          23
+          {order.orderId}
         </Typography>,
         <LogoText key={0} gapSize={'8px'} logo={BTC} text="BTC" />,
         <Typography key={0}>Downward</Typography>,
@@ -65,8 +81,8 @@ export default function Address() {
         </Box>,
         <StatusTag key={0} type="pending" text="Progressing" />
       ]
-    ]
-  }, [])
+    })
+  }, [orderList])
 
   const tableTabs = useMemo(() => {
     return [
