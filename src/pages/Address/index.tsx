@@ -15,6 +15,7 @@ import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
+import { shortenAddress } from 'utils'
 
 enum TableOptions {
   Positions,
@@ -135,7 +136,7 @@ export default function Address() {
               Address
             </Typography>
             <Typography fontWeight={'700'} fontSize={'24px'}>
-              0x3550...206882
+              {shortenAddress(address)}
             </Typography>
           </Box>
           <Box
