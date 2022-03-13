@@ -68,7 +68,7 @@ export function useOrderRecords(
         reject(null)
       })
     return Axios.get<{ records: OrderRecord[]; pages: string; size: string; total: string }>('getOrderRecord', {
-      address: address,
+      address,
       investType,
       investStatus: Array.isArray(investStatus) ? undefined : investStatus,
       pageNum: Array.isArray(investStatus) ? undefined : pageNum,

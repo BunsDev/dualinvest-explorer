@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
@@ -13,7 +14,7 @@ import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import { useOrderRecords, InvestStatus, INVEST_TYPE } from 'hooks/useOrderData'
+import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
 
 enum TableOptions {
   Positions,
@@ -36,16 +37,10 @@ export default function Address() {
   const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Positions)
 
+  const { address } = useParams<{ address: string }>()
+
   // const [page, setPage] = useState(1)
-  const statusArr = [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
-  const { orderList, pageParams } = useOrderRecords(
-    '0xb55c5e58ce4a5e9e247a266fd8fd3281c01e6be3',
-    INVEST_TYPE.recur,
-    'All',
-    statusArr,
-    1,
-    999999
-  )
+  const { orderList, pageParams } = useOrderRecords(address, INVEST_TYPE.recur, 'All', undefined, 1, 999999)
 
   console.log(orderList, pageParams)
 
@@ -69,10 +64,10 @@ export default function Address() {
         <Typography key={0} color="#3861FB">
           {order.orderId}
         </Typography>,
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text="BTC" />,
-        <Typography key={0}>Downward</Typography>,
+        <LogoText key={0} gapSize={'8px'} logo={BTC} text={order.currency} />,
+        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          {order.annualRor + '%'}
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>

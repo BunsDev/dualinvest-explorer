@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 // import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
@@ -19,6 +20,7 @@ import TabButton from 'components/Button/TabButton'
 import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
+import { routes } from 'constants/routes'
 
 enum SearchOptions {
   Address = 'Address',
@@ -48,6 +50,17 @@ export default function Home() {
   const [chain, setChain] = useState<Chain | null>(ChainList[0])
   const [searchOption, setSearchOption] = useState(SearchOptions.Address)
   const [search, setSearch] = useState('')
+  const history = useHistory()
+
+  const onSearch = useCallback(() => {
+    if (!search || !searchOption) {
+      return
+    }
+
+    if (searchOption == SearchOptions.Address) {
+      history.push(routes.explorerAddress.replace(':address', search))
+    }
+  }, [search])
 
   const dataRows = useMemo(() => {
     return [
@@ -127,7 +140,7 @@ export default function Home() {
                 onChangeInput={e => setSearch(e.target.value)}
               />
             </Box>
-            <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
+            <Button width="220px" height="60px" onClick={onSearch} style={{ marginLeft: '24px' }}>
               <SearchIcon />
               <Typography ml={10}>Search</Typography>
             </Button>
