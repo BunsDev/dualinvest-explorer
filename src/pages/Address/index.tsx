@@ -15,7 +15,7 @@ import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
+import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
 import Spinner from 'components/Spinner'
 
@@ -43,9 +43,16 @@ export default function Address() {
   const { address } = useParams<{ address: string }>()
 
   // const [page, setPage] = useState(1)
-  const { orderList, pageParams } = useOrderRecords(address, INVEST_TYPE.recur, 'All', undefined, 1, 999999)
 
-  console.log(orderList, pageParams)
+  const statusArr = useMemo(() => {
+    if (tab === TableOptions.Positions) {
+      return [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
+    }
+
+    return [InvestStatus.Settled]
+  }, [tab])
+
+  const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', statusArr, 1, 999999)
 
   const data = {
     ['Total Invest Amount']: '62800.00 USDT',
