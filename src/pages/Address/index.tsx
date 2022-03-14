@@ -49,7 +49,7 @@ export default function Address() {
       return [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
     }
 
-    return [InvestStatus.Settled]
+    return undefined
   }, [tab])
 
   const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', statusArr, 1, 999999)
