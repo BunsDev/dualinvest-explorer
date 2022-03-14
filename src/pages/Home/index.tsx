@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 // import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
-import Input from 'components/Input'
+// import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import BTCLogo from 'assets/svg/btc_logo.svg'
@@ -17,6 +18,15 @@ import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import TabButton from 'components/Button/TabButton'
 import TextButton from 'components/Button/TextButton'
+import { Chain } from 'models/chain'
+import SelectInput from 'components/Input/SelectInput'
+import { routes } from 'constants/routes'
+
+enum SearchOptions {
+  Address = 'Address',
+  Order = 'Order',
+  Product = 'Product'
+}
 
 enum ChainOptions {
   BNB,
@@ -37,6 +47,20 @@ const TableHeader = [
 export default function Home() {
   const theme = useTheme()
   const [tab, setTab] = useState(ChainOptions.BNB)
+  const [chain, setChain] = useState<Chain | null>(ChainList[0])
+  const [searchOption, setSearchOption] = useState(SearchOptions.Address)
+  const [search, setSearch] = useState('')
+  const history = useHistory()
+
+  const onSearch = useCallback(() => {
+    if (!search || !searchOption) {
+      return
+    }
+
+    if (searchOption == SearchOptions.Address) {
+      history.push(routes.explorerAddress.replace(':address', search))
+    }
+  }, [search])
 
   const dataRows = useMemo(() => {
     return [
@@ -100,12 +124,25 @@ export default function Home() {
           </Box>
           <Box display="flex" gap={24} position="relative" mt={21} width="100%">
             <Box width="100%" display="flex" gap={8}>
-              <ChainSelect chainList={ChainList} selectedChain={ChainList[0]} width="180px" height="60px" />
-              <Input value="" placeholder="Search by Address/Order ID/Product ID" width={680} height={60} />
+              <ChainSelect
+                chainList={ChainList}
+                selectedChain={chain}
+                onChange={setChain}
+                width="180px"
+                height="60px"
+              />
+              <SelectInput
+                placeholder={`Search by ${searchOption}`}
+                options={['Address', 'Order', 'Product']}
+                selected={searchOption}
+                onChangeSelect={setSearchOption}
+                value={search}
+                onChangeInput={e => setSearch(e.target.value)}
+              />
             </Box>
-            <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
+            <Button width="220px" height="60px" onClick={onSearch} style={{ marginLeft: '24px' }}>
               <SearchIcon />
-              <Typography>Search</Typography>
+              <Typography ml={10}>Search</Typography>
             </Button>
           </Box>
           <Box display="flex" gap="12px" mt={46} width="100%">

@@ -2,7 +2,7 @@ import { MenuItem } from '@mui/material'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
 import InputLabel from 'components/Input/InputLabel'
-import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
+// import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
 import { useCallback } from 'react'
 import { Chain } from 'models/chain'
 
@@ -36,7 +36,7 @@ export default function ChainSelect({
   )
 
   return (
-    <div style={{ width }}>
+    <div>
       {label && <InputLabel>{label}</InputLabel>}
       <Select
         defaultValue={selectedChain?.symbol}
@@ -44,28 +44,30 @@ export default function ChainSelect({
         disabled={disabled}
         onChange={handleChange}
         placeholder={placeholder ?? 'Select Chain'}
-        width={'100%'}
+        width={width}
         height={height}
         primary={active}
       >
         {chainList.map(option => (
           <MenuItem
-            sx={{
-              '&::before': {
-                content: '""',
-                width: 30,
-                height: 20,
-                display: 'flex',
-                justifyContent: 'center'
-              },
-              '&.Mui-selected::before': {
-                content: `url(${SelectedIcon})`,
-                width: 30,
-                height: 20,
-                display: 'flex',
-                justifyContent: 'center'
-              }
-            }}
+            // sx={
+            // {
+            // '&::before': {
+            //   content: '""',
+            //   width: 30,
+            //   height: 20,
+            //   display: 'flex',
+            //   justifyContent: 'center'
+            // },
+            // '&.Mui-selected::before': {
+            //   content: `url(${SelectedIcon})`,
+            //   width: 30,
+            //   height: 20,
+            //   display: 'flex',
+            //   justifyContent: 'center'
+            // }
+            //   }
+            // }
             value={option.symbol}
             key={option.symbol}
             selected={selectedChain?.symbol === option.symbol}
