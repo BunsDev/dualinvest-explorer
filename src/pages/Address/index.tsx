@@ -8,11 +8,12 @@ import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
-import { ReactComponent as Matter } from 'assets/svg/antimatter.svg'
+import { ReactComponent as Matter } from 'assets/svg/antimatter_colored.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
+import TextButton from 'components/Button/TextButton'
 
 enum TableOptions {
   Positions,
@@ -36,24 +37,24 @@ export default function Address() {
   const [tab, setTab] = useState(TableOptions.Positions)
 
   const data = {
-    ['Total Invest Amount']: '62800.00 USDT',
-    ['Amount of Investing in Progress']: '62800.00 USDT',
-    ['Positions']: '5'
+    ['Total Invest Amount:']: '62800.00 USDT',
+    ['Amount of Investing in Progress:']: '62800.00 USDT',
+    ['Positions:']: '5'
   }
 
   const dataRows = useMemo(() => {
     return [
       [
-        <Typography key={0} color="#3861FB">
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           Recurring Strategy
-        </Typography>,
-        <Typography key={0} color="#3861FB">
+        </TextButton>,
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
-        </Typography>,
-        <Typography key={0} color="#3861FB">
+        </TextButton>,
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
-        </Typography>,
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text="BTC" />,
+        </TextButton>,
+        <LogoText key={0} logo={BTC} text="BTC" />,
         <Typography key={0}>Downward</Typography>,
         <Typography key={0} color="#31B047">
           140.21%
@@ -116,11 +117,12 @@ export default function Address() {
           display="flex"
           flexDirection="row"
           justifyContent="flex-start"
+          alignItems="center"
         >
           <Matter />
 
-          <Box display="flex" flexDirection="column">
-            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+          <Box display="flex" flexDirection="column" paddingLeft={'20px'}>
+            <Typography sx={{ opacity: '0.5' }} fontSize={16} paddingBottom={'6px'}>
               Address
             </Typography>
             <Typography fontWeight={'700'} fontSize={'24px'}>

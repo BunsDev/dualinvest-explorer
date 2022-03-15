@@ -105,7 +105,7 @@ export default function Home() {
             </Box>
             <Button width="220px" height="60px" onClick={() => {}} style={{ marginLeft: '24px' }}>
               <SearchIcon />
-              <Typography>Search</Typography>
+              <Typography paddingLeft={'10px'}>Search</Typography>
             </Button>
           </Box>
           <Box display="flex" gap="12px" mt={46} width="100%">
@@ -155,8 +155,8 @@ export default function Home() {
       >
         <Box display="flex" width="100%" gap={20} mb={41}>
           <NumericalCard unit="$" value={'57,640'} title="Cumulative Investment Amount" fontSize="44px" border />
-          <NumericalCard value={'114,375'} title="Total Namber Of Oders" fontSize="44px" border />
-          <NumericalCard unit="Addresses" value={'367'} title="Cumulative Namber Of Users" fontSize="44px" border />
+          <NumericalCard value={'114,375'} title="Total Number Of Orders" fontSize="44px" border />
+          <NumericalCard unit="Addresses" value={'367'} title="Cumulative Number Of Users" fontSize="44px" border />
         </Box>
         <Card padding="28px 60px 68px">
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
