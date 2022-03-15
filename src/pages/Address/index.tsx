@@ -45,21 +45,54 @@ export default function Address() {
 
   // const [page, setPage] = useState(1)
 
-  const statusArr = useMemo(() => {
-    if (tab === TableOptions.Positions) {
-      return [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
+  const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', undefined, 1, 999999)
+
+  const positionList = useMemo(() => {
+    if (!orderList) return []
+    return orderList.filter((order: OrderRecord) =>
+      [InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)
+    )
+  }, [orderList])
+
+  const historyList = useMemo(() => {
+    return orderList || []
+  }, [orderList])
+
+  const filteredOrderList = useMemo(() => {
+    if (!positionList || !historyList) {
+      return []
     }
 
-    return undefined
-  }, [tab])
+    if (tab === TableOptions.Positions) {
+      return positionList
+    }
 
-  const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', statusArr, 1, 999999)
+    return historyList
+  }, [tab, positionList, historyList])
 
-  const data = {
-    ['Total Invest Amount:']: '62800.00 USDT',
-    ['Amount of Investing in Progress:']: '62800.00 USDT',
-    ['Positions:']: '5'
-  }
+  const totalAmount = useMemo(() => {
+    return historyList
+      .map((order: OrderRecord) => +order.amount)
+      .reduce(function(acc: number, val: number) {
+        return acc + val
+      }, 0)
+  }, [historyList])
+
+  const AmountInProgress = useMemo(() => {
+    return positionList
+      .map((order: OrderRecord) => +order.amount)
+      .reduce(function(acc: number, val: number) {
+        return acc + val
+      }, 0)
+  }, [positionList])
+
+  const data = useMemo(() => {
+    return {
+      ['Total Invest Amount:']: `${totalAmount} USDT`,
+      ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
+      ['Positions:']: orderList?.length || 0
+    }
+  }, [orderList])
 
   const statusType = useCallback((order: OrderRecord) => {
     if ([InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)) {
@@ -91,7 +124,7 @@ export default function Address() {
   const dataRows = useMemo(() => {
     if (!orderList) return []
 
-    return orderList.map((order: OrderRecord) => {
+    return filteredOrderList.map((order: OrderRecord) => {
       return [
         <Typography key={0} color="#3861FB">
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
@@ -109,7 +142,7 @@ export default function Address() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
           </Typography>
         </Box>,
         <StatusTag key={0} type={statusType(order)} text={statusText(order)} />
