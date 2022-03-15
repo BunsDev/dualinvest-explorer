@@ -45,7 +45,7 @@ export default function Address() {
 
   // const [page, setPage] = useState(1)
 
-  const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', undefined, 1, 999999)
+  const { orderList } = useOrderRecords(INVEST_TYPE.recur, 'All', undefined, address, undefined, undefined, 1, 999999)
 
   const positionList = useMemo(() => {
     if (!orderList) return []
