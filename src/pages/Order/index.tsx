@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
@@ -6,10 +7,15 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
-import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
 import { useMemo } from 'react'
 import Table from 'components/Table'
+import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
+import { OrderRecord } from 'utils/fetch/record'
+import OrderStatusTag from 'components/OrderStatusTag'
+import dayjs from 'dayjs'
+import NoDataCard from 'components/Card/NoDataCard'
+import Spinner from 'components/Spinner'
 
 const TableHeader = [
   'Token',
@@ -19,37 +25,56 @@ const TableHeader = [
   'Settlement Time',
   'Strike Price',
   'Exercise',
+  'Refund Amount',
   'Status'
 ]
 
 export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
-  const data = {
-    ['Settlement Price:']: '140.25%',
-    ['Settlement Time:']: 'Sep 21, 2021 10:42 AM',
-    ['Product ID:']: '023',
-    ['TXID:']: '0x35500253DEB46fa8c2b271628c65DcF159206882'
-  }
+
+  const { order } = useParams<{ order: string }>()
+  const { orderList } = useOrderRecords(INVEST_TYPE.recur, 'All', undefined, undefined, order, undefined, 1, 999999)
+
+  const data = useMemo(() => {
+    if (!orderList || orderList.length === 0) return
+
+    const order = orderList[0]
+
+    return {
+      ['Settlement Price:']: `${order.strikePrice}`,
+      ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY'),
+      ['Product ID:']: order.productId,
+      ['TXID:']: order.confirmOrderHash
+    }
+  }, [orderList])
 
   const dataRows = useMemo(() => {
-    return [
-      [
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text="BTC" />,
-        <Typography key={0}>12900 USDT</Typography>,
-        <Typography key={0}> Sep 21, 2021</Typography>,
+    if (!orderList) return []
 
+    return orderList.map((order: OrderRecord) => {
+      return [
+        <LogoText key={0} gapSize={'8px'} logo={BTC} text={order.currency} />,
+        <Typography key={0}>{order.amount} USDT</Typography>,
+        <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          {order.annualRor + '%'}
         </Typography>,
-        <Typography key={0}> Sep 21, 2021 10:42 AM</Typography>,
-        <Typography key={0}>62800.00</Typography>,
-        <Typography key={0}>Downward</Typography>,
-        <Typography key={0}>--</Typography>,
-        <StatusTag key={0} type="pending" text="Progressing" />
+        <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
+        <Typography key={0}>{order.strikePrice}</Typography>,
+        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
+        <Typography key={0}>{order.returnedAmount}</Typography>,
+        <OrderStatusTag key={0} order={order} />
       ]
-    ]
-  }, [])
+    })
+  }, [orderList])
+
+  const filterBy = useMemo(() => {
+    if (!orderList || orderList.length === 0) return {}
+    const order = orderList[0]
+
+    return { ['Address:']: order.address, ['Order ID:']: order.orderId }
+  }, [orderList])
 
   return (
     <Box
@@ -93,8 +118,8 @@ export default function Order() {
             <Typography sx={{ opacity: '0.5' }} fontSize={16}>
               Order ID
             </Typography>
-            <Typography fontWeight={'700'} fontSize={'24px'}>
-              #045
+            <Typography fontWeight={'700'} fontSize={'24px'} mt={16}>
+              #{order}
             </Typography>
           </Box>
           <Box
@@ -116,24 +141,42 @@ export default function Order() {
               Overview
             </Typography>
 
-            {Object.keys(data).map((key, idx) => (
-              <Box key={idx} display="flex" justifyContent={'flex-start'}>
-                <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
-                  {key}
-                </Typography>
+            {data &&
+              Object.keys(data).map((key, idx) => (
+                <Box key={idx} display="flex" justifyContent={'flex-start'}>
+                  <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+                    {key}
+                  </Typography>
 
-                <Typography fontWeight={400} fontSize={16}>
-                  {data[key as keyof typeof data]}
-                </Typography>
-              </Box>
-            ))}
+                  <Typography fontWeight={400} fontSize={16}>
+                    {data[key as keyof typeof data]}
+                  </Typography>
+                </Box>
+              ))}
           </Box>
         </Box>
         <Box>
-          <FilteredBy />
+          <FilteredBy data={filterBy} />
         </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          {!orderList && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                width: '100%',
+                height: 350,
+                background: '#ffffff',
+                zIndex: 3,
+                borderRadius: 2
+              }}
+            >
+              <Spinner size={60} />
+            </Box>
+          )}
+          {orderList && orderList.length === 0 && <NoDataCard text={'Not Found'} />}
         </Box>
       </Card>
 

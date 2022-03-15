@@ -8,10 +8,10 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
-import StatusTag from 'components/StatusTag'
+import OrderStatusTag from 'components/OrderStatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
@@ -94,33 +94,6 @@ export default function Address() {
     }
   }, [orderList])
 
-  const statusType = useCallback((order: OrderRecord) => {
-    if ([InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)) {
-      return 'pending'
-    }
-    if ([InvestStatus.OrderFailed, InvestStatus.EverythingFailed].includes(+order.status)) {
-      return 'failed'
-    }
-    if (order.returnedCurrency === order.investCurrency) {
-      return 'warning'
-    }
-
-    return 'success'
-  }, [])
-
-  const statusText = useCallback((order: OrderRecord) => {
-    if ([InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)) {
-      return 'Progressing'
-    }
-    if ([InvestStatus.OrderFailed, InvestStatus.EverythingFailed].includes(+order.status)) {
-      return 'Failed'
-    }
-    if (order.investCurrency === order.returnedCurrency) {
-      return 'Unexcercised'
-    }
-    return 'Exercised'
-  }, [])
-
   const dataRows = useMemo(() => {
     if (!orderList) return []
 
@@ -145,7 +118,7 @@ export default function Address() {
             {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type={statusType(order)} text={statusText(order)} />
+        <OrderStatusTag key={0} order={order} />
       ]
     })
   }, [orderList])
@@ -160,6 +133,10 @@ export default function Address() {
       </TabButton>
     ]
   }, [tab])
+
+  const filterBy = useMemo(() => {
+    return { ['Address:']: address }
+  }, [address])
 
   return (
     <Box
@@ -247,7 +224,7 @@ export default function Address() {
           </Box>
         </Box>
         <Box>
-          <FilteredBy />
+          <FilteredBy data={filterBy} />
         </Box>
         <Box padding={'24px 24px 0px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />

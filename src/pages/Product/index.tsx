@@ -157,7 +157,7 @@ export default function Order() {
           </Box>
         </Box>
         <Box>
-          <FilteredBy />
+          <FilteredBy data={{ ['Product ID:']: '123' }} />
         </Box>
         <Box padding={'24px 24px 0px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
