@@ -11,13 +11,14 @@ import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
 import Spinner from 'components/Spinner'
+import { OrderRecord } from 'utils/fetch/record'
 
 enum TableOptions {
   Positions,
@@ -60,10 +61,37 @@ export default function Address() {
     ['Positions:']: '5'
   }
 
+  const statusType = useCallback((order: OrderRecord) => {
+    if ([InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)) {
+      return 'pending'
+    }
+    if ([InvestStatus.OrderFailed, InvestStatus.EverythingFailed].includes(+order.status)) {
+      return 'failed'
+    }
+    if (order.returnedCurrency === order.investCurrency) {
+      return 'warning'
+    }
+
+    return 'success'
+  }, [])
+
+  const statusText = useCallback((order: OrderRecord) => {
+    if ([InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)) {
+      return 'Progressing'
+    }
+    if ([InvestStatus.OrderFailed, InvestStatus.EverythingFailed].includes(+order.status)) {
+      return 'Failed'
+    }
+    if (order.investCurrency === order.returnedCurrency) {
+      return 'Unexcercised'
+    }
+    return 'Exercised'
+  }, [])
+
   const dataRows = useMemo(() => {
     if (!orderList) return []
 
-    return orderList.map(order => {
+    return orderList.map((order: OrderRecord) => {
       return [
         <Typography key={0} color="#3861FB">
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
@@ -84,7 +112,7 @@ export default function Address() {
             12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type="pending" text="Progressing" />
+        <StatusTag key={0} type={statusType(order)} text={statusText(order)} />
       ]
     })
   }, [orderList])

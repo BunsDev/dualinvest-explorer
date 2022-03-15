@@ -7,7 +7,7 @@ export default function StatusTag({
   fontSize,
   text
 }: {
-  type: 'success' | 'pending' | 'warning'
+  type: 'success' | 'pending' | 'warning' | 'failed'
   height?: string | number
   fontSize?: string | number
   text: string
@@ -20,6 +20,8 @@ export default function StatusTag({
         return 'rgba(24, 160, 251, 0.16)'
       case 'warning':
         return 'rgba(240, 185, 11, 0.16)'
+      case 'failed':
+        return 'rgba(49, 176, 71, 0.16)'
     }
   }, [type])
 
@@ -31,6 +33,8 @@ export default function StatusTag({
         return 'rgba(24, 160, 251, 1)'
       case 'warning':
         return 'rgba(240, 185, 11, 1)'
+      case 'failed':
+        return 'rgba(49, 176, 71, 1)'
     }
   }, [type])
 
