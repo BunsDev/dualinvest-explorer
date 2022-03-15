@@ -2,14 +2,14 @@ import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { AppBar, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
-import Web3Status from './Web3Status'
+// import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
 import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import antimatter from '../../assets/svg/antimatter.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
-import NetworkSelect from './NetworkSelect'
+// import NetworkSelect from './NetworkSelect'
 
 interface TabContent {
   title: string
@@ -26,11 +26,10 @@ export const Tabs: Tab[] = [
   {
     title: 'Invest',
     subTab: [
-      { title: 'Dual Investment', route: routes.dualInvest },
-      { title: 'Recurring Strategy', route: routes.recurringVault }
+      { title: 'Dual Investment', link: '#' },
+      { title: 'Recurring Strategy', link: '#' }
     ]
   },
-  { title: 'Account', route: routes.account },
   { title: 'Docs', link: 'https://docs.antimatter.finance/' },
   { title: 'Explorer', route: routes.home }
 ]
@@ -231,8 +230,8 @@ export default function Header() {
         </Box>
 
         <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '20px' }}>
-          <NetworkSelect />
-          <Web3Status />
+          {/* <NetworkSelect />
+          <Web3Status /> */}
           <ShowOnMobile breakpoint="md">
             <IconButton
               sx={{

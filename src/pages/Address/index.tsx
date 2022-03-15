@@ -1,5 +1,7 @@
+import { useParams } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
+import NoDataCard from 'components/Card/NoDataCard'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -8,12 +10,14 @@ import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
-import { ReactComponent as Matter } from 'assets/svg/antimatter_colored.svg'
+import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import TextButton from 'components/Button/TextButton'
+import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
+import { shortenAddress, isAddress } from 'utils'
+import Spinner from 'components/Spinner'
 
 enum TableOptions {
   Positions,
@@ -36,6 +40,20 @@ export default function Address() {
   const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Positions)
 
+  const { address } = useParams<{ address: string }>()
+
+  // const [page, setPage] = useState(1)
+
+  const statusArr = useMemo(() => {
+    if (tab === TableOptions.Positions) {
+      return [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
+    }
+
+    return undefined
+  }, [tab])
+
+  const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', statusArr, 1, 999999)
+
   const data = {
     ['Total Invest Amount:']: '62800.00 USDT',
     ['Amount of Investing in Progress:']: '62800.00 USDT',
@@ -43,21 +61,23 @@ export default function Address() {
   }
 
   const dataRows = useMemo(() => {
-    return [
-      [
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          Recurring Strategy
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
-        </TextButton>,
-        <LogoText key={0} logo={BTC} text="BTC" />,
-        <Typography key={0}>Downward</Typography>,
+    if (!orderList) return []
+
+    return orderList.map(order => {
+      return [
+        <Typography key={0} color="#3861FB">
+          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
+        </Typography>,
+        <Typography key={0} color="#3861FB">
+          {order.productId}
+        </Typography>,
+        <Typography key={0} color="#3861FB">
+          {order.orderId}
+        </Typography>,
+        <LogoText key={0} gapSize={'8px'} logo={BTC} text={order.currency} />,
+        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          {order.annualRor + '%'}
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
@@ -66,8 +86,8 @@ export default function Address() {
         </Box>,
         <StatusTag key={0} type="pending" text="Progressing" />
       ]
-    ]
-  }, [])
+    })
+  }, [orderList])
 
   const tableTabs = useMemo(() => {
     return [
@@ -119,16 +139,19 @@ export default function Address() {
           justifyContent="flex-start"
           alignItems="center"
         >
-          <Matter />
+          <Box display="flex" gap={20} alignItems="center">
+            <Matter />
 
-          <Box display="flex" flexDirection="column" paddingLeft={'20px'}>
-            <Typography sx={{ opacity: '0.5' }} fontSize={16} paddingBottom={'6px'}>
-              Address
-            </Typography>
-            <Typography fontWeight={'700'} fontSize={'24px'}>
-              0x3550...206882
-            </Typography>
+            <Box display="grid" gap={6}>
+              <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+                Address
+              </Typography>
+              <Typography fontWeight={'700'} fontSize={'24px'}>
+                {isAddress(address) ? shortenAddress(address) : 'Not Valid Address'}
+              </Typography>
+            </Box>
           </Box>
+
           <Box
             sx={{
               width: '96px',
@@ -170,6 +193,23 @@ export default function Address() {
         </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          {!orderList && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                width: '100%',
+                height: 350,
+                background: '#ffffff',
+                zIndex: 3,
+                borderRadius: 2
+              }}
+            >
+              <Spinner size={60} />
+            </Box>
+          )}
+          {orderList && orderList.length === 0 && <NoDataCard text={'You don’t have any positions'} />}
         </Box>
       </Card>
 

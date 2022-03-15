@@ -62,5 +62,6 @@ export const WETH = {
   [ChainId.RINKEBY]: new Token(ChainId.MAINNET, '0x5545153CCFcA01fbd7Dd11C0b23ba694D9509A6F', 18, 'WHT', 'Wrapped HT'),
   [ChainId.GÖRLI]: new Token(ChainId.MAINNET, '0x5545153CCFcA01fbd7Dd11C0b23ba694D9509A6F', 18, 'WHT', 'Wrapped HT'),
   [ChainId.KOVAN]: new Token(ChainId.MAINNET, '0x5545153CCFcA01fbd7Dd11C0b23ba694D9509A6F', 18, 'WHT', 'Wrapped HT'),
-  [ChainId.BSC]: new Token(ChainId.BSC, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB')
+  [ChainId.BSC]: new Token(ChainId.BSC, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
+  [ChainId.AVAX]: new Token(ChainId.AVAX, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WAVAX', 'Wrapped AVAX')
 }
