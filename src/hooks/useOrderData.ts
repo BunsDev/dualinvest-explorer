@@ -86,7 +86,7 @@ export function useOrderRecords(
     })
   }, [])
 
-  usePollingWithMaxRetries(promiseFn, callbackFn, 3000)
+  usePollingWithMaxRetries(promiseFn, callbackFn)
 
   return useMemo(() => {
     if (Array.isArray(investStatus)) {
