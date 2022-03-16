@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
-export default function FilteredBy({ data }: { data: { [key: string]: string } }) {
+export default function FilteredBy({ data = {} }: { data: { [key: string]: string } }) {
   return (
     <Box display="flex" flexDirection="column" padding={'10px 24px'}>
       <>

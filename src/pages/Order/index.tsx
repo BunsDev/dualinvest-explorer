@@ -76,10 +76,10 @@ export default function Order() {
   }, [orderList])
 
   const filterBy = useMemo(() => {
-    if (!orderList || orderList.length === 0) return {}
+    if (!orderList) return
     const order = orderList[0]
 
-    return { ['Address:']: order.address, ['Order ID:']: order.orderId }
+    return { ['Address:']: order.address, ['Order ID:']: `${order.orderId}` }
   }, [orderList])
 
   return (
@@ -161,9 +161,7 @@ export default function Order() {
               ))}
           </Box>
         </Box>
-        <Box>
-          <FilteredBy data={filterBy} />
-        </Box>
+        <Box>{filterBy && <FilteredBy data={filterBy} />}</Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
           {!orderList && (
