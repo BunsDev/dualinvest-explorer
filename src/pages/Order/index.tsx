@@ -34,7 +34,13 @@ export default function Order() {
   const isDownMd = useBreakpoint('md')
 
   const { order } = useParams<{ order: string }>()
-  const { orderList } = useOrderRecords(INVEST_TYPE.recur, 'All', undefined, undefined, order, undefined, 1, 999999)
+
+  const { orderList } = useOrderRecords({
+    investType: INVEST_TYPE.recur,
+    orderId: order,
+    pageNum: 1,
+    pageSize: 999999
+  })
 
   const data = useMemo(() => {
     if (!orderList || orderList.length === 0) return
