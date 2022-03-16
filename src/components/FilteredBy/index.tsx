@@ -1,11 +1,7 @@
 import { Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
-export default function FilteredBy() {
-  const data = {
-    ['Address:']: '0x35500253DEB46fa8c2b271628c65DcF159206882',
-    ['Order ID:']: '45'
-  }
+export default function FilteredBy({ data = {} }: { data: { [key: string]: string } }) {
   return (
     <Box display="flex" flexDirection="column" padding={'10px 24px'}>
       <>

@@ -8,7 +8,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
-import StatusTag from 'components/StatusTag'
+import OrderStatusTag from 'components/OrderStatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
@@ -18,6 +18,7 @@ import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
 import Spinner from 'components/Spinner'
+import { OrderRecord } from 'utils/fetch/record'
 
 enum TableOptions {
   Positions,
@@ -44,26 +45,64 @@ export default function Address() {
 
   // const [page, setPage] = useState(1)
 
-  const statusArr = useMemo(() => {
-    if (tab === TableOptions.Positions) {
-      return [InvestStatus.Ordered, InvestStatus.ReadyToSettle]
+  const { orderList } = useOrderRecords({
+    investType: INVEST_TYPE.recur,
+    address,
+    pageNum: 1,
+    pageSize: 999999
+  })
+
+  const positionList = useMemo(() => {
+    if (!orderList) return []
+    return orderList.filter((order: OrderRecord) =>
+      [InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)
+    )
+  }, [orderList])
+
+  const historyList = useMemo(() => {
+    return orderList || []
+  }, [orderList])
+
+  const filteredOrderList = useMemo(() => {
+    if (!positionList || !historyList) {
+      return []
     }
 
-    return undefined
-  }, [tab])
+    if (tab === TableOptions.Positions) {
+      return positionList
+    }
 
-  const { orderList } = useOrderRecords(address, INVEST_TYPE.recur, 'All', statusArr, 1, 999999)
+    return historyList
+  }, [tab, positionList, historyList])
 
-  const data = {
-    ['Total Invest Amount:']: '62800.00 USDT',
-    ['Amount of Investing in Progress:']: '62800.00 USDT',
-    ['Positions:']: '5'
-  }
+  const totalAmount = useMemo(() => {
+    return historyList
+      .map((order: OrderRecord) => +order.amount)
+      .reduce(function(acc: number, val: number) {
+        return acc + val
+      }, 0)
+  }, [historyList])
+
+  const AmountInProgress = useMemo(() => {
+    return positionList
+      .map((order: OrderRecord) => +order.amount)
+      .reduce(function(acc: number, val: number) {
+        return acc + val
+      }, 0)
+  }, [positionList])
+
+  const data = useMemo(() => {
+    return {
+      ['Total Invest Amount:']: `${totalAmount} USDT`,
+      ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
+      ['Positions:']: orderList?.length || 0
+    }
+  }, [orderList, totalAmount, AmountInProgress])
 
   const dataRows = useMemo(() => {
-    if (!orderList) return []
+    if (!filteredOrderList) return []
 
-    return orderList.map(order => {
+    return filteredOrderList.map((order: OrderRecord) => {
       return [
         <Typography key={0} color="#3861FB">
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
@@ -81,13 +120,13 @@ export default function Address() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type="pending" text="Progressing" />
+        <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [orderList])
+  }, [filteredOrderList])
 
   const tableTabs = useMemo(() => {
     return [
@@ -99,6 +138,10 @@ export default function Address() {
       </TabButton>
     ]
   }, [tab])
+
+  const filterBy = useMemo(() => {
+    return { ['Address:']: address }
+  }, [address])
 
   return (
     <Box
@@ -186,7 +229,7 @@ export default function Address() {
           </Box>
         </Box>
         <Box>
-          <FilteredBy />
+          <FilteredBy data={filterBy} />
         </Box>
         <Box padding={'24px 24px 0px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
