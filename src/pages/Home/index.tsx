@@ -64,7 +64,7 @@ export default function Home() {
     if (searchOption === SearchOptions.Order) {
       history.push(routes.explorerOrder.replace(':order', search))
     }
-  }, [search, searchOption])
+  }, [search, searchOption, history])
 
   const dataRows = useMemo(() => {
     return [

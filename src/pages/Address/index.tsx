@@ -92,10 +92,10 @@ export default function Address() {
       ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
       ['Positions:']: orderList?.length || 0
     }
-  }, [orderList])
+  }, [orderList, totalAmount, AmountInProgress])
 
   const dataRows = useMemo(() => {
-    if (!orderList) return []
+    if (!filteredOrderList) return []
 
     return filteredOrderList.map((order: OrderRecord) => {
       return [
@@ -121,7 +121,7 @@ export default function Address() {
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [orderList])
+  }, [filteredOrderList])
 
   const tableTabs = useMemo(() => {
     return [
