@@ -1,6 +1,6 @@
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
@@ -12,13 +12,17 @@ import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
+//import TextButton from 'components/Button/TextButton'
+import { useProduct } from 'hooks/useProduct'
+import Button from 'components/Button/Button'
+import TextButton from 'components/Button/TextButton'
 
 enum TableOptions {
   Details,
   Orders
 }
 
-const TableHeader = [
+const OrdersTableHeader = [
   'Product Type',
   'Product ID',
   'Order ID',
@@ -29,30 +33,65 @@ const TableHeader = [
   'Status'
 ]
 
+const DetailsTableHeader = ['Token', 'APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
+
 export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Details)
+  //const id = '2064'
+  const { id } = useParams<{ id: string }>()
+  //const productList = useProductList()
+  const product = useProduct(id)
 
   const data = {
-    ['Type:']: 'Dual Investment',
-    ['Total Invest Amount']: 'Sep 21, 2021 10:42 AM',
-    ['Positions']: '5'
+    ['Type:']: `${product?.strikePrice ?? '-'}`,
+    ['Total Invest Amount:']: '-',
+    ['Positions:']: '-'
   }
 
-  const dataRows = useMemo(() => {
+  const detailsDataRows = useMemo(() => {
     return [
       [
-        <Typography key={0} color="#3861FB">
+        <LogoText key={0} gapSize={'8px'} logo={BTC} text={`${product?.currency ?? '-'}`} />,
+        <Typography key={0} color="#31B047">
+          {product?.apy}
+        </Typography>,
+        <Typography key={0}>{product?.expiredAt}</Typography>,
+        <Typography key={0}>{product?.strikePrice} </Typography>,
+        <Typography key={0}>{product?.type === 'CALL' ? 'Up' : 'Down'}</Typography>,
+
+        <StatusTag
+          key={0}
+          type={product?.isActive ? 'pending' : 'success'}
+          text={product?.isActive ? 'Progressing' : 'Finished'}
+        />,
+        <Button
+          key={0}
+          height="36px"
+          width={isDownMd ? '100%' : '120px'}
+          style={{ borderRadius: 50, fontSize: 14, marginLeft: 'auto' }}
+          onClick={() => {}}
+        >
+          Subscribe now
+        </Button>
+      ]
+    ]
+  }, [product])
+
+  const ordersDataRows = useMemo(() => {
+    return [
+      [
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           Recurring Strategy
-        </Typography>,
-        <Typography key={0} color="#3861FB">
+        </TextButton>,
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
-        </Typography>,
-        <Typography key={0} color="#3861FB">
+        </TextButton>,
+        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
-        </Typography>,
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text="BTC" />,
+        </TextButton>,
+        <LogoText key={0} logo={BTC} text="BTC" />,
         <Typography key={0}>Downward</Typography>,
         <Typography key={0} color="#31B047">
           140.21%
@@ -121,7 +160,7 @@ export default function Order() {
               Product ID
             </Typography>
             <Typography fontWeight={'700'} fontSize={'24px'}>
-              #045
+              #{id}
             </Typography>
           </Box>
           <Box
@@ -163,7 +202,11 @@ export default function Order() {
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
         </Box>
         <Box padding={'24px'}>
-          <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          <Table
+            fontSize="16px"
+            header={tab === TableOptions.Details ? DetailsTableHeader : OrdersTableHeader}
+            rows={tab === TableOptions.Details ? detailsDataRows : ordersDataRows}
+          />
         </Box>
       </Card>
 

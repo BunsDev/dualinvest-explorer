@@ -25,11 +25,13 @@ const TableHeader = [
 export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
+  //const { id } = useParams<{ id: string; orderId: string }>()
+
   const data = {
-    ['Settlement Price:']: '140.25%',
-    ['Settlement Time:']: 'Sep 21, 2021 10:42 AM',
-    ['Product ID:']: '023',
-    ['TXID:']: '0x35500253DEB46fa8c2b271628c65DcF159206882'
+    ['Settlement Price:']: '`${order?.deliveryPrice}`',
+    ['Settlement Time:']: '`${order?.expiredAt}`',
+    ['Product ID:']: '`${order?.productId}`',
+    ['TXID:']: '`${order?.confirmOrderHash}`'
   }
 
   const dataRows = useMemo(() => {
