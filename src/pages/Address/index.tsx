@@ -13,7 +13,6 @@ import BTC from 'assets/svg/btc_logo.svg'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
-import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
@@ -129,15 +128,8 @@ export default function Address() {
   }, [filteredOrderList])
 
   const tableTabs = useMemo(() => {
-    return [
-      <TabButton key={0} onClick={() => setTab(TableOptions.Positions)} selected={tab === TableOptions.Positions}>
-        Positions
-      </TabButton>,
-      <TabButton key={0} onClick={() => setTab(TableOptions.History)} selected={tab === TableOptions.History}>
-        History
-      </TabButton>
-    ]
-  }, [tab])
+    return ['Positions', 'History']
+  }, [])
 
   const filterBy = useMemo(() => {
     return { ['Address:']: address }

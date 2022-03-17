@@ -8,11 +8,12 @@ import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import BTC from 'assets/svg/btc_logo.svg'
+import ETH from 'assets/svg/eth_logo.svg'
+import AVAX from 'assets/svg/avax_logo.svg'
+//import LUNA from 'assets/svg/luna_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
-import TabButton from 'components/Button/TabButton'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-//import TextButton from 'components/Button/TextButton'
 import { useProduct } from 'hooks/useProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
@@ -50,10 +51,19 @@ export default function Order() {
     ['Positions:']: '-'
   }
 
+  const filterBy = useMemo(() => {
+    return { ['Product ID:']: productId }
+  }, [productId])
+
   const detailsDataRows = useMemo(() => {
     return [
       [
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text={`${product?.currency ?? '-'}`} />,
+        <LogoText
+          key={0}
+          gapSize={'8px'}
+          logo={product?.currency == 'BTC' ? BTC : product?.currency == 'ETH' ? ETH : AVAX}
+          text={`${product?.currency ?? '-'}`}
+        />,
         <Typography key={0} color="#31B047">
           {product?.apy}
         </Typography>,
@@ -107,15 +117,8 @@ export default function Order() {
   }, [])
 
   const tableTabs = useMemo(() => {
-    return [
-      <TabButton key={0} onClick={() => setTab(TableOptions.Details)} selected={tab === TableOptions.Details}>
-        Details
-      </TabButton>,
-      <TabButton key={0} onClick={() => setTab(TableOptions.Orders)} selected={tab === TableOptions.Orders}>
-        Orders
-      </TabButton>
-    ]
-  }, [tab])
+    return ['Details', 'Orders']
+  }, [])
 
   return (
     <Box
@@ -196,7 +199,7 @@ export default function Order() {
           </Box>
         </Box>
         <Box>
-          <FilteredBy data={{ ['Product ID:']: '123' }} />
+          <FilteredBy data={filterBy} />
         </Box>
         <Box padding={'24px 24px 0px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />

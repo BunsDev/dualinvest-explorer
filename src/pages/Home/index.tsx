@@ -13,10 +13,9 @@ import BTCLogo from 'assets/svg/btc_logo.svg'
 import Table from 'components/Table'
 import LogoText from 'components/LogoText'
 import BNBLogo from 'assets/svg/binance.svg'
-import AVAXLogo from 'assets/svg/avalanche.svg'
+import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import TabButton from 'components/Button/TabButton'
 import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
@@ -95,14 +94,10 @@ export default function Home() {
 
   const tableTabs = useMemo(() => {
     return [
-      <TabButton key={0} onClick={() => setTab(ChainOptions.BNB)} selected={tab === ChainOptions.BNB}>
-        <LogoText logo={BNBLogo} text={'BNB Chain'} />
-      </TabButton>,
-      <TabButton key={0} onClick={() => setTab(ChainOptions.AVAX)} selected={tab === ChainOptions.AVAX}>
-        <LogoText logo={AVAXLogo} text={'AVAX Chain'} />
-      </TabButton>
+      <LogoText key={0} logo={BNBLogo} text={'BNB Chain'} />,
+      <LogoText key={0} logo={AVAXLogo} text={'AVAX Chain'} />
     ]
-  }, [tab])
+  }, [])
 
   return (
     <Box
@@ -200,7 +195,7 @@ export default function Home() {
           <NumericalCard unit="Addresses" value={'367'} title="Cumulative Number Of Users" fontSize="44px" border />
         </Box>
         <Card padding="28px 60px 68px">
-          <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
+          <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
           <Box display="flex" justifyContent="space-between" alignItems="center" mt={40}>
             <Box display="flex" gap={8}>
               <Typography fontSize={24} fontWeight={700}>
