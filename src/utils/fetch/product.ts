@@ -1,9 +1,4 @@
-import { SYMBOL_MAP } from 'constants/currencies'
-
-const TYPE = {
-  call: 'CALL',
-  put: 'PUT'
-}
+import dayjs from 'dayjs'
 
 export interface createOrder {
   address: string
@@ -17,7 +12,7 @@ export interface createOrder {
 interface ProductRaw {
   annual_ror: string
   currency: string
-  expired_at: number
+  expired_at: string
   expired_str: string
   index_price: string
   invest_currency: string
@@ -38,7 +33,7 @@ interface ProductRaw {
 
 export interface Product {
   productId: number
-  expiredAt: number
+  expiredAt: string
   apy: string
   type: string
   source: string
@@ -56,19 +51,13 @@ export interface Product {
   price: string
 }
 
-export type SingleCurProductList = { call: Product[]; put: Product[] }
-
-export type ProductList = {
-  [key in Partial<keyof typeof SYMBOL_MAP>]: SingleCurProductList
-}
-
 export const productFormatter = (raw: ProductRaw): Product => {
   return {
     price: raw.price,
     currentPrice: raw.index_price,
     productId: raw.product_id,
-    expiredAt: raw.expired_at * 1000,
-    apy: raw.annual_ror,
+    expiredAt: dayjs(+raw.expired_at * 1000).format('MMM DD, YYYY'),
+    apy: raw.annual_ror ?? '-',
     type: raw.type,
     source: raw.source,
     isActive: raw.is_active,
@@ -82,21 +71,4 @@ export const productFormatter = (raw: ProductRaw): Product => {
     ltStrikePrice: raw.lt_strike_price,
     strikeCurrency: raw.strike_currency
   }
-}
-
-export const productListFormatter = (raw: ProductRaw[]): ProductList => {
-  return raw.reduce((acc, item) => {
-    if (!acc[item.currency as Partial<keyof typeof SYMBOL_MAP>]) {
-      acc[item.currency as Partial<keyof typeof SYMBOL_MAP>] = {
-        call: [],
-        put: []
-      }
-    }
-    if (item.type === TYPE.call) {
-      acc[item.currency as Partial<keyof typeof SYMBOL_MAP>].call.push(productFormatter(item))
-    } else {
-      acc[item.currency as Partial<keyof typeof SYMBOL_MAP>].put.push(productFormatter(item))
-    }
-    return acc
-  }, {} as ProductList)
 }

@@ -33,7 +33,6 @@ export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
 
-
   const { order } = useParams<{ order: string }>()
 
   const { orderList } = useOrderRecords({
@@ -55,7 +54,6 @@ export default function Order() {
       ['TXID:']: order.confirmOrderHash
     }
   }, [orderList])
-
 
   const dataRows = useMemo(() => {
     if (!orderList) return []
