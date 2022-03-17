@@ -77,7 +77,7 @@ export default function Order() {
         </Button>
       ]
     ]
-  }, [product])
+  }, [product, isDownMd])
 
   const ordersDataRows = useMemo(() => {
     return [
