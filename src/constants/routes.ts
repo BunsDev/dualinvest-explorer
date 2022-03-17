@@ -1,6 +1,6 @@
 export const routes = {
   home: '/explorer',
-  explorerOrder: '/explorer/order',
-  explorerProduct: '/explorer/product/:id',
+  explorerOrder: '/explorer/order/:order',
+  explorerProduct: '/explorer/product/:productId',
   explorerAddress: '/explorer/address/:address'
 }

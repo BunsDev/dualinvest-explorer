@@ -40,9 +40,9 @@ export default function Order() {
   const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Details)
   //const id = '2064'
-  const { id } = useParams<{ id: string }>()
+  const { productId } = useParams<{ productId: string }>()
   //const productList = useProductList()
-  const product = useProduct(id)
+  const product = useProduct(productId)
 
   const data = {
     ['Type:']: `${product?.strikePrice ?? '-'}`,
@@ -160,7 +160,7 @@ export default function Order() {
               Product ID
             </Typography>
             <Typography fontWeight={'700'} fontSize={'24px'}>
-              #{id}
+              #{productId}
             </Typography>
           </Box>
           <Box
