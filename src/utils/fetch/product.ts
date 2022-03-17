@@ -57,7 +57,7 @@ export const productFormatter = (raw: ProductRaw): Product => {
     currentPrice: raw.index_price,
     productId: raw.product_id,
     expiredAt: dayjs(+raw.expired_at * 1000).format('MMM DD, YYYY'),
-    apy: raw.annual_ror ?? '-',
+    apy: (+raw.annual_ror * 100).toFixed(2) + '%' ?? '-',
     type: raw.type,
     source: raw.source,
     isActive: raw.is_active,
