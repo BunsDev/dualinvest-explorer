@@ -57,10 +57,14 @@ export default function Home() {
       return
     }
 
-    if (searchOption == SearchOptions.Address) {
+    if (searchOption === SearchOptions.Address) {
       history.push(routes.explorerAddress.replace(':address', search))
     }
-  }, [search])
+
+    if (searchOption === SearchOptions.Order) {
+      history.push(routes.explorerOrder.replace(':order', search))
+    }
+  }, [search, searchOption, history])
 
   const dataRows = useMemo(() => {
     return [
