@@ -55,7 +55,7 @@ export default function Order() {
   })
 
   const data = useMemo(() => {
-    if (!orderList || orderList.length === 0) return
+    if (!orderList) return
 
     const positions = orderList?.filter(order => {
       order.investStatus == 2 || 3
