@@ -1,14 +1,19 @@
 import { ChangeEvent, useCallback } from 'react'
 import { Tabs as MuiTabs, Tab } from '@mui/material'
+import theme from 'theme'
 
 export default function ButtonTabs({
   titles,
   current,
-  onChange
+  onChange,
+  width,
+  height
 }: {
   titles: string[] | JSX.Element[]
   current: number
   onChange: (val: number) => void
+  width?: string
+  height?: string
   // onChange?: ((event: SyntheticEvent<Element, Event>, value: any) => void
 }) {
   const handleOnChange = useCallback(
@@ -39,19 +44,20 @@ export default function ButtonTabs({
           sx={{
             textTransform: 'none',
             padding: '0px 0px',
-            fontSize: 14,
-            fontWeight: 500,
-            color: '#000000',
+            fontSize: 16,
+            fontWeight: 400,
+            color: 'rgba(37, 37, 37, 0.5)',
+            background: theme.palette.background.paper,
+            border: '1px solid rgba(0, 0, 0, 0.1)',
             // border: '1px solid rgba(22, 22, 22, 0.1)',
             borderRadius: '6px',
-            minHeight: 30,
-            minWidth: 51,
+            minHeight: height || 40,
+            minWidth: width || 104,
             // height: '30px',
             '&.Mui-selected': {
               opacity: 1,
-              background: '#F0F6FF',
-              color: '#2DAB50'
-              // borderColor: 'transparent'
+              border: '1px solid',
+              borderColor: theme.palette.primary.main
             }
           }}
         />
