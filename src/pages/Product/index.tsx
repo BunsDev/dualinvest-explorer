@@ -17,6 +17,7 @@ import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useProduct } from 'hooks/useProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
+import { INVEST_TYPE, useOrderRecords } from 'hooks/useOrderData'
 
 enum TableOptions {
   Details,
@@ -45,11 +46,39 @@ export default function Order() {
   //const productList = useProductList()
   const product = useProduct(productId)
 
-  const data = {
-    ['Type:']: `${product?.strikePrice ?? '-'}`,
-    ['Total Invest Amount:']: '-',
-    ['Positions:']: '-'
-  }
+  const { orderList } = useOrderRecords({
+    //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
+    investType: INVEST_TYPE.dualInvest,
+    productId: productId,
+    pageNum: 1,
+    pageSize: 999999
+  })
+
+  const data = useMemo(() => {
+    if (!orderList || orderList.length === 0) return
+
+    const positions = orderList?.filter(order => {
+      order.investStatus == 2 || 3
+    }).length
+
+    let sum = 0
+
+    orderList
+      ?.filter(order => {
+        order.investStatus == 2 || 3 || 4
+      })
+      .forEach(order => {
+        sum = sum + order.amount * order.multiplier * order.strikePrice
+      })
+
+    const totalInvestAmount = sum
+
+    return {
+      ['Type:']: `${product?.strikePrice ?? '-'}`,
+      ['Total Invest Amount:']: totalInvestAmount,
+      ['Positions:']: positions
+    }
+  }, [orderList, product])
 
   const filterBy = useMemo(() => {
     return { ['Product ID:']: productId }
@@ -185,17 +214,18 @@ export default function Order() {
               Overview
             </Typography>
 
-            {Object.keys(data).map((key, idx) => (
-              <Box key={idx} display="flex" justifyContent={'flex-start'}>
-                <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
-                  {key}
-                </Typography>
+            {data &&
+              Object.keys(data).map((key, idx) => (
+                <Box key={idx} display="flex" justifyContent={'flex-start'}>
+                  <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+                    {key}
+                  </Typography>
 
-                <Typography fontWeight={400} fontSize={16}>
-                  {data[key as keyof typeof data]}
-                </Typography>
-              </Box>
-            ))}
+                  <Typography fontWeight={400} fontSize={16}>
+                    {data[key as keyof typeof data]}
+                  </Typography>
+                </Box>
+              ))}
           </Box>
         </Box>
         <Box>

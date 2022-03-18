@@ -15,7 +15,7 @@ export interface OrderRecord {
   investStatus: number
   investCurrency: string
   isLiquidated: string
-  multiplier: string
+  multiplier: number
   orderId: number
   price: string
   productId: number
@@ -24,7 +24,7 @@ export interface OrderRecord {
   signCount: string
   status: string
   strikeCurrency: string
-  strikePrice: string
+  strikePrice: number
   ts: number
   type: string
   investType: INVEST_TYPE
