@@ -6,7 +6,6 @@ import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
-// import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import BTCLogo from 'assets/svg/btc_logo.svg'
@@ -16,15 +15,14 @@ import BNBLogo from 'assets/svg/binance.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-// import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
 import { routes } from 'constants/routes'
 import { useTopProducts } from 'hooks/useProduct'
 import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
-import BTC from 'assets/svg/btc_logo.svg'
 import { useStatistical } from 'hooks/useStatistical'
+import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 
 enum SearchOptions {
   Address = 'Address',
@@ -91,7 +89,12 @@ export default function Home() {
             XXX
           </Link>
         </Typography>,
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text={product.investCurrency} />,
+        <LogoText
+          key={0}
+          gapSize={'8px'}
+          logo={SUPPORTED_CURRENCIES[product.investCurrency].logoUrl}
+          text={product.investCurrency}
+        />,
         <Typography key={0}>XXX</Typography>,
         <Typography key={0} color="#31B047">
           XXX%
@@ -104,7 +107,7 @@ export default function Home() {
         <StatusTag key={0} type={'pending'} text={'Progressing'} />
       ]
     })
-  }, [products])
+  }, [products, theme])
 
   const tableTabs = useMemo(() => {
     return [

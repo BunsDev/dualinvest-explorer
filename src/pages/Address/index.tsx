@@ -9,7 +9,6 @@ import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
-import BTC from 'assets/svg/btc_logo.svg'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
@@ -18,6 +17,7 @@ import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
 import Spinner from 'components/Spinner'
 import { OrderRecord } from 'utils/fetch/record'
+import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 
 enum TableOptions {
   Positions,
@@ -94,7 +94,7 @@ export default function Address() {
     return {
       ['Total Invest Amount:']: `${totalAmount} USDT`,
       ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
-      ['Positions:']: orderList?.length || 0
+      ['Positions:']: positionList?.length || 0
     }
   }, [orderList, totalAmount, AmountInProgress])
 
@@ -112,7 +112,7 @@ export default function Address() {
         <Typography key={0} color="#3861FB">
           {order.orderId}
         </Typography>,
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text={order.currency} />,
+        <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
         <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}

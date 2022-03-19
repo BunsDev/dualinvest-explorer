@@ -7,7 +7,6 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
-import BTC from 'assets/svg/btc_logo.svg'
 import { useMemo } from 'react'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
@@ -16,6 +15,7 @@ import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import dayjs from 'dayjs'
 import NoDataCard from 'components/Card/NoDataCard'
 import Spinner from 'components/Spinner'
+import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 
 const TableHeader = [
   'Token',
@@ -60,7 +60,7 @@ export default function Order() {
 
     return orderList.map((order: OrderRecord) => {
       return [
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text={order.currency} />,
+        <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
         <Typography key={0}>{order.amount} USDT</Typography>,
         <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
         <Typography key={0} color="#31B047">

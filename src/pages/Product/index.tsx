@@ -7,9 +7,9 @@ import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
-import BTC from 'assets/svg/btc_logo.svg'
-import ETH from 'assets/svg/eth_logo.svg'
-import AVAX from 'assets/svg/avax_logo.svg'
+// import BTC from 'assets/svg/btc_logo.svg'
+// import ETH from 'assets/svg/eth_logo.svg'
+// import AVAX from 'assets/svg/avax_logo.svg'
 //import LUNA from 'assets/svg/luna_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
@@ -17,6 +17,7 @@ import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useProduct } from 'hooks/useProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
+import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 
 enum TableOptions {
   Details,
@@ -61,7 +62,7 @@ export default function Order() {
         <LogoText
           key={0}
           gapSize={'8px'}
-          logo={product?.currency == 'BTC' ? BTC : product?.currency == 'ETH' ? ETH : AVAX}
+          logo={product ? SUPPORTED_CURRENCIES[product?.currency].logoUrl : ''}
           text={`${product?.currency ?? '-'}`}
         />,
         <Typography key={0} color="#31B047">
@@ -101,7 +102,7 @@ export default function Order() {
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           23
         </TextButton>,
-        <LogoText key={0} logo={BTC} text="BTC" />,
+        <LogoText key={0} logo={SUPPORTED_CURRENCIES['BTC'].logoUrl} text="BTC" />,
         <Typography key={0}>Downward</Typography>,
         <Typography key={0} color="#31B047">
           140.21%
