@@ -72,3 +72,55 @@ export const productFormatter = (raw: ProductRaw): Product => {
     strikeCurrency: raw.strike_currency
   }
 }
+
+export interface TopProductRaw {
+  invest_currency: string
+  amount: string
+  invest_status: number
+  multiplier: string
+  amount_raw: string
+  product_id: number
+  invest_type: number
+  amount_u: string
+  strike_price: string
+  ts: string
+}
+
+export interface TopProduct {
+  investCurrency: string
+  amount: string
+  investStatus: number
+  multiplier: string
+  amountRaw: string
+  productId: number
+  investType: number
+  amountU: string
+  strikePrice: string
+  ts: string
+}
+
+export const topProductFomatter = ({
+  invest_currency,
+  amount,
+  invest_status,
+  multiplier,
+  amount_raw,
+  product_id,
+  invest_type,
+  amount_u,
+  strike_price,
+  ts
+}: TopProductRaw): TopProduct => {
+  return {
+    investCurrency: invest_currency,
+    amount,
+    investStatus: invest_status,
+    multiplier,
+    amountRaw: amount_raw,
+    productId: product_id,
+    investType: invest_type,
+    amountU: amount_u,
+    strikePrice: strike_price,
+    ts
+  }
+}

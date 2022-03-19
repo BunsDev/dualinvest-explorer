@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 // import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
@@ -16,10 +16,14 @@ import BNBLogo from 'assets/svg/binance.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import TextButton from 'components/Button/TextButton'
+// import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
 import { routes } from 'constants/routes'
+import { useTopProducts } from 'hooks/useProduct'
+import { TopProduct } from 'utils/fetch/product'
+import { INVEST_TYPE } from 'hooks/useOrderData'
+import BTC from 'assets/svg/btc_logo.svg'
 
 enum SearchOptions {
   Address = 'Address',
@@ -65,32 +69,40 @@ export default function Home() {
     }
   }, [search, searchOption, history])
 
+  const products = useTopProducts()
+
   const dataRows = useMemo(() => {
-    return [
-      [
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          Recurring Strategy
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
-        </TextButton>,
-        <LogoText key={0} logo={BNBLogo} text="BTC" />,
-        <Typography key={0}>Downward</Typography>,
+    return products.map((product: TopProduct) => {
+      return [
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
+          </Link>
+        </Typography>,
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {product.productId}
+          </Link>
+        </Typography>,
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            XXX
+          </Link>
+        </Typography>,
+        <LogoText key={0} gapSize={'8px'} logo={BTC} text={product.investCurrency} />,
+        <Typography key={0}>XXX</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          XXX%
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {product.amount} USDT/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type="pending" text="Progressing" />
+        <StatusTag key={0} type={'pending'} text={'Progressing'} />
       ]
-    ]
-  }, [])
+    })
+  }, [products])
 
   const tableTabs = useMemo(() => {
     return [
