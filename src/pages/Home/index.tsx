@@ -225,7 +225,7 @@ export default function Home() {
             border
           />
         </Box>
-        <Card padding="28px 60px 68px">
+        <Card padding="35px 24px 111px">
           <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
           <Box display="flex" justifyContent="space-between" alignItems="center" mt={40}>
             <Box display="flex" gap={8}>
