@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useHistory, Link } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
-// import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
@@ -64,7 +63,11 @@ export default function Home() {
     }
 
     if (searchOption === SearchOptions.Order) {
-      history.push(routes.explorerOrder.replace(':order', search))
+      history.push(routes.explorerOrder.replace(':orderId', search))
+    }
+
+    if (searchOption === SearchOptions.Product) {
+      history.push(routes.explorerProduct.replace(':productId', search))
     }
   }, [search, searchOption, history])
 

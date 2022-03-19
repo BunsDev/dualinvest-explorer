@@ -33,11 +33,11 @@ export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
 
-  const { order } = useParams<{ order: string }>()
+  const { orderId } = useParams<{ orderId: string }>()
 
   const { orderList } = useOrderRecords({
     investType: INVEST_TYPE.recur,
-    orderId: order,
+    orderId,
     pageNum: 1,
     pageSize: 999999
   })
@@ -125,7 +125,7 @@ export default function Order() {
               Order ID
             </Typography>
             <Typography fontWeight={'700'} fontSize={'24px'} mt={16}>
-              #{order}
+              #{orderId}
             </Typography>
           </Box>
           <Box
