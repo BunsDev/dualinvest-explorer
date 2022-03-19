@@ -18,6 +18,7 @@ import { useProduct } from 'hooks/useProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
 import { INVEST_TYPE, useOrderRecords } from 'hooks/useOrderData'
+import { OrderRecord } from 'utils/fetch/record'
 
 enum TableOptions {
   Details,
@@ -48,7 +49,7 @@ export default function Order() {
 
   const { orderList } = useOrderRecords({
     //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
-    investType: INVEST_TYPE.dualInvest,
+    investType: product?.isRecur ? INVEST_TYPE.recur : INVEST_TYPE.dualInvest,
     productId: productId,
     pageNum: 1,
     pageSize: 999999
@@ -58,14 +59,14 @@ export default function Order() {
     if (!orderList) return
 
     const positions = orderList?.filter(order => {
-      order.investStatus == 2 || 3
+      return order.investStatus == 2 || 3
     }).length
 
     let sum = 0
 
     orderList
       ?.filter(order => {
-        order.investStatus == 2 || 3 || 4
+        return order.investStatus == 2 || 3 || 4
       })
       .forEach(order => {
         sum = sum + order.amount * order.multiplier * order.strikePrice
@@ -74,8 +75,8 @@ export default function Order() {
     const totalInvestAmount = sum
 
     return {
-      ['Type:']: `${product?.strikePrice ?? '-'}`,
-      ['Total Invest Amount:']: totalInvestAmount,
+      ['Type:']: product?.isRecur ? 'Recurring Strategy' : !product?.isRecur ? 'Dual Investment' : '-',
+      ['Total Invest Amount:']: totalInvestAmount.toFixed(2) + ' USDT',
       ['Positions:']: positions
     }
   }, [orderList, product])
@@ -119,31 +120,48 @@ export default function Order() {
   }, [product, isDownMd])
 
   const ordersDataRows = useMemo(() => {
-    return [
-      [
+    if (!orderList) return []
+
+    return orderList.map((order: OrderRecord) => {
+      return [
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          Recurring Strategy
+          {order.investType == INVEST_TYPE.dualInvest ? 'Dual Investment' : 'Recurring Strategy'}
         </TextButton>,
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
+          {order.productId}
         </TextButton>,
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
+          {order.orderId}
         </TextButton>,
-        <LogoText key={0} logo={BTC} text="BTC" />,
-        <Typography key={0}>Downward</Typography>,
+        <LogoText
+          key={0}
+          logo={
+            order.investCurrency == 'BTC'
+              ? BTC
+              : order.investCurrency == 'ETH'
+              ? ETH
+              : order.investCurrency == 'AVAX'
+              ? AVAX
+              : ''
+          }
+          text={order.investCurrency}
+        />,
+        <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          {(order.annualRor * 100).toFixed(2) + '%'}
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {(order.amount * order.multiplier * order.strikePrice).toFixed(0) + ' USDT/'}
+            <span style={{ opacity: 0.5, fontSize: 14 }}>
+              {'$' + data?.['Total Invest Amount:']?.replace('USDT', '')}
+            </span>
           </Typography>
         </Box>,
         <StatusTag key={0} type="pending" text="Progressing" />
       ]
-    ]
-  }, [])
+    })
+  }, [orderList, data])
 
   const tableTabs = useMemo(() => {
     return ['Details', 'Orders']

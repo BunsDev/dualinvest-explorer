@@ -3,7 +3,7 @@ import { INVEST_TYPE } from 'hooks/useOrderData'
 export interface OrderRecord {
   address: string
   amount: number
-  annualRor: string
+  annualRor: number
   confirmOrderHash: string
   createdAt: number
   currency: string
