@@ -96,7 +96,7 @@ export default function Address() {
       ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
       ['Positions:']: positionList?.length || 0
     }
-  }, [orderList, totalAmount, AmountInProgress])
+  }, [positionList, totalAmount, AmountInProgress])
 
   const dataRows = useMemo(() => {
     if (!filteredOrderList) return []
