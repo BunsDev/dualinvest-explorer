@@ -24,6 +24,7 @@ import { useTopProducts } from 'hooks/useProduct'
 import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import BTC from 'assets/svg/btc_logo.svg'
+import { useStatistical } from 'hooks/useStatistical'
 
 enum SearchOptions {
   Address = 'Address',
@@ -70,6 +71,7 @@ export default function Home() {
   }, [search, searchOption, history])
 
   const products = useTopProducts()
+  const stat = useStatistical()
 
   const dataRows = useMemo(() => {
     return products.map((product: TopProduct) => {
@@ -202,9 +204,26 @@ export default function Home() {
         }}
       >
         <Box display="flex" width="100%" gap={20} mb={41}>
-          <NumericalCard unit="$" value={'57,640'} title="Cumulative Investment Amount" fontSize="44px" border />
-          <NumericalCard value={'114,375'} title="Total Number Of Orders" fontSize="44px" border />
-          <NumericalCard unit="Addresses" value={'367'} title="Cumulative Number Of Users" fontSize="44px" border />
+          <NumericalCard
+            unit="$"
+            value={stat?.CumulativeInvestmentAmount || '-'}
+            title="Cumulative Investment Amount"
+            fontSize="44px"
+            border
+          />
+          <NumericalCard
+            value={stat?.TotalNamberOfOders || '-'}
+            title="Total Number Of Orders"
+            fontSize="44px"
+            border
+          />
+          <NumericalCard
+            unit="Addresses"
+            value={stat?.CumulativeNamberOUsers || '-'}
+            title="Cumulative Number Of Users"
+            fontSize="44px"
+            border
+          />
         </Box>
         <Card padding="28px 60px 68px">
           <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
