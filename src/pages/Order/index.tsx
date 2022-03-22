@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
@@ -48,9 +48,13 @@ export default function Order() {
     const order = orderList[0]
 
     return {
-      ['Settlement Price:']: `${order.strikePrice}`,
-      ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY'),
-      ['Product ID:']: order.productId,
+      ['Settlement Price:']: order.strikePrice,
+      ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY hh:mm A'),
+      ['Product ID:']: (
+        <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+          {order.productId}
+        </Link>
+      ),
       ['TXID:']: order.confirmOrderHash
     }
   }, [orderList])
