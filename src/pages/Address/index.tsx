@@ -135,7 +135,7 @@ export default function Address() {
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [filteredOrderList])
+  }, [filteredOrderList, theme])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']

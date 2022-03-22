@@ -94,7 +94,7 @@ export default function Order() {
         </Box>
       )
     }
-  }, [orderList])
+  }, [orderList, theme])
 
   const dataRows = useMemo(() => {
     if (!order) return []
@@ -144,13 +144,13 @@ export default function Order() {
         <OrderStatusTag key={0} order={order} />
       ]
     ]
-  }, [order])
+  }, [order, isActive, theme])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
 
     history.push(routes.explorerAddress.replace(':address', order.address))
-  }, [order])
+  }, [order, history])
 
   return (
     <Box
@@ -224,7 +224,7 @@ export default function Order() {
                     {key}
                   </Typography>
 
-                  <Typography fontWeight={400} fontSize={16}>
+                  <Typography fontWeight={400} fontSize={16} component="div">
                     {data[key as keyof typeof data]}
                   </Typography>
                 </Box>

@@ -14,6 +14,8 @@ import { useProduct } from 'hooks/useProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import { INVEST_TYPE, useOrderRecords } from 'hooks/useOrderData'
+import { OrderRecord } from 'utils/fetch/record'
 
 enum TableOptions {
   Details,
@@ -42,11 +44,39 @@ export default function Order() {
   //const productList = useProductList()
   const product = useProduct(productId)
 
-  const data = {
-    ['Type:']: `${product?.strikePrice ?? '-'}`,
-    ['Total Invest Amount:']: '-',
-    ['Positions:']: '-'
-  }
+  const { orderList } = useOrderRecords({
+    //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
+    investType: product?.isRecur ? INVEST_TYPE.recur : INVEST_TYPE.dualInvest,
+    productId: productId,
+    pageNum: 1,
+    pageSize: 999999
+  })
+
+  const data = useMemo(() => {
+    if (!orderList) return
+
+    const positions = orderList?.filter(order => {
+      return order.investStatus == 2 || 3
+    }).length
+
+    let sum = 0
+
+    orderList
+      ?.filter(order => {
+        return order.investStatus == 2 || 3 || 4
+      })
+      .forEach(order => {
+        sum = sum + order.amount * order.multiplier * order.strikePrice
+      })
+
+    const totalInvestAmount = sum
+
+    return {
+      ['Type:']: product?.isRecur ? 'Recurring Strategy' : !product?.isRecur ? 'Dual Investment' : '-',
+      ['Total Invest Amount:']: totalInvestAmount.toFixed(2) + ' USDT',
+      ['Positions:']: positions
+    }
+  }, [orderList, product])
 
   const filterBy = useMemo(() => {
     return { ['Product ID:']: productId }
@@ -87,31 +117,36 @@ export default function Order() {
   }, [product, isDownMd])
 
   const ordersDataRows = useMemo(() => {
-    return [
-      [
+    if (!orderList) return []
+
+    return orderList.map((order: OrderRecord) => {
+      return [
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          Recurring Strategy
+          {order.investType == INVEST_TYPE.dualInvest ? 'Dual Investment' : 'Recurring Strategy'}
         </TextButton>,
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
+          {order.productId}
         </TextButton>,
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
+          {order.orderId}
         </TextButton>,
         <LogoText key={0} logo={SUPPORTED_CURRENCIES['BTC'].logoUrl} text="BTC" />,
-        <Typography key={0}>Downward</Typography>,
+        <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          {(order.annualRor * 100).toFixed(2) + '%'}
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {(order.amount * order.multiplier * order.strikePrice).toFixed(0) + ' USDT/'}
+            <span style={{ opacity: 0.5, fontSize: 14 }}>
+              {'$' + data?.['Total Invest Amount:']?.replace('USDT', '')}
+            </span>
           </Typography>
         </Box>,
         <StatusTag key={0} type="pending" text="Progressing" />
       ]
-    ]
-  }, [])
+    })
+  }, [orderList, data])
 
   const tableTabs = useMemo(() => {
     return ['Details', 'Orders']
@@ -182,17 +217,18 @@ export default function Order() {
               Overview
             </Typography>
 
-            {Object.keys(data).map((key, idx) => (
-              <Box key={idx} display="flex" justifyContent={'flex-start'}>
-                <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
-                  {key}
-                </Typography>
+            {data &&
+              Object.keys(data).map((key, idx) => (
+                <Box key={idx} display="flex" justifyContent={'flex-start'}>
+                  <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+                    {key}
+                  </Typography>
 
-                <Typography fontWeight={400} fontSize={16}>
-                  {data[key as keyof typeof data]}
-                </Typography>
-              </Box>
-            ))}
+                  <Typography fontWeight={400} fontSize={16}>
+                    {data[key as keyof typeof data]}
+                  </Typography>
+                </Box>
+              ))}
           </Box>
         </Box>
         <Box>

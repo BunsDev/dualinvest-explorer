@@ -4,7 +4,6 @@ import TextButton from 'components/Button/TextButton'
 export default function Tag({ text, onClose }: { text: string; onClose?: () => void }) {
   return (
     <Box
-      component="span"
       borderRadius="10px"
       color={'#11BF2D'}
       bgcolor={'rgba(17, 191, 45, 0.1)'}
