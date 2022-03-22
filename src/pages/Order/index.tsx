@@ -1,4 +1,5 @@
-import { useParams, Link } from 'react-router-dom'
+import { useMemo, useCallback } from 'react'
+import { useParams, Link, useHistory } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
@@ -6,7 +7,6 @@ import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.sv
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
-import { useMemo } from 'react'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
@@ -18,6 +18,7 @@ import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
+import { routes } from 'constants/routes'
 
 const TableHeader = [
   'Token',
@@ -34,8 +35,8 @@ const TableHeader = [
 export default function Order() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
-
   const { orderId } = useParams<{ orderId: string }>()
+  const history = useHistory()
 
   const { orderList } = useOrderRecords({
     investType: INVEST_TYPE.recur,
@@ -96,6 +97,12 @@ export default function Order() {
       ]
     })
   }, [orderList])
+
+  const onCancelOrderFilter = useCallback(() => {
+    if (!order) return
+
+    history.push(routes.explorerAddress.replace(':address', order.address))
+  }, [order])
 
   return (
     <Box
@@ -180,7 +187,7 @@ export default function Order() {
           <Typography fontSize={16}>Filtered by Order Holder, Order ID</Typography>
           <Box display="flex" flexDirection="row" paddingTop={'20px'} gap={12}>
             <Tag text={order?.address || ''} />
-            <Tag text={`${order?.orderId}` || ''} onClose={() => {}} />
+            <Tag text={`${order?.orderId}` || ''} onClose={onCancelOrderFilter} />
           </Box>
         </Box>
         <Box padding={'24px'}>
