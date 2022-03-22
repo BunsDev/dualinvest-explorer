@@ -6,7 +6,6 @@ import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.sv
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
-import FilteredBy from 'components/FilteredBy'
 import { useMemo } from 'react'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
@@ -44,6 +43,12 @@ export default function Order() {
     pageNum: 1,
     pageSize: 999999
   })
+
+  const order = useMemo(() => {
+    if (!orderList || orderList.length === 0) return
+
+    return orderList[0]
+  }, [orderList])
 
   const data = useMemo(() => {
     if (!orderList || orderList.length === 0) return
@@ -90,13 +95,6 @@ export default function Order() {
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [orderList])
-
-  const filterBy = useMemo(() => {
-    if (!orderList) return
-    const order = orderList[0]
-
-    return { ['Address:']: order.address, ['Order ID:']: `${order.orderId}` }
   }, [orderList])
 
   return (
@@ -178,7 +176,13 @@ export default function Order() {
               ))}
           </Box>
         </Box>
-        <Box>{filterBy && <FilteredBy data={filterBy} />}</Box>
+        <Box padding={'10px 24px'}>
+          <Typography fontSize={16}>Filtered by Order Holder, Order ID</Typography>
+          <Box display="flex" flexDirection="row" paddingTop={'20px'} gap={12}>
+            <Tag text={order?.address || ''} />
+            <Tag text={`${order?.orderId}` || ''} onClose={() => {}} />
+          </Box>
+        </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
           {!orderList && (
