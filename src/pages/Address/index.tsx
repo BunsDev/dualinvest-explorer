@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import NoDataCard from 'components/Card/NoDataCard'
@@ -103,14 +103,20 @@ export default function Address() {
 
     return filteredOrderList.map((order: OrderRecord) => {
       return [
-        <Typography key={0} color="#3861FB">
-          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+          </Link>
         </Typography>,
-        <Typography key={0} color="#3861FB">
-          {order.productId}
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {order.productId}
+          </Link>
         </Typography>,
-        <Typography key={0} color="#3861FB">
-          {order.orderId}
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {order.orderId}
+          </Link>
         </Typography>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
         <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
