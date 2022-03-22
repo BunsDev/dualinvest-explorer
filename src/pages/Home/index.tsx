@@ -7,7 +7,6 @@ import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
-import BTCLogo from 'assets/svg/btc_logo.svg'
 import Table from 'components/Table'
 import LogoText from 'components/LogoText'
 import BNBLogo from 'assets/svg/binance.svg'
@@ -169,9 +168,27 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText
+                    logo={SUPPORTED_CURRENCIES['BTC'].logoUrl}
+                    text={'BTC'}
+                    gapSize={4}
+                    fontSize={12}
+                    size="16px"
+                  />
+                  <LogoText
+                    logo={SUPPORTED_CURRENCIES['USDT'].logoUrl}
+                    text={'USDT'}
+                    gapSize={4}
+                    fontSize={12}
+                    size="16px"
+                  />
+                  <LogoText
+                    logo={SUPPORTED_CURRENCIES['ETH'].logoUrl}
+                    text={'ETH'}
+                    gapSize={4}
+                    fontSize={12}
+                    size="16px"
+                  />
                 </Box>
               </Box>
             </OutlinedCard>
