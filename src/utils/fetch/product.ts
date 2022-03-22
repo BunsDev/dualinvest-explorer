@@ -18,6 +18,7 @@ interface ProductRaw {
   invest_currency: string
   source: string
   is_active: boolean
+  re_invest: boolean
   multiplier: string
   order_limit: string
   order_limit_u: string
@@ -38,6 +39,7 @@ export interface Product {
   type: string
   source: string
   isActive: boolean
+  isRecur: boolean
   strikePrice: string
   currentPrice: string
   multiplier: string
@@ -61,6 +63,7 @@ export const productFormatter = (raw: ProductRaw): Product => {
     type: raw.type,
     source: raw.source,
     isActive: raw.is_active,
+    isRecur: raw.re_invest,
     strikePrice: raw.strike_price,
     multiplier: raw.multiplier,
     currency: raw.currency,
