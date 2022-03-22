@@ -185,7 +185,7 @@ export default function Order() {
         </Box>
         <Box padding={'10px 24px'}>
           <Typography fontSize={16}>Filtered by Order Holder, Order ID</Typography>
-          <Box display="flex" flexDirection="row" paddingTop={'20px'} gap={12}>
+          <Box display="flex" paddingTop={'20px'} gap={12}>
             <Tag text={order?.address || ''} />
             <Tag text={`${order?.orderId}` || ''} onClose={onCancelOrderFilter} />
           </Box>

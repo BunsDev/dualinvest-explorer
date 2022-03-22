@@ -7,7 +7,6 @@ import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.sv
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
-import FilteredBy from 'components/FilteredBy'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
@@ -18,6 +17,7 @@ import { shortenAddress, isAddress } from 'utils'
 import Spinner from 'components/Spinner'
 import { OrderRecord } from 'utils/fetch/record'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import Tag from 'components/Tag'
 
 enum TableOptions {
   Positions,
@@ -137,10 +137,6 @@ export default function Address() {
     return ['Positions', 'History']
   }, [])
 
-  const filterBy = useMemo(() => {
-    return { ['Address:']: address }
-  }, [address])
-
   return (
     <Box
       display="grid"
@@ -226,8 +222,11 @@ export default function Address() {
             ))}
           </Box>
         </Box>
-        <Box>
-          <FilteredBy data={filterBy} />
+        <Box padding={'10px 24px'}>
+          <Typography fontSize={16}>Filtered by Order Holder</Typography>
+          <Box paddingTop={'20px'}>
+            <Tag text={address || ''} />
+          </Box>
         </Box>
         <Box padding={'24px 24px 0px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
