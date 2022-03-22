@@ -212,20 +212,20 @@ export default function Home() {
         <Box display="flex" width="100%" gap={20} mb={41}>
           <NumericalCard
             unit="$"
-            value={stat?.CumulativeInvestmentAmount || '-'}
+            value={Number(stat?.CumulativeInvestmentAmount).toLocaleString() || '-'}
             title="Cumulative Investment Amount"
             fontSize="44px"
             border
           />
           <NumericalCard
-            value={stat?.TotalNamberOfOders || '-'}
+            value={stat?.TotalNamberOfOders.toLocaleString() || '-'}
             title="Total Number Of Orders"
             fontSize="44px"
             border
           />
           <NumericalCard
             unit="Addresses"
-            value={stat?.CumulativeNamberOUsers || '-'}
+            value={stat?.CumulativeNamberOUsers.toLocaleString() || '-'}
             title="Cumulative Number Of Users"
             fontSize="44px"
             border
