@@ -18,6 +18,7 @@ import Spinner from 'components/Spinner'
 import { OrderRecord } from 'utils/fetch/record'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
+import { routes } from 'constants/routes'
 
 enum TableOptions {
   Positions,
@@ -114,7 +115,10 @@ export default function Address() {
           </Link>
         </Typography>,
         <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+          >
             {order.orderId}
           </Link>
         </Typography>,
