@@ -125,7 +125,7 @@ export default function Address() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />

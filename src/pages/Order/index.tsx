@@ -8,8 +8,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
-import { useOrderRecords, INVEST_TYPE } from 'hooks/useOrderData'
-import { OrderRecord } from 'utils/fetch/record'
+import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import dayjs from 'dayjs'
 import NoDataCard from 'components/Card/NoDataCard'
@@ -20,7 +19,7 @@ import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
 
-const TableHeader = [
+const TableHeaderActive = [
   'Token',
   'Invest Amount',
   'Subscribed Time',
@@ -28,8 +27,17 @@ const TableHeader = [
   'Settlement Time',
   'Strike Price',
   'Exercise',
-  'Refund Amount',
-  'Status'
+  'Refund Amount'
+]
+
+const TableHeaderInActive = [
+  'Product Type',
+  'Product ID',
+  'Order ID',
+  'Token',
+  'Exercise',
+  'APY',
+  'Amount of Investing in Progress'
 ]
 
 export default function Order() {
@@ -50,6 +58,16 @@ export default function Order() {
 
     return orderList[0]
   }, [orderList])
+
+  const isActive = useMemo(() => {
+    if (!order) return
+
+    if ([InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)) {
+      return true
+    }
+
+    return false
+  }, [order])
 
   const data = useMemo(() => {
     if (!orderList || orderList.length === 0) return
@@ -79,24 +97,54 @@ export default function Order() {
   }, [orderList])
 
   const dataRows = useMemo(() => {
-    if (!orderList) return []
+    if (!order) return []
 
-    return orderList.map((order: OrderRecord) => {
+    if (isActive) {
       return [
+        [
+          <LogoText
+            key={0}
+            gapSize={'8px'}
+            logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
+            text={order.currency}
+          />,
+          <Typography key={0}>{order.amount} USDT</Typography>,
+          <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
+          <Typography key={0} color="#31B047">
+            {order.annualRor + '%'}
+          </Typography>,
+          <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
+          <Typography key={0}>{order.strikePrice}</Typography>,
+          <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
+          <Typography key={0}>{order.returnedAmount}</Typography>,
+          <OrderStatusTag key={0} order={order} />
+        ]
+      ]
+    }
+
+    return [
+      [
+        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+        </Link>,
+        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+          {order.productId}
+        </Link>,
+        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+          {order.orderId}
+        </Link>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
-        <Typography key={0}>{order.amount} USDT</Typography>,
-        <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
+        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
-        <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
-        <Typography key={0}>{order.strikePrice}</Typography>,
-        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
-        <Typography key={0}>{order.returnedAmount}</Typography>,
+        <Typography key={0}>
+          XXX/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
+        </Typography>,
         <OrderStatusTag key={0} order={order} />
       ]
-    })
-  }, [orderList])
+    ]
+  }, [order])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
@@ -191,7 +239,11 @@ export default function Order() {
           </Box>
         </Box>
         <Box padding={'24px'}>
-          <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          {isActive ? (
+            <Table fontSize="16px" header={TableHeaderActive} rows={dataRows} />
+          ) : (
+            <Table fontSize="16px" header={TableHeaderInActive} rows={dataRows} />
+          )}
           {!orderList && (
             <Box
               display="flex"
