@@ -79,7 +79,10 @@ export default function Order() {
       ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY hh:mm A'),
       ['Product ID:']: (
         <Box display="flex" gap={12} alignItems="center">
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+          >
             {order.productId}
           </Link>
           <Tag text={order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'} />
