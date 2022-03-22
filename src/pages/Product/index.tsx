@@ -130,7 +130,7 @@ export default function Order() {
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           {order.orderId}
         </TextButton>,
-        <LogoText key={0} logo={SUPPORTED_CURRENCIES['BTC'].logoUrl} text="BTC" />,
+        <LogoText key={0} logo={SUPPORTED_CURRENCIES['BTC'].logoUrl} text={order.investCurrency} />,
         <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {(order.annualRor * 100).toFixed(2) + '%'}

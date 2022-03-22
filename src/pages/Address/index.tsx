@@ -110,7 +110,10 @@ export default function Address() {
           </Link>
         </Typography>,
         <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+          >
             {order.productId}
           </Link>
         </Typography>,
@@ -135,7 +138,7 @@ export default function Address() {
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [filteredOrderList, theme])
+  }, [filteredOrderList])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']

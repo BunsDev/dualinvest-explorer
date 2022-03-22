@@ -82,7 +82,10 @@ export default function Home() {
           </Link>
         </Typography>,
         <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={routes.explorerProduct.replace(':productId', 'XXX')}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
+          >
             {product.productId}
           </Link>
         </Typography>,
