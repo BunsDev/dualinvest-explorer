@@ -5,7 +5,7 @@ export default function Tag({ text, onClose }: { text: string; onClose?: () => v
   return (
     <Box
       component="span"
-      borderRadius={22}
+      borderRadius="10px"
       sx={{ border: '1px solid transparent' }}
       color={'#11BF2D'}
       bgcolor={'rgba(17, 191, 45, 0.1)'}

@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { Box, Container, Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
@@ -16,6 +16,9 @@ import dayjs from 'dayjs'
 import NoDataCard from 'components/Card/NoDataCard'
 import Spinner from 'components/Spinner'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import Tag from 'components/Tag'
+import { ExternalLink } from 'theme/components'
+import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 
 const TableHeader = [
   'Token',
@@ -51,11 +54,21 @@ export default function Order() {
       ['Settlement Price:']: order.strikePrice,
       ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY hh:mm A'),
       ['Product ID:']: (
-        <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-          {order.productId}
-        </Link>
+        <Box display="flex" gap={12} alignItems="center">
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {order.productId}
+          </Link>
+          <Tag text={order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'} />
+        </Box>
       ),
-      ['TXID:']: order.confirmOrderHash
+      ['TXID:']: (
+        <Box display="flex" gap={8} alignItems="center">
+          {order.confirmOrderHash}{' '}
+          <ExternalLink href={'#'}>
+            <ExternalIcon />
+          </ExternalLink>
+        </Box>
+      )
     }
   }, [orderList])
 
@@ -153,7 +166,7 @@ export default function Order() {
 
             {data &&
               Object.keys(data).map((key, idx) => (
-                <Box key={idx} display="flex" justifyContent={'flex-start'}>
+                <Box key={idx} display="flex" alignItems="center">
                   <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
                     {key}
                   </Typography>
@@ -187,12 +200,6 @@ export default function Order() {
           {orderList && orderList.length === 0 && <NoDataCard text={'Not Found'} />}
         </Box>
       </Card>
-
-      <Container
-        sx={{
-          maxWidth: theme.width.maxContent
-        }}
-      ></Container>
     </Box>
   )
 }
