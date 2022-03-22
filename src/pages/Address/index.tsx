@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import NoDataCard from 'components/Card/NoDataCard'
@@ -7,9 +7,7 @@ import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.sv
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
-import FilteredBy from 'components/FilteredBy'
-import OrderStatusTag from 'components/OrderStatusTag'
-import BTC from 'assets/svg/btc_logo.svg'
+import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
@@ -18,6 +16,9 @@ import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
 import Spinner from 'components/Spinner'
 import { OrderRecord } from 'utils/fetch/record'
+import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import Tag from 'components/Tag'
+import { routes } from 'constants/routes'
 
 enum TableOptions {
   Positions,
@@ -94,46 +95,54 @@ export default function Address() {
     return {
       ['Total Invest Amount:']: `${totalAmount} USDT`,
       ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
-      ['Positions:']: orderList?.length || 0
+      ['Positions:']: positionList?.length || 0
     }
-  }, [orderList, totalAmount, AmountInProgress])
+  }, [positionList, totalAmount, AmountInProgress])
 
   const dataRows = useMemo(() => {
     if (!filteredOrderList) return []
 
     return filteredOrderList.map((order: OrderRecord) => {
       return [
-        <Typography key={0} color="#3861FB">
-          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+          </Link>
         </Typography>,
-        <Typography key={0} color="#3861FB">
-          {order.productId}
+        <Typography key={0}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+          >
+            {order.productId}
+          </Link>
         </Typography>,
-        <Typography key={0} color="#3861FB">
-          {order.orderId}
+        <Typography key={0}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+          >
+            {order.orderId}
+          </Link>
         </Typography>,
-        <LogoText key={0} gapSize={'8px'} logo={BTC} text={order.currency} />,
+        <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
         <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [filteredOrderList])
+  }, [filteredOrderList, theme])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']
   }, [])
-
-  const filterBy = useMemo(() => {
-    return { ['Address:']: address }
-  }, [address])
 
   return (
     <Box
@@ -220,8 +229,11 @@ export default function Address() {
             ))}
           </Box>
         </Box>
-        <Box>
-          <FilteredBy data={filterBy} />
+        <Box padding={'10px 24px'}>
+          <Typography fontSize={16}>Filtered by Order Holder</Typography>
+          <Box paddingTop={'20px'}>
+            <Tag text={address || ''} />
+          </Box>
         </Box>
         <Box padding={'24px 24px 0px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
