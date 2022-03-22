@@ -79,7 +79,7 @@ export default function Home() {
       return [
         <Typography key={0}>
           <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'XXXXXXX'}
+            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Invest Stratedgy'}
           </Link>
         </Typography>,
         <Typography key={0}>
@@ -95,7 +95,7 @@ export default function Home() {
         <LogoText
           key={0}
           gapSize={'8px'}
-          logo={SUPPORTED_CURRENCIES[product.investCurrency].logoUrl}
+          logo={SUPPORTED_CURRENCIES[product.investCurrency]?.logoUrl}
           text={product.investCurrency}
         />,
         <Typography key={0}>XXX</Typography>,
@@ -233,14 +233,11 @@ export default function Home() {
         </Box>
         <Card padding="35px 24px 111px">
           <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={40}>
-            <Box display="flex" gap={8}>
-              <Typography fontSize={24} fontWeight={700}>
-                Top Products
-              </Typography>
-              <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
-            </Box>
-            <Typography fontSize={16}>24H</Typography>
+          <Box display="flex" gap={8} mt={40} mb={20}>
+            <Typography fontSize={24} fontWeight={700}>
+              Top Products
+            </Typography>
+            <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
         </Card>
