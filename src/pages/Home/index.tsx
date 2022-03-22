@@ -79,7 +79,7 @@ export default function Home() {
       return [
         <Typography key={0}>
           <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Invest Stratedgy'}
+            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
           </Link>
         </Typography>,
         <Typography key={0}>
@@ -159,7 +159,7 @@ export default function Home() {
                 onChangeInput={e => setSearch(e.target.value)}
               />
             </Box>
-            <Button width="220px" height="60px" onClick={onSearch} style={{ marginLeft: '24px' }}>
+            <Button width="220px" height="60px" onClick={onSearch}>
               <SearchIcon />
               <Typography ml={10}>Search</Typography>
             </Button>
