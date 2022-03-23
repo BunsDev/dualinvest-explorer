@@ -140,7 +140,7 @@ export default function Order() {
           {order.orderId}
         </Link>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
-        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
+        <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
