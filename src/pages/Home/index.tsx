@@ -106,7 +106,8 @@ export default function Home() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {product.amount} USDT/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
+            {(+product.amount * +product.multiplier).toFixed(2)} USDT/
+            <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
           </Typography>
         </Box>,
         <StatusTag key={0} type={'pending'} text={'Progressing'} />

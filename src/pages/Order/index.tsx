@@ -59,6 +59,8 @@ export default function Order() {
     return orderList[0]
   }, [orderList])
 
+  const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+
   const isActive = useMemo(() => {
     if (!order) return
 
@@ -111,14 +113,14 @@ export default function Order() {
             logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
             text={order.currency}
           />,
-          <Typography key={0}>{order.amount} USDT</Typography>,
+          <Typography key={0}>{(+order.amount * +order.multiplier * multiplier).toFixed(2)} USDT</Typography>,
           <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
           <Typography key={0} color="#31B047">
             {order.annualRor + '%'}
           </Typography>,
           <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
           <Typography key={0}>{order.strikePrice}</Typography>,
-          <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
+          <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
           <Typography key={0}>{order.returnedAmount}</Typography>,
           <OrderStatusTag key={0} order={order} />
         ]
