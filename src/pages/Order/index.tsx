@@ -18,6 +18,7 @@ import Tag from 'components/Tag'
 import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
+import { getEtherscanLink } from 'utils'
 
 const TableHeaderActive = [
   'Token',
@@ -92,8 +93,8 @@ export default function Order() {
       ),
       ['TXID:']: (
         <Box display="flex" gap={8} alignItems="center">
-          {order.confirmOrderHash}{' '}
-          <ExternalLink href={'#'}>
+          {order.confirmOrderHash}
+          <ExternalLink href={getEtherscanLink(order.chainId, order.hash, 'transaction')}>
             <ExternalIcon />
           </ExternalLink>
         </Box>
