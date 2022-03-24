@@ -145,7 +145,8 @@ export default function Order() {
           {order.annualRor + '%'}
         </Typography>,
         <Typography key={0}>
-          XXX/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
+          {order.amount * order.multiplier} {order.investCurrency}/
+          <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
         </Typography>,
         <OrderStatusTag key={0} order={order} />
       ]

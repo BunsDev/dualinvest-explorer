@@ -134,8 +134,8 @@ export default function Address() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+order.amount * +order.multiplier * multiplier).toFixed(2)}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
+            {(+order.amount * +order.multiplier * multiplier).toFixed(2)} {order.investCurrency}/
+            <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
