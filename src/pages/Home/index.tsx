@@ -1,25 +1,26 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
-// import { ReactComponent as Antimatter } from '../../assets/svg/antimatter.svg'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList } from 'constants/chain'
-// import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
-import BTCLogo from 'assets/svg/btc_logo.svg'
 import Table from 'components/Table'
 import LogoText from 'components/LogoText'
 import BNBLogo from 'assets/svg/binance.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import TextButton from 'components/Button/TextButton'
 import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
 import { routes } from 'constants/routes'
+import { useTopProducts } from 'hooks/useProduct'
+import { TopProduct } from 'utils/fetch/product'
+import { INVEST_TYPE } from 'hooks/useOrderData'
+import { useStatistical } from 'hooks/useStatistical'
+import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 
 enum SearchOptions {
   Address = 'Address',
@@ -61,36 +62,57 @@ export default function Home() {
     }
 
     if (searchOption === SearchOptions.Order) {
-      history.push(routes.explorerOrder.replace(':order', search))
+      history.push(routes.explorerOrder.replace(':orderId', search))
+    }
+
+    if (searchOption === SearchOptions.Product) {
+      history.push(routes.explorerProduct.replace(':productId', search))
     }
   }, [search, searchOption, history])
 
+  const products = useTopProducts()
+  const stat = useStatistical()
+
   const dataRows = useMemo(() => {
-    return [
-      [
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          Recurring Strategy
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          23
-        </TextButton>,
-        <LogoText key={0} logo={BNBLogo} text="BTC" />,
-        <Typography key={0}>Downward</Typography>,
+    return products.map((product: TopProduct) => {
+      return [
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
+            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+          </Link>
+        </Typography>,
+        <Typography key={0}>
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
+          >
+            {product.productId}
+          </Link>
+        </Typography>,
+        <Typography key={0}>
+          <Link style={{ color: theme.palette.text.primary }} to={routes.explorerOrder.replace(':orderId', 'XXX')}>
+            XXX
+          </Link>
+        </Typography>,
+        <LogoText
+          key={0}
+          gapSize={'8px'}
+          logo={SUPPORTED_CURRENCIES[product.investCurrency]?.logoUrl}
+          text={product.investCurrency}
+        />,
+        <Typography key={0}>XXX</Typography>,
         <Typography key={0} color="#31B047">
-          140.21%
+          XXX%
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            12900/<span style={{ opacity: 0.5, fontSize: 14 }}>$235.056</span>
+            {product.amount} USDT/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type="pending" text="Progressing" />
+        <StatusTag key={0} type={'pending'} text={'Progressing'} />
       ]
-    ]
-  }, [])
+    })
+  }, [products, theme])
 
   const tableTabs = useMemo(() => {
     return [
@@ -139,7 +161,7 @@ export default function Home() {
                 onChangeInput={e => setSearch(e.target.value)}
               />
             </Box>
-            <Button width="220px" height="60px" onClick={onSearch} style={{ marginLeft: '24px' }}>
+            <Button width="220px" height="60px" onClick={onSearch}>
               <SearchIcon />
               <Typography ml={10}>Search</Typography>
             </Button>
@@ -149,9 +171,27 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={BTCLogo} text={'BTC'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText
+                    logo={SUPPORTED_CURRENCIES['BTC'].logoUrl}
+                    text={'BTC'}
+                    gapSize={4}
+                    fontSize={12}
+                    size="16px"
+                  />
+                  <LogoText
+                    logo={SUPPORTED_CURRENCIES['USDT'].logoUrl}
+                    text={'USDT'}
+                    gapSize={4}
+                    fontSize={12}
+                    size="16px"
+                  />
+                  <LogoText
+                    logo={SUPPORTED_CURRENCIES['ETH'].logoUrl}
+                    text={'ETH'}
+                    gapSize={4}
+                    fontSize={12}
+                    size="16px"
+                  />
                 </Box>
               </Box>
             </OutlinedCard>
@@ -190,20 +230,34 @@ export default function Home() {
         }}
       >
         <Box display="flex" width="100%" gap={20} mb={41}>
-          <NumericalCard unit="$" value={'57,640'} title="Cumulative Investment Amount" fontSize="44px" border />
-          <NumericalCard value={'114,375'} title="Total Number Of Orders" fontSize="44px" border />
-          <NumericalCard unit="Addresses" value={'367'} title="Cumulative Number Of Users" fontSize="44px" border />
+          <NumericalCard
+            unit="$"
+            value={Number(stat?.CumulativeInvestmentAmount).toLocaleString() || '-'}
+            title="Cumulative Investment Amount"
+            fontSize="44px"
+            border
+          />
+          <NumericalCard
+            value={stat?.TotalNamberOfOders.toLocaleString() || '-'}
+            title="Total Number Of Orders"
+            fontSize="44px"
+            border
+          />
+          <NumericalCard
+            unit="Addresses"
+            value={stat?.CumulativeNamberOUsers.toLocaleString() || '-'}
+            title="Cumulative Number Of Users"
+            fontSize="44px"
+            border
+          />
         </Box>
-        <Card padding="28px 60px 68px">
+        <Card padding="35px 24px 111px">
           <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={40}>
-            <Box display="flex" gap={8}>
-              <Typography fontSize={24} fontWeight={700}>
-                Top Products
-              </Typography>
-              <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
-            </Box>
-            <Typography fontSize={16}>24H</Typography>
+          <Box display="flex" gap={8} mt={40} mb={20}>
+            <Typography fontSize={24} fontWeight={700}>
+              Top Products
+            </Typography>
+            <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
         </Card>

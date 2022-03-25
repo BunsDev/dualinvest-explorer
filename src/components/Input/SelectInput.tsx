@@ -34,7 +34,7 @@ export default function SelectInput({
       sx={{
         [`&.${inputBaseClasses.root}`]: {
           fontSize: 16,
-          borderRadius: 16,
+          borderRadius: '16px',
           fontWeight: 400,
           color: theme => theme.palette.text.primary,
           backgroundColor: theme => theme.palette.background.default
