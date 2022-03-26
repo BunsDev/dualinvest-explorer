@@ -150,7 +150,7 @@ export default function Order() {
         <OrderStatusTag key={0} order={order} />
       ]
     ]
-  }, [order, isActive, theme])
+  }, [order, isActive, theme, multiplier])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
