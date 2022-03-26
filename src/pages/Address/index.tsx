@@ -19,6 +19,7 @@ import { OrderRecord } from 'utils/fetch/record'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { routes } from 'constants/routes'
+import Pagination from 'components/Pagination'
 
 enum TableOptions {
   Positions,
@@ -43,7 +44,7 @@ export default function Address() {
 
   const { address } = useParams<{ address: string }>()
 
-  // const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1)
 
   const { orderList } = useOrderRecords({
     address,
@@ -72,7 +73,7 @@ export default function Address() {
     }
 
     return historyList
-  }, [tab, positionList, historyList])
+  }, [tab, positionList, historyList, page])
 
   const totalAmount = useMemo(() => {
     return historyList
@@ -98,10 +99,28 @@ export default function Address() {
     }
   }, [positionList, totalAmount, AmountInProgress])
 
-  const dataRows = useMemo(() => {
-    if (!filteredOrderList) return []
+  const pageParams = useMemo(() => {
+    const perPage = 10
+    const count = Math.ceil(filteredOrderList.length / perPage)
+    const total = filteredOrderList.length
 
-    return filteredOrderList.map((order: OrderRecord) => {
+    return {
+      count,
+      perPage,
+      total
+    }
+  }, [filteredOrderList, page])
+
+  const currentPageOrderList = useMemo(() => {
+    if (!filteredOrderList) return
+
+    return filteredOrderList.slice((page - 1) * pageParams.perPage, page * pageParams.perPage)
+  }, [page, pageParams, filteredOrderList])
+
+  const dataRows = useMemo(() => {
+    if (!currentPageOrderList) return []
+
+    return currentPageOrderList.map((order: OrderRecord) => {
       const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
 
       return [
@@ -140,7 +159,7 @@ export default function Address() {
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [filteredOrderList, theme])
+  }, [currentPageOrderList, theme])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']
@@ -242,7 +261,7 @@ export default function Address() {
         </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
-          {!orderList && (
+          {!currentPageOrderList && (
             <Box
               display="flex"
               justifyContent="center"
@@ -258,7 +277,19 @@ export default function Address() {
               <Spinner size={60} />
             </Box>
           )}
-          {orderList && orderList.length === 0 && <NoDataCard text={'You don’t have any positions'} />}
+          {currentPageOrderList && currentPageOrderList.length === 0 && (
+            <NoDataCard text={'You don’t have any positions'} />
+          )}
+          {currentPageOrderList && currentPageOrderList.length > 0 && (
+            <Pagination
+              count={pageParams.count}
+              page={page}
+              perPage={pageParams?.perPage}
+              boundaryCount={0}
+              total={pageParams?.total}
+              onChange={(event, value) => setPage(value)}
+            />
+          )}
         </Box>
       </Card>
 
