@@ -103,6 +103,8 @@ export default function Address() {
     if (!filteredOrderList) return []
 
     return filteredOrderList.map((order: OrderRecord) => {
+      const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+
       return [
         <Typography key={0}>
           <Link style={{ color: theme.palette.text.primary }} to={'#'}>
@@ -126,13 +128,14 @@ export default function Address() {
           </Link>
         </Typography>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
-        <Typography key={0}>{order.type === 'CALL' ? 'upward' : 'downward'}</Typography>,
+        <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {order.amount}/<span style={{ opacity: 0.5, fontSize: 14 }}>$XXX</span>
+            {(+order.amount * +order.multiplier * multiplier).toFixed(2)} {order.investCurrency}/
+            <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
