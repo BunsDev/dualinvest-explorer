@@ -9,7 +9,7 @@ import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import Table from 'components/Table'
 import LogoText from 'components/LogoText'
-import BNBLogo from 'assets/svg/binance.svg'
+import BSCLogo from 'assets/svg/bsc_logo.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
@@ -29,7 +29,7 @@ enum SearchOptions {
 }
 
 enum ChainOptions {
-  BNB,
+  BSC,
   AVAX
 }
 
@@ -46,7 +46,7 @@ const TableHeader = [
 
 export default function Home() {
   const theme = useTheme()
-  const [tab, setTab] = useState(ChainOptions.BNB)
+  const [tab, setTab] = useState(ChainOptions.BSC)
   const [chain, setChain] = useState<Chain | null>(ChainList[0])
   const [searchOption, setSearchOption] = useState(SearchOptions.Address)
   const [search, setSearch] = useState('')
@@ -117,7 +117,7 @@ export default function Home() {
 
   const tableTabs = useMemo(() => {
     return [
-      <LogoText key={0} logo={BNBLogo} text={'BNB Chain'} />,
+      <LogoText key={0} logo={BSCLogo} text={'BSC Chain'} />,
       <LogoText key={0} logo={AVAXLogo} text={'AVAX Chain'} />
     ]
   }, [])
@@ -201,7 +201,7 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={BNBLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BSCLogo} text={'BSC Chain'} gapSize={4} fontSize={12} size="16px" />
                   <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
@@ -258,7 +258,7 @@ export default function Home() {
             <Typography fontSize={24} fontWeight={700}>
               Top Products
             </Typography>
-            <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
+            <LogoText logo={BSCLogo} size="28px" text="BSC" fontSize={20} />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
         </Card>
