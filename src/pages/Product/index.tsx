@@ -4,13 +4,15 @@ import { NavLink, useParams } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
+import AVAXUrl from 'assets/svg/avax_logo.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import { useProduct } from 'hooks/useProduct'
+//import { useProduct } from 'hooks/useProduct'
+import { useApproveProduct } from 'hooks/useApproveProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
@@ -42,7 +44,7 @@ export default function Order() {
   //const id = '2064'
   const { productId } = useParams<{ productId: string }>()
   //const productList = useProductList()
-  const product = useProduct(productId)
+  const product = useApproveProduct(productId)
 
   const { orderList } = useOrderRecords({
     //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
@@ -83,12 +85,15 @@ export default function Order() {
   }, [productId])
 
   const detailsDataRows = useMemo(() => {
+    if (!product) return []
+
+    console.log(product.currency)
     return [
       [
         <LogoText
           key={0}
           gapSize={'8px'}
-          logo={product ? SUPPORTED_CURRENCIES[product?.currency].logoUrl : ''}
+          logo={product ? SUPPORTED_CURRENCIES[product.currency].logoUrl : ''}
           text={`${product?.currency ?? '-'}`}
         />,
         <Typography key={0} color="#31B047">
@@ -208,7 +213,13 @@ export default function Order() {
             display="flex"
             justifyContent={'space-evenly'}
           >
-            <LogoText logo={BSCUrl} text={'BNB'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+            <LogoText
+              logo={product?.chain == 'BSC' ? BSCUrl : AVAXUrl}
+              text={product?.chain == 'BSC' ? 'BNB' : 'AVAX'}
+              gapSize={'8px'}
+              fontSize={14}
+              opacity={'0.5'}
+            />
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>

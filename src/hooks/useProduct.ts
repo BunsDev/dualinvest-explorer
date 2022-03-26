@@ -1,13 +1,17 @@
+//import { ChainId } from 'constants/chain'
 import { useState, useCallback } from 'react'
 import { Axios } from 'utils/axios'
 import { productFormatter, Product, TopProduct, TopProductRaw, topProductFomatter } from 'utils/fetch/product'
 
 import usePollingWithMaxRetries from './usePollingWithMaxRetries'
 
-export function useProduct(productId: string) {
+export function useProduct(chainId: number, productId: string) {
   const [product, setProduct] = useState<Product | undefined>(undefined)
 
-  const promiseFn = useCallback(() => Axios.get('getProducts?productId=' + productId), [productId])
+  const promiseFn = useCallback(() => Axios.get('getProducts?chainId=' + chainId + '&productId=' + productId), [
+    productId,
+    chainId
+  ])
   const callbackFn = useCallback(r => setProduct(productFormatter(r.data.data)), [])
 
   usePollingWithMaxRetries(promiseFn, callbackFn)

@@ -12,6 +12,7 @@ export interface createOrder {
 interface ProductRaw {
   annual_ror: string
   currency: string
+  chain: string
   expired_at: string
   expired_str: string
   index_price: string
@@ -37,6 +38,7 @@ export interface Product {
   expiredAt: string
   apy: string
   type: string
+  chain: string
   source: string
   isActive: boolean
   isRecur: boolean
@@ -61,6 +63,7 @@ export const productFormatter = (raw: ProductRaw): Product => {
     expiredAt: dayjs(+raw.expired_at * 1000).format('MMM DD, YYYY'),
     apy: (+raw.annual_ror * 100).toFixed(2) + '%' ?? '-',
     type: raw.type,
+    chain: raw.chain,
     source: raw.source,
     isActive: raw.is_active,
     isRecur: raw.re_invest,
