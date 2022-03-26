@@ -21,6 +21,7 @@ import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import { useStatistical } from 'hooks/useStatistical'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import NoDataCard from 'components/Card/NoDataCard'
 
 enum SearchOptions {
   Address = 'Address',
@@ -261,6 +262,7 @@ export default function Home() {
             <LogoText logo={BSCLogo} size="28px" text="BSC" fontSize={20} />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          {products && products.length === 0 && <NoDataCard text={'No data'} />}
         </Card>
       </Container>
     </Box>
