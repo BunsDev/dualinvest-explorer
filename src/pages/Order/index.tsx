@@ -48,7 +48,6 @@ export default function Order() {
   const history = useHistory()
 
   const { orderList } = useOrderRecords({
-    investType: INVEST_TYPE.recur,
     orderId,
     pageNum: 1,
     pageSize: 999999

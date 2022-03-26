@@ -46,7 +46,7 @@ export default function Order() {
 
   const { orderList } = useOrderRecords({
     //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
-    investType: product?.isRecur ? INVEST_TYPE.recur : INVEST_TYPE.dualInvest,
+    // investType: product?.isRecur ? INVEST_TYPE.recur : INVEST_TYPE.dualInvest,
     productId: productId,
     pageNum: 1,
     pageSize: 999999
