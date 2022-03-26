@@ -5,7 +5,7 @@ import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import BSCUrl from 'assets/svg/binance.svg'
+import BSCUrl from 'assets/svg/bsc_logo.svg'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -214,7 +214,7 @@ export default function Order() {
             display="flex"
             justifyContent={'space-evenly'}
           >
-            <LogoText logo={BSCUrl} text={'BNB'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+            <LogoText logo={BSCUrl} text={'BSC'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
