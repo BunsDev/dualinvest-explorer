@@ -16,8 +16,10 @@ import { useApproveProduct } from 'hooks/useApproveProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
-import { INVEST_TYPE, useOrderRecords } from 'hooks/useOrderData'
+import { INVEST_TYPE /* useOrderRecords*/ } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
+import NoDataCard from 'components/Card/NoDataCard'
+import PaginationView from 'components/Pagination'
 
 enum TableOptions {
   Details,
@@ -37,22 +39,23 @@ const OrdersTableHeader = [
 
 const DetailsTableHeader = ['Token', 'APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
 
-export default function Order() {
+export default function Page() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
+  const [page, setPage] = useState(1)
   const [tab, setTab] = useState(TableOptions.Details)
   //const id = '2064'
   const { productId } = useParams<{ productId: string }>()
   //const productList = useProductList()
-  const product = useApproveProduct(productId)
+  const { product, orderList, pageParams } = useApproveProduct(productId, page)
 
-  const { orderList } = useOrderRecords({
-    //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
-    investType: product?.isRecur ? INVEST_TYPE.recur : INVEST_TYPE.dualInvest,
-    productId: productId,
-    pageNum: 1,
-    pageSize: 999999
-  })
+  // const { orderList } = useOrderRecords({
+  //   //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
+  //   investType: INVEST_TYPE.DO_NOT_USE_THIS,
+  //   productId: productId,
+  //   pageNum: 1,
+  //   pageSize: 999999
+  // })
 
   const data = useMemo(() => {
     if (!orderList) return
@@ -87,7 +90,8 @@ export default function Order() {
   const detailsDataRows = useMemo(() => {
     if (!product) return []
 
-    console.log(product.currency)
+    console.log(product?.currency)
+
     return [
       [
         <LogoText
@@ -156,7 +160,49 @@ export default function Order() {
   const tableTabs = useMemo(() => {
     return ['Details', 'Orders']
   }, [])
+  if (!product)
+    return (
+      <Box
+        display="grid"
+        width="100%"
+        alignContent="flex-start"
+        marginBottom="auto"
+        justifyItems="center"
+        gap={40}
+        padding={{ xs: '24px 20px', md: 0 }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            background: isDownMd ? theme.palette.background.default : theme.palette.background.paper,
+            padding: isDownMd ? '0 0 28px 0' : '27px 20px'
+          }}
+        >
+          <Box maxWidth={theme.width.maxContent} width="100%">
+            <NavLink to={'/account'} style={{ textDecoration: 'none' }}>
+              <ArrowLeft />
+              <Typography component="span" color={theme.bgColor.bg1} fontSize={{ xs: 12, md: 14 }} ml={16}>
+                Go Back
+              </Typography>
+            </NavLink>
+          </Box>
+        </Box>
 
+        <NoDataCard>
+          <Box display="flex" flexDirection="column">
+            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+              Product ID
+            </Typography>
+            <Typography fontWeight={'700'} fontSize={'24px'}>
+              #{productId}
+            </Typography>
+          </Box>
+        </NoDataCard>
+      </Box>
+    )
   return (
     <Box
       display="grid"
@@ -254,6 +300,16 @@ export default function Order() {
             header={tab === TableOptions.Details ? DetailsTableHeader : OrdersTableHeader}
             rows={tab === TableOptions.Details ? detailsDataRows : ordersDataRows}
           />
+          {tab !== TableOptions.Details && (
+            <PaginationView
+              count={pageParams?.count}
+              page={page}
+              perPage={pageParams?.perPage}
+              boundaryCount={0}
+              total={pageParams?.total}
+              onChange={(event, value) => setPage(value)}
+            />
+          )}
         </Box>
       </Card>
 
