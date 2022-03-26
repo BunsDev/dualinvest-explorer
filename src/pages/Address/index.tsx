@@ -1,3 +1,4 @@
+import { useMemo, useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
@@ -9,7 +10,6 @@ import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
-import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -51,6 +51,10 @@ export default function Address() {
     pageNum: 1,
     pageSize: 999999
   })
+
+  useEffect(() => {
+    setPage(1)
+  }, [tab])
 
   const positionList = useMemo(() => {
     if (!orderList) return []
