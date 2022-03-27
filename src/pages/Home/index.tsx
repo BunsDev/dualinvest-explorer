@@ -127,7 +127,11 @@ export default function Home() {
             <span style={{ opacity: 0.5, fontSize: 14 }}>${(+product.amountU).toFixed(2)} USDT</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type={'pending'} text={'Progressing'} />
+        <StatusTag
+          key={0}
+          type={+product.ts > Date.now() ? 'pending' : 'success'}
+          text={+product.ts > Date.now() ? 'Progressing' : 'Exercised'}
+        />
       ]
     })
   }, [products, theme])
