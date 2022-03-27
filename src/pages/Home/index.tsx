@@ -4,7 +4,7 @@ import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
-import { ChainList } from 'constants/chain'
+import { ChainList, ChainId } from 'constants/chain'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import Table from 'components/Table'
@@ -71,7 +71,15 @@ export default function Home() {
     }
   }, [search, searchOption, history])
 
-  const products = useTopProducts()
+  const selectedChainId = useMemo(() => {
+    if (tab === ChainOptions.AVAX) {
+      return ChainId.AVAX
+    }
+
+    return ChainId.BSC
+  }, [tab])
+
+  const products = useTopProducts(selectedChainId)
   const stat = useStatistical()
 
   const dataRows = useMemo(() => {
