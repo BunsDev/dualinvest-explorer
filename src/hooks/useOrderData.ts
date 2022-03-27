@@ -24,13 +24,15 @@ export function useOrderRecords({
   orderId,
   productId,
   pageNum,
-  pageSize
+  pageSize,
+  chainId
 }: {
   address?: string
   orderId?: string
   productId?: string
   pageNum?: number
   pageSize?: number
+  chainId?: string
 }) {
   const [orderList, setOrderList] = useState<OrderRecord[] | undefined>(undefined)
   const [pageParams, setPageParams] = useState<{ count: number; perPage: number; total: number }>({
@@ -45,7 +47,8 @@ export function useOrderRecords({
       pageSize,
       address,
       orderId,
-      productId
+      productId,
+      chainId
     })
   }, [pageNum, pageSize, address, orderId, productId])
 

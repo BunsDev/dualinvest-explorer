@@ -59,7 +59,8 @@ export default function Address() {
   const { orderList } = useOrderRecords({
     address,
     pageNum: 1,
-    pageSize: 999999
+    pageSize: 999999,
+    chainId: chainId ?? undefined
   })
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function Address() {
     return orderList.filter((order: OrderRecord) =>
       [InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)
     )
-  }, [orderList])
+  }, [orderList, chainId])
 
   const historyList = useMemo(() => {
     if (!orderList) return []
