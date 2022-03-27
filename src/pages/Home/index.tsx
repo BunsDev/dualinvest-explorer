@@ -115,7 +115,7 @@ export default function Home() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+product.amount).toFixed(2)} {product.investCurrency}/
+            {(+product.amountRaw).toFixed(2)} {product.investCurrency}/
             <span style={{ opacity: 0.5, fontSize: 14 }}>${product.amountU} USDT</span>
           </Typography>
         </Box>,

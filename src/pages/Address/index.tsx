@@ -20,6 +20,7 @@ import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { routes } from 'constants/routes'
 import Pagination from 'components/Pagination'
+import PriceU from 'components/PriceU'
 
 enum TableOptions {
   Positions,
@@ -127,6 +128,8 @@ export default function Address() {
     return currentPageOrderList.map((order: OrderRecord) => {
       const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
 
+      const investAmount = +order.amount * +order.multiplier * multiplier
+
       return [
         <Typography key={0}>
           <Link style={{ color: theme.palette.text.primary }} to={'#'}>
@@ -156,8 +159,10 @@ export default function Address() {
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+order.amount * +order.multiplier * multiplier).toFixed(2)} {order.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
+            {investAmount.toFixed(2)} {order.investCurrency}/
+            <span style={{ opacity: 0.5, fontSize: 14 }}>
+              $<PriceU symbol={order.investCurrency} amount={investAmount} /> USDT
+            </span>
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
