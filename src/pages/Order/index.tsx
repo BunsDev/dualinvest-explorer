@@ -75,6 +75,9 @@ export default function Order() {
 
     const order = orderList[0]
 
+    const hash = order.confirmOrderHash || order.hash
+    const link = order.chainId && hash && getEtherscanLink(order.chainId, order.hash, 'transaction')
+
     return {
       ['Settlement Price:']: order.strikePrice,
       ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY hh:mm A'),
@@ -91,10 +94,12 @@ export default function Order() {
       ),
       ['TXID:']: (
         <Box display="flex" gap={8} alignItems="center">
-          {order.confirmOrderHash}
-          <ExternalLink href={getEtherscanLink(order.chainId, order.hash, 'transaction')}>
-            <ExternalIcon />
-          </ExternalLink>
+          {hash || 'N/A'}
+          {link && (
+            <ExternalLink href={link}>
+              <ExternalIcon />
+            </ExternalLink>
+          )}
         </Box>
       )
     }
