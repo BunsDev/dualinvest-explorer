@@ -20,6 +20,7 @@ import { routes } from 'constants/routes'
 import { getEtherscanLink } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 
 const TableHeaderActive = [
   'Token',
@@ -140,13 +141,26 @@ export default function Order() {
 
     return [
       [
-        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
-        </Link>,
-        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+        </ExternalLink>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+        >
           {order.productId}
         </Link>,
-        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+        >
           {order.orderId}
         </Link>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,

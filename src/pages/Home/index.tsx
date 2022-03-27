@@ -22,6 +22,8 @@ import { INVEST_TYPE } from 'hooks/useOrderData'
 import { useStatistical } from 'hooks/useStatistical'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import NoDataCard from 'components/Card/NoDataCard'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { ExternalLink } from 'theme/components'
 
 enum SearchOptions {
   Address = 'Address',
@@ -85,11 +87,14 @@ export default function Home() {
   const dataRows = useMemo(() => {
     return products.map((product: TopProduct) => {
       return [
-        <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
-          </Link>
-        </Typography>,
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={product.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
+          {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+        </ExternalLink>,
         <Typography key={0}>
           <Link
             style={{ color: theme.palette.text.primary }}

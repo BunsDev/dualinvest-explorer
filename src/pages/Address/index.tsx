@@ -21,6 +21,8 @@ import { routes } from 'constants/routes'
 import Pagination from 'components/Pagination'
 import { usePriceForAll } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { ExternalLink } from 'theme/components'
 
 enum TableOptions {
   Positions,
@@ -149,11 +151,14 @@ export default function Address() {
         : ''
 
       return [
-        <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-            {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
-          </Link>
-        </Typography>,
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
+          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+        </ExternalLink>,
         <Typography key={0}>
           <Link
             style={{ color: theme.palette.text.primary }}
