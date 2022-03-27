@@ -99,8 +99,11 @@ export default function Home() {
           </Link>
         </Typography>,
         <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={routes.explorerOrder.replace(':orderId', 'XXX')}>
-            XXX
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerOrder.replace(':orderId', `${product.orderId}`)}
+          >
+            {product.orderId || '-'}
           </Link>
         </Typography>,
         <LogoText
@@ -109,14 +112,14 @@ export default function Home() {
           logo={SUPPORTED_CURRENCIES[product.investCurrency]?.logoUrl}
           text={product.investCurrency}
         />,
-        <Typography key={0}>XXX</Typography>,
+        <Typography key={0}>-</Typography>,
         <Typography key={0} color="#31B047">
-          XXX%
+          -%
         </Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+product.amountRaw).toFixed(2)} {product.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>${product.amountU} USDT</span>
+            {(+product.amount).toFixed(2)} {product.investCurrency}/
+            <span style={{ opacity: 0.5, fontSize: 14 }}>${(+product.amountU).toFixed(2)} USDT</span>
           </Typography>
         </Box>,
         <StatusTag key={0} type={'pending'} text={'Progressing'} />
