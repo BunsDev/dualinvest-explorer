@@ -65,7 +65,9 @@ export default function Address() {
   }, [orderList])
 
   const historyList = useMemo(() => {
-    return orderList || []
+    if (!orderList) return []
+
+    return orderList
   }, [orderList])
 
   const filteredOrderList = useMemo(() => {
@@ -78,7 +80,25 @@ export default function Address() {
     }
 
     return historyList
-  }, [tab, positionList, historyList, page])
+  }, [tab, positionList, historyList])
+
+  const pageParams = useMemo(() => {
+    const perPage = 10
+    const count = Math.ceil(filteredOrderList.length / perPage)
+    const total = filteredOrderList.length
+
+    return {
+      count,
+      perPage,
+      total
+    }
+  }, [filteredOrderList])
+
+  const currentPageOrderList = useMemo(() => {
+    if (!filteredOrderList) return
+
+    return filteredOrderList.slice((page - 1) * pageParams.perPage, page * pageParams.perPage)
+  }, [page, pageParams, filteredOrderList])
 
   const totalAmount = useMemo(() => {
     return historyList
@@ -104,29 +124,11 @@ export default function Address() {
     }
   }, [positionList, totalAmount, AmountInProgress])
 
-  const pageParams = useMemo(() => {
-    const perPage = 10
-    const count = Math.ceil(filteredOrderList.length / perPage)
-    const total = filteredOrderList.length
-
-    return {
-      count,
-      perPage,
-      total
-    }
-  }, [filteredOrderList, page])
-
-  const currentPageOrderList = useMemo(() => {
-    if (!filteredOrderList) return
-
-    return filteredOrderList.slice((page - 1) * pageParams.perPage, page * pageParams.perPage)
-  }, [page, pageParams, filteredOrderList])
-
   const dataRows = useMemo(() => {
     if (!currentPageOrderList) return []
 
     return currentPageOrderList.map((order: OrderRecord) => {
-      const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+      const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
 
       const investAmount = +order.amount * +order.multiplier * multiplier
 

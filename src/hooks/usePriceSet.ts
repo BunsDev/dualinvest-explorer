@@ -8,6 +8,8 @@ export function usePrice(symbol: string | undefined, delay = 15000) {
     let isMounted = true
     const call = () => {
       if (symbol === 'USDT') {
+        setPrice('1')
+
         return new Promise(() => {
           return new Response(null, { status: 200, statusText: '' })
         })

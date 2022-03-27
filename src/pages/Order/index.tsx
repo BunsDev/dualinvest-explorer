@@ -19,6 +19,7 @@ import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
 import { getEtherscanLink } from 'utils'
+import PriceU from 'components/PriceU'
 
 const TableHeaderActive = [
   'Token',
@@ -58,8 +59,6 @@ export default function Order() {
 
     return orderList[0]
   }, [orderList])
-
-  const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
 
   const isActive = useMemo(() => {
     if (!order) return
@@ -104,6 +103,9 @@ export default function Order() {
   const dataRows = useMemo(() => {
     if (!order) return []
 
+    const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+    const investAmount = +order.amount * +order.multiplier * multiplier
+
     if (isActive) {
       return [
         [
@@ -113,7 +115,9 @@ export default function Order() {
             logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
             text={order.currency}
           />,
-          <Typography key={0}>{(+order.amount * +order.multiplier * multiplier).toFixed(2)} USDT</Typography>,
+          <Typography key={0}>
+            {investAmount.toFixed(2)} {order.investCurrency}
+          </Typography>,
           <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
           <Typography key={0} color="#31B047">
             {order.annualRor + '%'}
@@ -121,7 +125,7 @@ export default function Order() {
           <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
           <Typography key={0}>{order.strikePrice}</Typography>,
           <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-          <Typography key={0}>{order.returnedAmount}</Typography>,
+          <Typography key={0}>{(+order.returnedAmount * multiplier).toFixed(2)}</Typography>,
           <OrderStatusTag key={0} order={order} />
         ]
       ]
@@ -144,13 +148,15 @@ export default function Order() {
           {order.annualRor + '%'}
         </Typography>,
         <Typography key={0}>
-          {order.amount * order.multiplier} {order.investCurrency}/
-          <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
+          {investAmount} {order.investCurrency}/
+          <span style={{ opacity: 0.5, fontSize: 14 }}>
+            $<PriceU symbol={order.investCurrency} amount={investAmount} /> USDT
+          </span>
         </Typography>,
         <OrderStatusTag key={0} order={order} />
       ]
     ]
-  }, [order, isActive, theme, multiplier])
+  }, [order, isActive, theme])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
