@@ -61,15 +61,15 @@ export default function Home() {
     }
 
     if (searchOption === SearchOptions.Address) {
-      history.push(routes.explorerAddress.replace(':address', search))
+      history.push(routes.explorerAddress.replace(':address', `${search}?chainId=${chain?.id}`))
     }
 
     if (searchOption === SearchOptions.Order) {
-      history.push(routes.explorerOrder.replace(':orderId', search))
+      history.push(routes.explorerOrder.replace(':orderId', `${search}?chainId=${chain?.id}`))
     }
 
     if (searchOption === SearchOptions.Product) {
-      history.push(routes.explorerProduct.replace(':productId', search))
+      history.push(routes.explorerProduct.replace(':productId', `${search}?chainId=${chain?.id}`))
     }
   }, [search, searchOption, history])
 
