@@ -6,7 +6,6 @@ import NoDataCard from 'components/Card/NoDataCard'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import BSCUrl from 'assets/svg/bsc_logo.svg'
 import LogoText from 'components/LogoText'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
@@ -21,6 +20,7 @@ import Tag from 'components/Tag'
 import { routes } from 'constants/routes'
 import Pagination from 'components/Pagination'
 import { usePriceForAll } from 'hooks/usePriceSet'
+import { ChainListMap } from 'constants/chain'
 
 enum TableOptions {
   Positions,
@@ -56,6 +56,11 @@ export default function Address() {
   useEffect(() => {
     setPage(1)
   }, [tab])
+
+  const chainIds = useMemo(() => {
+    const chainIds = orderList?.map(order => order.chainId) || []
+    return [...new Set(chainIds)]
+  }, [orderList])
 
   const indexPrices = usePriceForAll()
 
@@ -236,19 +241,28 @@ export default function Address() {
               </Typography>
             </Box>
           </Box>
-
-          <Box
-            sx={{
-              width: '96px',
-              height: '40px',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '10px',
-              marginLeft: 'auto'
-            }}
-            display="flex"
-            justifyContent={'space-evenly'}
-          >
-            <LogoText logo={BSCUrl} text={'BSC'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+          <Box sx={{ display: 'flex', gap: 12, marginLeft: 'auto' }}>
+            {chainIds.map(chainId => (
+              <Box
+                key={chainId}
+                sx={{
+                  width: '96px',
+                  height: '40px',
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  borderRadius: '10px'
+                }}
+                display="flex"
+                justifyContent={'space-evenly'}
+              >
+                <LogoText
+                  logo={ChainListMap[chainId].logo}
+                  text={ChainListMap[chainId].symbol}
+                  gapSize={'8px'}
+                  fontSize={14}
+                  opacity={'0.5'}
+                />
+              </Box>
+            ))}
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
