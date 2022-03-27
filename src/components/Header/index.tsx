@@ -181,12 +181,8 @@ export default function Header() {
                           >
                             <ExternalLink
                               href={sub.link}
-                              className={'link'}
-                              color="#00000050"
                               sx={{
-                                '&:hover': {
-                                  color: '#232323!important'
-                                }
+                                color: '#000000'
                               }}
                             >
                               {sub.titleContent ?? sub.title}

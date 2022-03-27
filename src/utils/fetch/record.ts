@@ -1,5 +1,5 @@
 import { INVEST_TYPE } from 'hooks/useOrderData'
-//import { ChainId } from 'constants/chain'
+import { ChainId } from 'constants/chain'
 
 
 export interface OrderRecord {
@@ -11,9 +11,7 @@ export interface OrderRecord {
   currency: string
   deliveryPrice: string
   earn: string
-  chainId: number
   expiredAt: number
-  hash: string
   indexPrice: string
   investStatus: number
   investCurrency: string
@@ -31,4 +29,6 @@ export interface OrderRecord {
   ts: number
   type: string
   investType: INVEST_TYPE
+  chainId: ChainId
+  hash: string
 }
