@@ -5,7 +5,6 @@ import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import BSCUrl from 'assets/svg/bsc_logo.svg'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -20,6 +19,7 @@ import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
 import { getEtherscanLink } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
+import { ChainListMap } from 'constants/chain'
 
 const TableHeaderActive = [
   'Token',
@@ -227,7 +227,13 @@ export default function Order() {
             display="flex"
             justifyContent={'space-evenly'}
           >
-            <LogoText logo={BSCUrl} text={'BSC'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+            <LogoText
+              logo={order ? ChainListMap[order?.chainId].logo : ''}
+              text={order && ChainListMap[order?.chainId].symbol}
+              gapSize={'8px'}
+              fontSize={14}
+              opacity={'0.5'}
+            />
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
