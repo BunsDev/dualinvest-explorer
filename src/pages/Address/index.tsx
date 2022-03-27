@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
@@ -20,7 +20,7 @@ import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { routes } from 'constants/routes'
 import Pagination from 'components/Pagination'
-import PriceU from 'components/PriceU'
+import { usePriceForAll } from 'hooks/usePriceSet'
 
 enum TableOptions {
   Positions,
@@ -57,6 +57,8 @@ export default function Address() {
     setPage(1)
   }, [tab])
 
+  const indexPrices = usePriceForAll()
+
   const positionList = useMemo(() => {
     if (!orderList) return []
     return orderList.filter((order: OrderRecord) =>
@@ -83,7 +85,7 @@ export default function Address() {
   }, [tab, positionList, historyList])
 
   const pageParams = useMemo(() => {
-    const perPage = 10
+    const perPage = 8
     const count = Math.ceil(filteredOrderList.length / perPage)
     const total = filteredOrderList.length
 
@@ -100,29 +102,34 @@ export default function Address() {
     return filteredOrderList.slice((page - 1) * pageParams.perPage, page * pageParams.perPage)
   }, [page, pageParams, filteredOrderList])
 
-  const totalAmount = useMemo(() => {
-    return historyList
-      .map((order: OrderRecord) => +order.amount)
-      .reduce(function(acc: number, val: number) {
-        return acc + val
-      }, 0)
-  }, [historyList])
+  const calcAmount = useCallback(
+    orders => {
+      return orders
+        .map((order: OrderRecord) => {
+          const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
 
-  const AmountInProgress = useMemo(() => {
-    return positionList
-      .map((order: OrderRecord) => +order.amount)
-      .reduce(function(acc: number, val: number) {
-        return acc + val
-      }, 0)
-  }, [positionList])
+          return (
+            +order.amount *
+            +order.multiplier *
+            multiplier *
+            +indexPrices[order.investCurrency as keyof typeof indexPrices]
+          )
+        })
+        .reduce(function(acc: number, val: number) {
+          return acc + val
+        }, 0)
+        .toFixed(2)
+    },
+    [indexPrices]
+  )
 
   const data = useMemo(() => {
     return {
-      ['Total Invest Amount:']: `${totalAmount} USDT`,
-      ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
+      ['Total Invest Amount:']: `${calcAmount(historyList)} USDT`,
+      ['Amount of Investing in Progress:']: `${calcAmount(positionList)} USDT`,
       ['Positions:']: positionList?.length || 0
     }
-  }, [positionList, totalAmount, AmountInProgress])
+  }, [positionList, historyList, calcAmount])
 
   const dataRows = useMemo(() => {
     if (!currentPageOrderList) return []
@@ -131,6 +138,10 @@ export default function Address() {
       const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
 
       const investAmount = +order.amount * +order.multiplier * multiplier
+
+      const amountU = order.investCurrency
+        ? (investAmount * indexPrices[order.investCurrency as keyof typeof indexPrices]).toFixed(2)
+        : ''
 
       return [
         <Typography key={0}>
@@ -162,15 +173,13 @@ export default function Address() {
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
             {investAmount.toFixed(2)} {order.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>
-              $<PriceU symbol={order.investCurrency} amount={investAmount} /> USDT
-            </span>
+            <span style={{ opacity: 0.5, fontSize: 14 }}>${amountU} USDT</span>
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [currentPageOrderList, theme])
+  }, [currentPageOrderList, theme, indexPrices])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']

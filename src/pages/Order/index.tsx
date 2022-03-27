@@ -19,7 +19,7 @@ import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
 import { getEtherscanLink } from 'utils'
-import PriceU from 'components/PriceU'
+import { usePrice } from 'hooks/usePriceSet'
 
 const TableHeaderActive = [
   'Token',
@@ -59,6 +59,8 @@ export default function Order() {
 
     return orderList[0]
   }, [orderList])
+
+  const price = usePrice(order?.investCurrency)
 
   const isActive = useMemo(() => {
     if (!order) return
@@ -155,7 +157,7 @@ export default function Order() {
         <Typography key={0}>
           {investAmount} {order.investCurrency}/
           <span style={{ opacity: 0.5, fontSize: 14 }}>
-            $<PriceU symbol={order.investCurrency} amount={investAmount} /> USDT
+            ${(price ? investAmount * +price : investAmount).toFixed(2)} USDT
           </span>
         </Typography>,
         <OrderStatusTag key={0} order={order} />
