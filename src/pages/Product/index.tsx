@@ -3,8 +3,6 @@ import Card from 'components/Card'
 import { NavLink, useParams } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import BSCUrl from 'assets/svg/binance.svg'
-import AVAXUrl from 'assets/svg/avax_logo.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
@@ -20,6 +18,7 @@ import { INVEST_TYPE /* useOrderRecords*/ } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
 import NoDataCard from 'components/Card/NoDataCard'
 import PaginationView from 'components/Pagination'
+import { SUPPORTED_CHAINS } from 'constants/chain'
 
 enum TableOptions {
   Details,
@@ -89,15 +88,13 @@ export default function Page() {
 
   const detailsDataRows = useMemo(() => {
     if (!product) return []
-
-    console.log(product?.currency)
-
+    console.log(product.currency)
     return [
       [
         <LogoText
           key={0}
           gapSize={'8px'}
-          logo={product ? SUPPORTED_CURRENCIES[product.currency].logoUrl : ''}
+          logo={product ? SUPPORTED_CURRENCIES[product.currency].logoUrl : '?'}
           text={`${product?.currency ?? '-'}`}
         />,
         <Typography key={0} color="#31B047">
@@ -139,7 +136,7 @@ export default function Page() {
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           {order.orderId}
         </TextButton>,
-        <LogoText key={0} logo={SUPPORTED_CURRENCIES['BTC'].logoUrl} text={order.investCurrency} />,
+        <LogoText key={0} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.investCurrency} />,
         <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {(order.annualRor * 100).toFixed(2) + '%'}
@@ -160,6 +157,7 @@ export default function Page() {
   const tableTabs = useMemo(() => {
     return ['Details', 'Orders']
   }, [])
+
   if (!product)
     return (
       <Box
@@ -260,8 +258,8 @@ export default function Page() {
             justifyContent={'space-evenly'}
           >
             <LogoText
-              logo={product?.chain == 'BSC' ? BSCUrl : AVAXUrl}
-              text={product?.chain == 'BSC' ? 'BNB' : 'AVAX'}
+              logo={product ? SUPPORTED_CHAINS[product.chain].logo : '?'}
+              text={product ? SUPPORTED_CHAINS[product.chain].symbol : '?'}
               gapSize={'8px'}
               fontSize={14}
               opacity={'0.5'}

@@ -1,8 +1,8 @@
 //import { NETWORK_CHAIN_ID } from 'constants/chain'
-import { useEffect, useMemo, useState } from 'react'
-import { Axios } from 'utils/axios'
+import { useEffect, /* useMemo */ useState } from 'react'
+/* import { Axios } from 'utils/axios'
 import { Product, productFormatter } from 'utils/fetch/product'
-import { OrderRecord } from 'utils/fetch/record'
+import { OrderRecord } from 'utils/fetch/record' */
 import { useOrderRecords } from './useOrderData'
 import { useProduct } from './useProduct'
 const PER_PAGE = 8
@@ -13,7 +13,6 @@ export function useApproveProduct(productId: string, page: number) {
     pageNum: page,
     pageSize: PER_PAGE
   })
-  const product = useProduct(chainId, productId)
 
   useEffect(() => {
     if (orderList && orderList.length > 0) {
@@ -23,10 +22,12 @@ export function useApproveProduct(productId: string, page: number) {
     }
   }, [orderList])
 
+  const product = useProduct(chainId, productId)
+
   return { product: chainId ? product : undefined, orderList, pageParams }
 }
 
-export function useApproveProduct2(productId: string, page: number) {
+/* export function useApproveProduct2(productId: string, page: number) {
   const [orderList, setOrderList] = useState<OrderRecord[] | undefined | null>(undefined)
   const [product, setProduct] = useState<Product | undefined | null>(undefined)
 
@@ -54,4 +55,4 @@ export function useApproveProduct2(productId: string, page: number) {
   return useMemo(() => {
     return { product, orderList, pageParams: { count: 2, perPage: PER_PAGE, total: 5 } }
   }, [orderList, product])
-}
+} */
