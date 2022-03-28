@@ -42,7 +42,6 @@ const TableHeader = [
   'Order ID',
   'Token',
   'Exercise',
-  'APY',
   'Amount of Investing in Progress',
   'Status'
 ]
@@ -86,6 +85,7 @@ export default function Home() {
 
   const dataRows = useMemo(() => {
     return products.map((product: TopProduct) => {
+      const multiplier = product.type === 'CALL' ? 1 : +product.strikePrice
       return [
         <ExternalLink
           key={0}
@@ -117,13 +117,10 @@ export default function Home() {
           logo={SUPPORTED_CURRENCIES[product.investCurrency]?.logoUrl}
           text={product.investCurrency}
         />,
-        <Typography key={0}>-</Typography>,
-        <Typography key={0} color="#31B047">
-          -%
-        </Typography>,
+        <Typography key={0}>{product.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+product.amountRaw).toFixed(2)} {product.investCurrency}/
+            {(+product * multiplier).toFixed(2)} {product.investCurrency}/
             <span style={{ opacity: 0.5, fontSize: 14 }}>${(+product.amountU).toFixed(2)} USDT</span>
           </Typography>
         </Box>,
