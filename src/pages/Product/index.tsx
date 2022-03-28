@@ -88,7 +88,7 @@ export default function Page() {
 
   const detailsDataRows = useMemo(() => {
     if (!product) return []
-    console.log(product.currency)
+
     return [
       [
         <LogoText
