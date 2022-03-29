@@ -120,7 +120,7 @@ export default function Home() {
         <Typography key={0}>{product.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+product * multiplier).toFixed(2)} {product.investCurrency}/
+            {(+product.amountRaw * multiplier).toFixed(2)} {product.investCurrency}/
             <span style={{ opacity: 0.5, fontSize: 14 }}>${(+product.amountU).toFixed(2)} USDT</span>
           </Typography>
         </Box>,
