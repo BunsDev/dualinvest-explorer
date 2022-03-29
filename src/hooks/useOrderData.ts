@@ -27,7 +27,7 @@ export function useOrderRecords({
   pageNum,
   pageSize
 }: {
-  investType: INVEST_TYPE
+  investType?: INVEST_TYPE | undefined
   address?: string
   orderId?: string
   productId?: string

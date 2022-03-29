@@ -4,6 +4,7 @@ import UsdtLogo from 'assets/svg/usdt_logo.svg'
 import EthLogo from 'assets/svg/eth_logo.svg'
 import MatterLogo from 'assets/svg/antimatter_circle_black.svg'
 import BSCLogo from 'assets/svg/binance.svg'
+import AVAXLogo from 'assets/svg/avax.svg'
 import { IS_TEST_NET } from './chain'
 
 export const SYMBOL_MAP = {
@@ -82,6 +83,16 @@ export const SUPPORTED_CURRENCIES: {
     name: 'Wrapped BNB',
     logoUrl: BSCLogo,
     color: '#F3BA2F'
+  },
+  AVAX: {
+    address: IS_TEST_NET
+      ? '0xA4560E8B4694B437d77452eBc2dE179AAA1137C3'
+      : 'FvwEAhmxKfeiG8SnEvq42hc6whRyY3EFYAvebMqDNDGCgxN5Z',
+    decimals: 18,
+    symbol: 'AVAX',
+    name: 'Avalanche',
+    logoUrl: AVAXLogo,
+    color: '#E84142'
   }
 }
 
