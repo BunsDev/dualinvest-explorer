@@ -2,9 +2,6 @@ import { useMemo, useCallback } from 'react'
 import { useParams, Link, useHistory, useLocation } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
-import { NavLink } from 'react-router-dom'
-import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
-import useBreakpoint from 'hooks/useBreakpoint'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -21,6 +18,7 @@ import { getEtherscanLink } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import GoBack from 'components/GoBack'
 
 const TableHeaderActive = [
   'Token',
@@ -45,7 +43,6 @@ const TableHeaderInActive = [
 
 export default function Order() {
   const theme = useTheme()
-  const isDownMd = useBreakpoint('md')
   const { orderId } = useParams<{ orderId: string }>()
   const history = useHistory()
 
@@ -202,25 +199,7 @@ export default function Order() {
       justifyItems="center"
       padding={{ xs: '24px 20px', md: 0 }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          background: isDownMd ? theme.palette.background.default : theme.palette.background.paper,
-          padding: isDownMd ? '0 0 28px 0' : '27px 0'
-        }}
-      >
-        <Box maxWidth={theme.width.maxContent} width="100%">
-          <NavLink to={'/account'} style={{ textDecoration: 'none' }}>
-            <ArrowLeft />
-            <Typography component="span" color={theme.bgColor.bg1} fontSize={{ xs: 12, md: 14 }} ml={16}>
-              Go Back
-            </Typography>
-          </NavLink>
-        </Box>
-      </Box>
+      <GoBack backLink="/explorer" />
       <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
