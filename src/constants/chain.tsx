@@ -22,35 +22,32 @@ export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
 
 export const IS_TEST_NET = !!(NETWORK_CHAIN_ID === ChainId.ROPSTEN)
 
+export const SUPPORTED_CHAINS: {
+  [key: string]: {
+    icon: JSX.Element
+    logo: string
+    symbol: string
+    name: string
+    id: number
+    hex: string
+  }
+} = {
+  BSC: {
+    icon: <BSC height={20} width={20} />,
+    logo: BSCUrl,
+    symbol: 'BNB',
+    name: 'Binance Smart Chain',
+    id: ChainId.BSC,
+    hex: '0x38'
+  },
+  AVAX: { icon: <AVAX />, logo: AVAXUrl, symbol: 'AVAX', name: 'Avalanche', id: ChainId.AVAX, hex: '0xA86A' }
+}
+
 export const ChainList = [
-  // {
-  //   icon: <ETH />,
-  //   logo: EthUrl,
-  //   symbol: 'Ropsten',
-  //   name: 'Ropsten Test Network',
-  //   id: ChainId.ROPSTEN,
-  //   hex: '0x3'
-  // },
-  // {
-  //   icon: <ETH />,
-  //   logo: EthUrl,
-  //   symbol: 'Rinkeby',
-  //   name: 'Rinkeby Testnet',
-  //   id: ChainId.RINKEBY,
-  //   hex: '0x4'
-  // },
-  // {
-  //   icon: <ETH />,
-  //   logo: EthUrl,
-  //   symbol: 'Kovan',
-  //   name: 'Kovan Testnet',
-  //   id: ChainId.KOVAN,
-  //   hex: '0x2a'
-  // },
   {
     icon: <BSC height={20} width={20} />,
     logo: BSCUrl,
-    symbol: 'BSC',
+    symbol: 'BNB',
     name: 'Binance Smart Chain',
     id: ChainId.BSC,
     hex: '0x38'

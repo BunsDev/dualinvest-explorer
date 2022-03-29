@@ -3,19 +3,22 @@ import Card from 'components/Card'
 import { NavLink, useParams } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
 import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import { useProduct } from 'hooks/useProduct'
+//import { useProduct } from 'hooks/useProduct'
+import { useApproveProduct } from 'hooks/useApproveProduct'
 import Button from 'components/Button/Button'
 import TextButton from 'components/Button/TextButton'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
-import { INVEST_TYPE, useOrderRecords } from 'hooks/useOrderData'
+import { INVEST_TYPE /* useOrderRecords*/ } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
+import NoDataCard from 'components/Card/NoDataCard'
+import PaginationView from 'components/Pagination'
+import { SUPPORTED_CHAINS } from 'constants/chain'
 
 enum TableOptions {
   Details,
@@ -35,22 +38,13 @@ const OrdersTableHeader = [
 
 const DetailsTableHeader = ['Token', 'APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
 
-export default function Order() {
+export default function Page() {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
+  const [page, setPage] = useState(1)
   const [tab, setTab] = useState(TableOptions.Details)
-  //const id = '2064'
   const { productId } = useParams<{ productId: string }>()
-  //const productList = useProductList()
-  const product = useProduct(productId)
-
-  const { orderList } = useOrderRecords({
-    //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
-    // investType: product?.isRecur ? INVEST_TYPE.recur : INVEST_TYPE.dualInvest,
-    productId: productId,
-    pageNum: 1,
-    pageSize: 999999
-  })
+  const { product, orderList, pageParams } = useApproveProduct(productId, page)
 
   const data = useMemo(() => {
     if (!orderList) return
@@ -83,12 +77,14 @@ export default function Order() {
   }, [productId])
 
   const detailsDataRows = useMemo(() => {
+    if (!product) return []
+
     return [
       [
         <LogoText
           key={0}
           gapSize={'8px'}
-          logo={product ? SUPPORTED_CURRENCIES[product?.currency].logoUrl : ''}
+          logo={product ? SUPPORTED_CURRENCIES[product.currency].logoUrl : '?'}
           text={`${product?.currency ?? '-'}`}
         />,
         <Typography key={0} color="#31B047">
@@ -130,7 +126,7 @@ export default function Order() {
         <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
           {order.orderId}
         </TextButton>,
-        <LogoText key={0} logo={SUPPORTED_CURRENCIES['BTC'].logoUrl} text={order.investCurrency} />,
+        <LogoText key={0} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.investCurrency} />,
         <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {(order.annualRor * 100).toFixed(2) + '%'}
@@ -152,6 +148,49 @@ export default function Order() {
     return ['Details', 'Orders']
   }, [])
 
+  if (!product)
+    return (
+      <Box
+        display="grid"
+        width="100%"
+        alignContent="flex-start"
+        marginBottom="auto"
+        justifyItems="center"
+        gap={40}
+        padding={{ xs: '24px 20px', md: 0 }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            background: isDownMd ? theme.palette.background.default : theme.palette.background.paper,
+            padding: isDownMd ? '0 0 28px 0' : '27px 20px'
+          }}
+        >
+          <Box maxWidth={theme.width.maxContent} width="100%">
+            <NavLink to={'/account'} style={{ textDecoration: 'none' }}>
+              <ArrowLeft />
+              <Typography component="span" color={theme.bgColor.bg1} fontSize={{ xs: 12, md: 14 }} ml={16}>
+                Go Back
+              </Typography>
+            </NavLink>
+          </Box>
+        </Box>
+
+        <NoDataCard>
+          <Box display="flex" flexDirection="column">
+            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+              Product ID
+            </Typography>
+            <Typography fontWeight={'700'} fontSize={'24px'}>
+              #{productId}
+            </Typography>
+          </Box>
+        </NoDataCard>
+      </Box>
+    )
   return (
     <Box
       display="grid"
@@ -208,7 +247,13 @@ export default function Order() {
             display="flex"
             justifyContent={'space-evenly'}
           >
-            <LogoText logo={BSCUrl} text={'BNB'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+            <LogoText
+              logo={product ? SUPPORTED_CHAINS[product.chain].logo : '?'}
+              text={product ? SUPPORTED_CHAINS[product.chain].symbol : '?'}
+              gapSize={'8px'}
+              fontSize={14}
+              opacity={'0.5'}
+            />
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
@@ -243,6 +288,16 @@ export default function Order() {
             header={tab === TableOptions.Details ? DetailsTableHeader : OrdersTableHeader}
             rows={tab === TableOptions.Details ? detailsDataRows : ordersDataRows}
           />
+          {tab !== TableOptions.Details && (
+            <PaginationView
+              count={pageParams?.count}
+              page={page}
+              perPage={pageParams?.perPage}
+              boundaryCount={0}
+              total={pageParams?.total}
+              onChange={(event, value) => setPage(value)}
+            />
+          )}
         </Box>
       </Card>
 
