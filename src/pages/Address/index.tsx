@@ -2,9 +2,6 @@ import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import NoDataCard from 'components/Card/NoDataCard'
-import { NavLink } from 'react-router-dom'
-import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
-import useBreakpoint from 'hooks/useBreakpoint'
 import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
@@ -19,6 +16,7 @@ import { OrderRecord } from 'utils/fetch/record'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { routes } from 'constants/routes'
+import GoBack from 'components/GoBack'
 
 enum TableOptions {
   Positions,
@@ -38,7 +36,6 @@ const TableHeader = [
 
 export default function Address() {
   const theme = useTheme()
-  const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Positions)
 
   const { address } = useParams<{ address: string }>()
@@ -147,6 +144,32 @@ export default function Address() {
     return ['Positions', 'History']
   }, [])
 
+  if (!isAddress(address)) {
+    return (
+      <Box
+        display="grid"
+        width="100%"
+        alignContent="flex-start"
+        marginBottom="auto"
+        justifyItems="center"
+        gap={40}
+        padding={{ xs: '24px 20px', md: 0 }}
+      >
+        <GoBack backLink="/explorer" />
+        <NoDataCard>
+          <Box display="flex" flexDirection="column">
+            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+              Address
+            </Typography>
+            <Typography fontWeight={'700'} fontSize={'24px'}>
+              &apos;{address}&apos; is not a valid address
+            </Typography>
+          </Box>
+        </NoDataCard>
+      </Box>
+    )
+  }
+
   return (
     <Box
       display="grid"
@@ -156,25 +179,7 @@ export default function Address() {
       justifyItems="center"
       padding={{ xs: '24px 20px', md: 0 }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          background: isDownMd ? theme.palette.background.default : theme.palette.background.paper,
-          padding: isDownMd ? '0 0 28px 0' : '27px 0'
-        }}
-      >
-        <Box maxWidth={theme.width.maxContent} width="100%">
-          <NavLink to={'/account'} style={{ textDecoration: 'none' }}>
-            <ArrowLeft />
-            <Typography component="span" color={theme.bgColor.bg1} fontSize={{ xs: 12, md: 14 }} ml={16}>
-              Go Back
-            </Typography>
-          </NavLink>
-        </Box>
-      </Box>
+      <GoBack backLink="/explorer" />
       <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
@@ -194,11 +199,10 @@ export default function Address() {
                 Address
               </Typography>
               <Typography fontWeight={'700'} fontSize={'24px'}>
-                {isAddress(address) ? shortenAddress(address) : 'Not Valid Address'}
+                {shortenAddress(address)}
               </Typography>
             </Box>
           </Box>
-
           <Box
             sx={{
               width: '96px',
