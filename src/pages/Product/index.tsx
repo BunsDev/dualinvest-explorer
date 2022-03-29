@@ -1,7 +1,6 @@
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
-import { NavLink, useParams } from 'react-router-dom'
-import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
+import { useParams } from 'react-router-dom'
 import useBreakpoint from 'hooks/useBreakpoint'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
@@ -19,6 +18,8 @@ import { OrderRecord } from 'utils/fetch/record'
 import NoDataCard from 'components/Card/NoDataCard'
 import PaginationView from 'components/Pagination'
 import { SUPPORTED_CHAINS } from 'constants/chain'
+import Tag from 'components/Tag'
+import GoBack from 'components/GoBack'
 
 enum TableOptions {
   Details,
@@ -66,7 +67,11 @@ export default function Page() {
     const totalInvestAmount = sum
 
     return {
-      ['Type:']: product?.isRecur ? 'Recurring Strategy' : !product?.isRecur ? 'Dual Investment' : '-',
+      ['Type:']: (
+        <Box display="flex" gap={12} alignItems="center">
+          <Tag text={product?.isRecur ? 'Recurring Strategy' : 'Dual Investment'} />
+        </Box>
+      ),
       ['Total Invest Amount:']: totalInvestAmount.toFixed(2) + ' USDT',
       ['Positions:']: positions
     }
@@ -159,26 +164,7 @@ export default function Page() {
         gap={40}
         padding={{ xs: '24px 20px', md: 0 }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            background: isDownMd ? theme.palette.background.default : theme.palette.background.paper,
-            padding: isDownMd ? '0 0 28px 0' : '27px 20px'
-          }}
-        >
-          <Box maxWidth={theme.width.maxContent} width="100%">
-            <NavLink to={'/account'} style={{ textDecoration: 'none' }}>
-              <ArrowLeft />
-              <Typography component="span" color={theme.bgColor.bg1} fontSize={{ xs: 12, md: 14 }} ml={16}>
-                Go Back
-              </Typography>
-            </NavLink>
-          </Box>
-        </Box>
-
+        <GoBack backLink="/explorer" />
         <NoDataCard>
           <Box display="flex" flexDirection="column">
             <Typography sx={{ opacity: '0.5' }} fontSize={16}>
@@ -200,25 +186,7 @@ export default function Page() {
       justifyItems="center"
       padding={{ xs: '24px 20px', md: 0 }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          background: isDownMd ? theme.palette.background.default : theme.palette.background.paper,
-          padding: isDownMd ? '0 0 28px 0' : '27px 0'
-        }}
-      >
-        <Box maxWidth={theme.width.maxContent} width="100%">
-          <NavLink to={'/account'} style={{ textDecoration: 'none' }}>
-            <ArrowLeft />
-            <Typography component="span" color={theme.bgColor.bg1} fontSize={{ xs: 12, md: 14 }} ml={16}>
-              Go Back
-            </Typography>
-          </NavLink>
-        </Box>
-      </Box>
+      <GoBack backLink="/account" />
       <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
@@ -264,12 +232,12 @@ export default function Page() {
 
             {data &&
               Object.keys(data).map((key, idx) => (
-                <Box key={idx} display="flex" justifyContent={'flex-start'}>
+                <Box key={idx} display="flex" justifyContent={'flex-start'} alignItems={'center'}>
                   <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
                     {key}
                   </Typography>
 
-                  <Typography fontWeight={400} fontSize={16}>
+                  <Typography component="div" fontWeight={400} fontSize={16}>
                     {data[key as keyof typeof data]}
                   </Typography>
                 </Box>
