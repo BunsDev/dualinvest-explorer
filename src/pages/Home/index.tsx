@@ -70,7 +70,7 @@ export default function Home() {
     if (searchOption === SearchOptions.Product) {
       history.push(routes.explorerProduct.replace(':productId', `${search}?chainId=${chain?.id}`))
     }
-  }, [search, searchOption, history])
+  }, [search, searchOption, history, chain])
 
   const selectedChainId = useMemo(() => {
     if (tab === ChainOptions.AVAX) {

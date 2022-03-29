@@ -79,7 +79,7 @@ export default function Address() {
     return orderList.filter((order: OrderRecord) =>
       [InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)
     )
-  }, [orderList, chainId])
+  }, [orderList])
 
   const historyList = useMemo(() => {
     if (!orderList) return []

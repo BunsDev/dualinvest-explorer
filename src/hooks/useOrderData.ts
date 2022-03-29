@@ -50,7 +50,7 @@ export function useOrderRecords({
       productId,
       chainId
     })
-  }, [pageNum, pageSize, address, orderId, productId])
+  }, [pageNum, pageSize, address, orderId, productId, chainId])
 
   const callbackFn = useCallback(r => {
     setOrderList(r.data.data.records)
