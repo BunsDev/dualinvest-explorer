@@ -26,33 +26,3 @@ export function useApproveProduct(productId: string, page: number) {
 
   return { product: chainId ? product : undefined, orderList, pageParams }
 }
-
-/* export function useApproveProduct2(productId: string, page: number) {
-  const [orderList, setOrderList] = useState<OrderRecord[] | undefined | null>(undefined)
-  const [product, setProduct] = useState<Product | undefined | null>(undefined)
-
-  useEffect(() => {
-    ;(async () => {
-      const orderList = await Axios.get<{ records: OrderRecord[]; pages: string; size: string; total: string }>(
-        'getOrderRecord',
-        {
-          productId
-        }
-      )
-      const orders = orderList?.data?.data?.records
-      if (!orders || orders.length === 0) {
-        setProduct(null)
-        setOrderList(null)
-        return
-      }
-      setOrderList(orders)
-
-      const product = await Axios.get('getProducts', { productId: orders[0].productId, chainId: orders[0].chainId })
-      setProduct(productFormatter(product.data.data))
-    })()
-  }, [productId])
-
-  return useMemo(() => {
-    return { product, orderList, pageParams: { count: 2, perPage: PER_PAGE, total: 5 } }
-  }, [orderList, product])
-} */

@@ -43,18 +43,8 @@ export default function Page() {
   const isDownMd = useBreakpoint('md')
   const [page, setPage] = useState(1)
   const [tab, setTab] = useState(TableOptions.Details)
-  //const id = '2064'
   const { productId } = useParams<{ productId: string }>()
-  //const productList = useProductList()
   const { product, orderList, pageParams } = useApproveProduct(productId, page)
-
-  // const { orderList } = useOrderRecords({
-  //   //investType: product?.type == 'CALL' ? INVEST_TYPE.dualInvest : INVEST_TYPE.recur,
-  //   investType: INVEST_TYPE.DO_NOT_USE_THIS,
-  //   productId: productId,
-  //   pageNum: 1,
-  //   pageSize: 999999
-  // })
 
   const data = useMemo(() => {
     if (!orderList) return

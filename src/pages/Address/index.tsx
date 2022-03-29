@@ -46,7 +46,6 @@ export default function Address() {
   // const [page, setPage] = useState(1)
 
   const { orderList } = useOrderRecords({
-    investType: INVEST_TYPE.recur,
     address,
     pageNum: 1,
     pageSize: 999999

@@ -44,30 +44,6 @@ export const SUPPORTED_CHAINS: {
 }
 
 export const ChainList = [
-  // {
-  //   icon: <ETH />,
-  //   logo: EthUrl,
-  //   symbol: 'Ropsten',
-  //   name: 'Ropsten Test Network',
-  //   id: ChainId.ROPSTEN,
-  //   hex: '0x3'
-  // },
-  // {
-  //   icon: <ETH />,
-  //   logo: EthUrl,
-  //   symbol: 'Rinkeby',
-  //   name: 'Rinkeby Testnet',
-  //   id: ChainId.RINKEBY,
-  //   hex: '0x4'
-  // },
-  // {
-  //   icon: <ETH />,
-  //   logo: EthUrl,
-  //   symbol: 'Kovan',
-  //   name: 'Kovan Testnet',
-  //   id: ChainId.KOVAN,
-  //   hex: '0x2a'
-  // },
   {
     icon: <BSC height={20} width={20} />,
     logo: BSCUrl,
