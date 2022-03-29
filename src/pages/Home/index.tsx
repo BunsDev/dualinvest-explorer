@@ -4,12 +4,12 @@ import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
 import ChainSelect from 'components/Select/ChainSelect'
-import { ChainList } from 'constants/chain'
+import { ChainList, ChainId } from 'constants/chain'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import Table from 'components/Table'
 import LogoText from 'components/LogoText'
-import BNBLogo from 'assets/svg/binance.svg'
+import BSCLogo from 'assets/svg/bsc_logo.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
@@ -21,6 +21,9 @@ import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import { useStatistical } from 'hooks/useStatistical'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import NoDataCard from 'components/Card/NoDataCard'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { ExternalLink } from 'theme/components'
 
 enum SearchOptions {
   Address = 'Address',
@@ -29,7 +32,7 @@ enum SearchOptions {
 }
 
 enum ChainOptions {
-  BNB,
+  BSC,
   AVAX
 }
 
@@ -39,14 +42,13 @@ const TableHeader = [
   'Order ID',
   'Token',
   'Exercise',
-  'APY',
   'Amount of Investing in Progress',
   'Status'
 ]
 
 export default function Home() {
   const theme = useTheme()
-  const [tab, setTab] = useState(ChainOptions.BNB)
+  const [tab, setTab] = useState(ChainOptions.BSC)
   const [chain, setChain] = useState<Chain | null>(ChainList[0])
   const [searchOption, setSearchOption] = useState(SearchOptions.Address)
   const [search, setSearch] = useState('')
@@ -58,29 +60,41 @@ export default function Home() {
     }
 
     if (searchOption === SearchOptions.Address) {
-      history.push(routes.explorerAddress.replace(':address', search))
+      history.push(routes.explorerAddress.replace(':address', `${search}?chainId=${chain?.id}`))
     }
 
     if (searchOption === SearchOptions.Order) {
-      history.push(routes.explorerOrder.replace(':orderId', search))
+      history.push(routes.explorerOrder.replace(':orderId', `${search}?chainId=${chain?.id}`))
     }
 
     if (searchOption === SearchOptions.Product) {
-      history.push(routes.explorerProduct.replace(':productId', search))
+      history.push(routes.explorerProduct.replace(':productId', `${search}?chainId=${chain?.id}`))
     }
   }, [search, searchOption, history])
 
-  const products = useTopProducts()
+  const selectedChainId = useMemo(() => {
+    if (tab === ChainOptions.AVAX) {
+      return ChainId.AVAX
+    }
+
+    return ChainId.BSC
+  }, [tab])
+
+  const products = useTopProducts(selectedChainId)
   const stat = useStatistical()
 
   const dataRows = useMemo(() => {
     return products.map((product: TopProduct) => {
+      const multiplier = product.type === 'CALL' ? 1 : +product.strikePrice
       return [
-        <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-            {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
-          </Link>
-        </Typography>,
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={product.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
+          {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+        </ExternalLink>,
         <Typography key={0}>
           <Link
             style={{ color: theme.palette.text.primary }}
@@ -90,8 +104,11 @@ export default function Home() {
           </Link>
         </Typography>,
         <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={routes.explorerOrder.replace(':orderId', 'XXX')}>
-            XXX
+          <Link
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerOrder.replace(':orderId', `${product.orderId}`)}
+          >
+            {product.orderId || '-'}
           </Link>
         </Typography>,
         <LogoText
@@ -100,24 +117,25 @@ export default function Home() {
           logo={SUPPORTED_CURRENCIES[product.investCurrency]?.logoUrl}
           text={product.investCurrency}
         />,
-        <Typography key={0}>XXX</Typography>,
-        <Typography key={0} color="#31B047">
-          XXX%
-        </Typography>,
+        <Typography key={0}>{product.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Box key={0} display="flex" alignItems="flex-end">
           <Typography>
-            {(+product.amount).toFixed(2)} {product.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>${product.amountU} USDT</span>
+            {(+product.amountRaw * multiplier).toFixed(2)} {product.investCurrency}/
+            <span style={{ opacity: 0.5, fontSize: 14 }}>${(+product.amountU).toFixed(2)} USDT</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type={'pending'} text={'Progressing'} />
+        <StatusTag
+          key={0}
+          type={+product.ts > Date.now() ? 'pending' : 'success'}
+          text={+product.ts > Date.now() ? 'Progressing' : 'Exercised'}
+        />
       ]
     })
   }, [products, theme])
 
   const tableTabs = useMemo(() => {
     return [
-      <LogoText key={0} logo={BNBLogo} text={'BNB Chain'} />,
+      <LogoText key={0} logo={BSCLogo} text={'BSC Chain'} />,
       <LogoText key={0} logo={AVAXLogo} text={'AVAX Chain'} />
     ]
   }, [])
@@ -201,7 +219,7 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={BNBLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BSCLogo} text={'BSC Chain'} gapSize={4} fontSize={12} size="16px" />
                   <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
@@ -258,9 +276,10 @@ export default function Home() {
             <Typography fontSize={24} fontWeight={700}>
               Top Products
             </Typography>
-            <LogoText logo={BNBLogo} size="28px" text="BNB" fontSize={20} />
+            <LogoText logo={BSCLogo} size="28px" text="BSC" fontSize={20} />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+          {products && products.length === 0 && <NoDataCard text={'No data'} />}
         </Card>
       </Container>
     </Box>

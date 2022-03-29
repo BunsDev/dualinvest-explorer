@@ -1,11 +1,10 @@
 import { useMemo, useCallback } from 'react'
-import { useParams, Link, useHistory } from 'react-router-dom'
+import { useParams, Link, useHistory, useLocation } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import { NavLink } from 'react-router-dom'
 import { ReactComponent as ArrowLeft } from 'assets/componentsIcon/arrow_left.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -19,6 +18,9 @@ import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
 import { getEtherscanLink } from 'utils'
+import { usePrice } from 'hooks/usePriceSet'
+import { ChainListMap } from 'constants/chain'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 
 const TableHeaderActive = [
   'Token',
@@ -47,11 +49,18 @@ export default function Order() {
   const { orderId } = useParams<{ orderId: string }>()
   const history = useHistory()
 
+  const { search } = useLocation()
+
+  const chainId = useMemo(() => {
+    const query = new URLSearchParams(search)
+    return query.get('chainId')
+  }, [search])
+
   const { orderList } = useOrderRecords({
-    investType: INVEST_TYPE.recur,
     orderId,
     pageNum: 1,
-    pageSize: 999999
+    pageSize: 999999,
+    chainId: chainId ?? undefined
   })
 
   const order = useMemo(() => {
@@ -60,7 +69,7 @@ export default function Order() {
     return orderList[0]
   }, [orderList])
 
-  const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+  const price = usePrice(order?.investCurrency)
 
   const isActive = useMemo(() => {
     if (!order) return
@@ -76,6 +85,9 @@ export default function Order() {
     if (!orderList || orderList.length === 0) return
 
     const order = orderList[0]
+
+    const hash = order.confirmOrderHash || order.hash
+    const link = order.chainId && hash && getEtherscanLink(order.chainId, order.hash, 'transaction')
 
     return {
       ['Settlement Price:']: order.strikePrice,
@@ -93,10 +105,12 @@ export default function Order() {
       ),
       ['TXID:']: (
         <Box display="flex" gap={8} alignItems="center">
-          {order.confirmOrderHash}
-          <ExternalLink href={getEtherscanLink(order.chainId, order.hash, 'transaction')}>
-            <ExternalIcon />
-          </ExternalLink>
+          {hash || 'N/A'}
+          {link && (
+            <ExternalLink href={link}>
+              <ExternalIcon />
+            </ExternalLink>
+          )}
         </Box>
       )
     }
@@ -104,6 +118,9 @@ export default function Order() {
 
   const dataRows = useMemo(() => {
     if (!order) return []
+
+    const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+    const investAmount = +order.amount * +order.multiplier * multiplier
 
     if (isActive) {
       return [
@@ -114,7 +131,9 @@ export default function Order() {
             logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
             text={order.currency}
           />,
-          <Typography key={0}>{(+order.amount * +order.multiplier * multiplier).toFixed(2)} USDT</Typography>,
+          <Typography key={0}>
+            {investAmount.toFixed(2)} {order.investCurrency}
+          </Typography>,
           <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
           <Typography key={0} color="#31B047">
             {order.annualRor + '%'}
@@ -122,7 +141,7 @@ export default function Order() {
           <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
           <Typography key={0}>{order.strikePrice}</Typography>,
           <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-          <Typography key={0}>{order.returnedAmount}</Typography>,
+          <Typography key={0}>{(+order.returnedAmount * multiplier).toFixed(2)}</Typography>,
           <OrderStatusTag key={0} order={order} />
         ]
       ]
@@ -130,13 +149,26 @@ export default function Order() {
 
     return [
       [
-        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
-        </Link>,
-        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+        </ExternalLink>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+        >
           {order.productId}
         </Link>,
-        <Link key={0} style={{ color: theme.palette.text.primary }} to={'#'}>
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+        >
           {order.orderId}
         </Link>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
@@ -145,13 +177,15 @@ export default function Order() {
           {order.annualRor + '%'}
         </Typography>,
         <Typography key={0}>
-          {order.amount * order.multiplier} {order.investCurrency}/
-          <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
+          {investAmount} {order.investCurrency}/
+          <span style={{ opacity: 0.5, fontSize: 14 }}>
+            ${(price ? investAmount * +price : investAmount).toFixed(2)} USDT
+          </span>
         </Typography>,
         <OrderStatusTag key={0} order={order} />
       ]
     ]
-  }, [order, isActive, theme, multiplier])
+  }, [order, isActive, theme, price])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
@@ -215,7 +249,13 @@ export default function Order() {
             display="flex"
             justifyContent={'space-evenly'}
           >
-            <LogoText logo={BSCUrl} text={'BNB'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+            <LogoText
+              logo={order ? ChainListMap[order?.chainId].logo : ''}
+              text={order && ChainListMap[order?.chainId].symbol}
+              gapSize={'8px'}
+              fontSize={14}
+              opacity={'0.5'}
+            />
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
@@ -241,8 +281,8 @@ export default function Order() {
         <Box padding={'10px 24px'}>
           <Typography fontSize={16}>Filtered by Order Holder, Order ID</Typography>
           <Box display="flex" paddingTop={'20px'} gap={12}>
-            <Tag text={order?.address || ''} />
-            <Tag text={`${order?.orderId}` || ''} onClose={onCancelOrderFilter} />
+            {order?.address && <Tag text={order?.address} />}
+            {order?.orderId && <Tag text={`${order?.orderId}`} onClose={onCancelOrderFilter} />}
           </Box>
         </Box>
         <Box padding={'24px'}>

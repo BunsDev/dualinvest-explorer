@@ -90,6 +90,8 @@ export interface TopProductRaw {
   amount_u: string
   strike_price: string
   ts: string
+  order_id: number
+  type: string
 }
 
 export interface TopProduct {
@@ -103,6 +105,8 @@ export interface TopProduct {
   amountU: string
   strikePrice: string
   ts: string
+  orderId: number
+  type: string
 }
 
 export const topProductFomatter = ({
@@ -115,7 +119,9 @@ export const topProductFomatter = ({
   invest_type,
   amount_u,
   strike_price,
-  ts
+  ts,
+  order_id,
+  type
 }: TopProductRaw): TopProduct => {
   return {
     investCurrency: invest_currency,
@@ -127,6 +133,8 @@ export const topProductFomatter = ({
     investType: invest_type,
     amountU: amount_u,
     strikePrice: strike_price,
-    ts
+    ts,
+    orderId: order_id,
+    type
   }
 }
