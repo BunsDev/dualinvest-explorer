@@ -135,7 +135,7 @@ export default function Home() {
 
   const tableTabs = useMemo(() => {
     return [
-      <LogoText key={0} logo={BSCLogo} text={'BSC Chain'} />,
+      <LogoText key={0} logo={BSCLogo} text={'BNB Chain'} />,
       <LogoText key={0} logo={AVAXLogo} text={'AVAX Chain'} />
     ]
   }, [])
@@ -219,7 +219,7 @@ export default function Home() {
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText logo={BSCLogo} text={'BSC Chain'} gapSize={4} fontSize={12} size="16px" />
+                  <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
                   <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                 </Box>
               </Box>
@@ -276,7 +276,12 @@ export default function Home() {
             <Typography fontSize={24} fontWeight={700}>
               Top Products
             </Typography>
-            <LogoText logo={BSCLogo} size="28px" text="BSC" fontSize={20} />
+            <LogoText
+              logo={tab == ChainOptions.BSC ? BSCLogo : AVAXLogo}
+              size="28px"
+              text={tab == ChainOptions.BSC ? 'BNB' : 'AVAX'}
+              fontSize={20}
+            />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
           {products && products.length === 0 && <NoDataCard text={'No data'} />}
