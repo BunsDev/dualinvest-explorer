@@ -46,18 +46,10 @@ export default function Order() {
   const { orderId } = useParams<{ orderId: string }>()
   const history = useHistory()
 
-  // const { search } = useLocation()
-
-  // const chainId = useMemo(() => {
-  //   const query = new URLSearchParams(search)
-  //   return query.get('chainId')
-  // }, [search])
-
   const { orderList } = useOrderRecords({
     orderId,
     pageNum: 1,
     pageSize: 999999
-    // chainId: chainId ?? undefined
   })
 
   const order = useMemo(() => {

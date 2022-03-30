@@ -34,15 +34,7 @@ enum ChainOptions {
   AVAX
 }
 
-const TableHeader = [
-  'Product Type',
-  'Product ID',
-  // 'Order ID',
-  'Token',
-  'Exercise',
-  'Amount of Investing in Progress',
-  'Status'
-]
+const TableHeader = ['Product Type', 'Product ID', 'Token', 'Exercise', 'Amount of Investing in Progress', 'Status']
 
 export default function Home() {
   const theme = useTheme()
@@ -99,13 +91,6 @@ export default function Home() {
         >
           {product.productId}
         </Link>,
-        // <Link
-        //   key={0}
-        //   style={{ color: theme.palette.text.primary }}
-        //   to={routes.explorerOrder.replace(':orderId', `${product.orderId}`)}
-        // >
-        //   {product.orderId || '-'}
-        // </Link>,
         <LogoText
           key={0}
           gapSize={'8px'}
@@ -152,20 +137,12 @@ export default function Home() {
           }}
         >
           <Box display="flex" gap={10} alignItems="center">
-            {/* <Antimatter /> */}
             <Typography fontSize={44} fontWeight={700}>
               Antimatter Explorer
             </Typography>
           </Box>
           <Box display="flex" gap={24} position="relative" mt={21} width="100%">
             <Box width="100%" display="flex" gap={8}>
-              {/* <ChainSelect
-                chainList={ChainList}
-                selectedChain={chain}
-                onChange={setChain}
-                width="180px"
-                height="60px"
-              /> */}
               <SelectInput
                 placeholder={`Search by ${searchOption}`}
                 options={['Address', 'Order', 'Product']}
