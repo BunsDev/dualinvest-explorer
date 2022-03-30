@@ -39,7 +39,7 @@ enum ChainOptions {
 const TableHeader = [
   'Product Type',
   'Product ID',
-  'Order ID',
+  // 'Order ID',
   'Token',
   'Exercise',
   'Amount of Investing in Progress',
@@ -95,22 +95,20 @@ export default function Home() {
         >
           {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
         </ExternalLink>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
-          >
-            {product.productId}
-          </Link>
-        </Typography>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerOrder.replace(':orderId', `${product.orderId}`)}
-          >
-            {product.orderId || '-'}
-          </Link>
-        </Typography>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
+        >
+          {product.productId}
+        </Link>,
+        // <Link
+        //   key={0}
+        //   style={{ color: theme.palette.text.primary }}
+        //   to={routes.explorerOrder.replace(':orderId', `${product.orderId}`)}
+        // >
+        //   {product.orderId || '-'}
+        // </Link>,
         <LogoText
           key={0}
           gapSize={'8px'}
