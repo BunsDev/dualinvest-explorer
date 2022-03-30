@@ -3,8 +3,7 @@ import { useHistory, Link } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
-import ChainSelect from 'components/Select/ChainSelect'
-import { ChainList, ChainId } from 'constants/chain'
+import { ChainId } from 'constants/chain'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import Table from 'components/Table'
@@ -13,7 +12,6 @@ import BSCLogo from 'assets/svg/bsc_logo.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
 import { routes } from 'constants/routes'
 import { useTopProducts } from 'hooks/useProduct'
@@ -49,7 +47,6 @@ const TableHeader = [
 export default function Home() {
   const theme = useTheme()
   const [tab, setTab] = useState(ChainOptions.BSC)
-  const [chain, setChain] = useState<Chain | null>(ChainList[0])
   const [searchOption, setSearchOption] = useState(SearchOptions.Address)
   const [search, setSearch] = useState('')
   const history = useHistory()
@@ -60,17 +57,17 @@ export default function Home() {
     }
 
     if (searchOption === SearchOptions.Address) {
-      history.push(routes.explorerAddress.replace(':address', `${search}?chainId=${chain?.id}`))
+      history.push(routes.explorerAddress.replace(':address', search))
     }
 
     if (searchOption === SearchOptions.Order) {
-      history.push(routes.explorerOrder.replace(':orderId', `${search}?chainId=${chain?.id}`))
+      history.push(routes.explorerOrder.replace(':orderId', search))
     }
 
     if (searchOption === SearchOptions.Product) {
-      history.push(routes.explorerProduct.replace(':productId', `${search}?chainId=${chain?.id}`))
+      history.push(routes.explorerProduct.replace(':productId', search))
     }
-  }, [search, searchOption, history, chain])
+  }, [search, searchOption, history])
 
   const selectedChainId = useMemo(() => {
     if (tab === ChainOptions.AVAX) {
@@ -162,13 +159,13 @@ export default function Home() {
           </Box>
           <Box display="flex" gap={24} position="relative" mt={21} width="100%">
             <Box width="100%" display="flex" gap={8}>
-              <ChainSelect
+              {/* <ChainSelect
                 chainList={ChainList}
                 selectedChain={chain}
                 onChange={setChain}
                 width="180px"
                 height="60px"
-              />
+              /> */}
               <SelectInput
                 placeholder={`Search by ${searchOption}`}
                 options={['Address', 'Order', 'Product']}

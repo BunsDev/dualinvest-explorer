@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
-import { useParams, Link, useLocation } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import NoDataCard from 'components/Card/NoDataCard'
@@ -44,20 +44,12 @@ export default function Address() {
 
   const { address } = useParams<{ address: string }>()
 
-  const { search } = useLocation()
-
-  const chainId = useMemo(() => {
-    const query = new URLSearchParams(search)
-    return query.get('chainId')
-  }, [search])
-
   const [page, setPage] = useState(1)
 
   const { orderList } = useOrderRecords({
     address,
     pageNum: 1,
-    pageSize: 999999,
-    chainId: chainId ?? undefined
+    pageSize: 999999
   })
 
   useEffect(() => {
@@ -65,12 +57,9 @@ export default function Address() {
   }, [tab])
 
   const chainIds = useMemo(() => {
-    if (chainId) {
-      return [+chainId]
-    }
     const chainIds = orderList?.map(order => order.chainId) || []
     return [...new Set(chainIds)]
-  }, [orderList, chainId])
+  }, [orderList])
 
   const indexPrices = usePriceForAll()
 
