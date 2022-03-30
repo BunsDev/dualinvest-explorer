@@ -218,24 +218,26 @@ export default function Order() {
               #{orderId}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              width: '96px',
-              height: '40px',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '10px'
-            }}
-            display="flex"
-            justifyContent={'space-evenly'}
-          >
-            <LogoText
-              logo={order ? ChainListMap[order?.chainId].logo : ''}
-              text={order && ChainListMap[order?.chainId].symbol}
-              gapSize={'8px'}
-              fontSize={14}
-              opacity={'0.5'}
-            />
-          </Box>
+          {order && (
+            <Box
+              sx={{
+                width: '96px',
+                height: '40px',
+                border: '1px solid rgba(0,0,0,0.1)',
+                borderRadius: '10px'
+              }}
+              display="flex"
+              justifyContent={'space-evenly'}
+            >
+              <LogoText
+                logo={order ? ChainListMap[order?.chainId].logo : ''}
+                text={order && ChainListMap[order?.chainId].symbol}
+                gapSize={'8px'}
+                fontSize={14}
+                opacity={'0.5'}
+              />
+            </Box>
+          )}
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
           <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>

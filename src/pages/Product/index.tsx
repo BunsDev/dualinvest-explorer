@@ -97,7 +97,7 @@ export default function Page() {
         </Typography>,
         <Typography key={0}>{product?.expiredAt}</Typography>,
         <Typography key={0}>{product?.strikePrice} </Typography>,
-        <Typography key={0}>{product?.type === 'CALL' ? 'Up' : 'Down'}</Typography>,
+        <Typography key={0}>{product?.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
 
         <StatusTag
           key={0}
