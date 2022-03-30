@@ -22,6 +22,7 @@ import { SUPPORTED_CHAINS } from 'constants/chain'
 import Tag from 'components/Tag'
 import GoBack from 'components/GoBack'
 import { ExternalLink } from 'theme/components'
+import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 
 enum TableOptions {
   Details,
@@ -159,10 +160,10 @@ export default function Page() {
             </span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type="pending" text="Progressing" />
+        <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [orderList, data])
+  }, [orderList, data, theme])
 
   const tableTabs = useMemo(() => {
     return ['Details', 'Orders']
