@@ -1,17 +1,18 @@
+import { useMemo, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
+import { routes } from 'constants/routes'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import Card from 'components/Card'
-import { useParams } from 'react-router-dom'
 import useBreakpoint from 'hooks/useBreakpoint'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
 import StatusTag from 'components/StatusTag'
-import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 //import { useProduct } from 'hooks/useProduct'
 import { useApproveProduct } from 'hooks/useApproveProduct'
 import Button from 'components/Button/Button'
-import TextButton from 'components/Button/TextButton'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import { INVEST_TYPE /* useOrderRecords*/ } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
@@ -20,6 +21,7 @@ import PaginationView from 'components/Pagination'
 import { SUPPORTED_CHAINS } from 'constants/chain'
 import Tag from 'components/Tag'
 import GoBack from 'components/GoBack'
+import { ExternalLink } from 'theme/components'
 
 enum TableOptions {
   Details,
@@ -122,15 +124,28 @@ export default function Page() {
 
     return orderList.map((order: OrderRecord) => {
       return [
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
-          {order.investType == INVEST_TYPE.dualInvest ? 'Dual Investment' : 'Recurring Strategy'}
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
+          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+        </ExternalLink>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+        >
           {order.productId}
-        </TextButton>,
-        <TextButton key={0} onClick={() => {}} underline fontWeight={400}>
+        </Link>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+        >
           {order.orderId}
-        </TextButton>,
+        </Link>,
         <LogoText key={0} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.investCurrency} />,
         <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">

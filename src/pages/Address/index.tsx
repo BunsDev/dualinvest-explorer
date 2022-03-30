@@ -167,22 +167,20 @@ export default function Address() {
         >
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
         </ExternalLink>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
-          >
-            {order.productId}
-          </Link>
-        </Typography>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
-          >
-            {order.orderId}
-          </Link>
-        </Typography>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+        >
+          {order.productId}
+        </Link>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+        >
+          {order.orderId}
+        </Link>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
         <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
