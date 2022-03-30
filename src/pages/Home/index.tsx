@@ -276,6 +276,7 @@ export default function Home() {
               size="28px"
               text={tab == ChainOptions.BSC ? 'BNB' : 'AVAX'}
               fontSize={20}
+              fontWeight={600}
             />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
