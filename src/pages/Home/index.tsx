@@ -3,8 +3,7 @@ import { useHistory, Link } from 'react-router-dom'
 import { Box, Container, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
-import ChainSelect from 'components/Select/ChainSelect'
-import { ChainList, ChainId } from 'constants/chain'
+import { ChainId } from 'constants/chain'
 import Button from 'components/Button/Button'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import Table from 'components/Table'
@@ -13,14 +12,13 @@ import BSCLogo from 'assets/svg/bsc_logo.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
-import { Chain } from 'models/chain'
 import SelectInput from 'components/Input/SelectInput'
 import { routes } from 'constants/routes'
 import { useTopProducts } from 'hooks/useProduct'
 import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import { useStatistical } from 'hooks/useStatistical'
-import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import { SUPPORTED_CURRENCIES, SUPPORTED_CURRENCY_SYMBOL } from 'constants/currencies'
 import NoDataCard from 'components/Card/NoDataCard'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import { ExternalLink } from 'theme/components'
@@ -36,20 +34,11 @@ enum ChainOptions {
   AVAX
 }
 
-const TableHeader = [
-  'Product Type',
-  'Product ID',
-  'Order ID',
-  'Token',
-  'Exercise',
-  'Amount of Investing in Progress',
-  'Status'
-]
+const TableHeader = ['Product Type', 'Product ID', 'Token', 'Exercise', 'Amount of Investing in Progress', 'Status']
 
 export default function Home() {
   const theme = useTheme()
   const [tab, setTab] = useState(ChainOptions.BSC)
-  const [chain, setChain] = useState<Chain | null>(ChainList[0])
   const [searchOption, setSearchOption] = useState(SearchOptions.Address)
   const [search, setSearch] = useState('')
   const history = useHistory()
@@ -60,17 +49,17 @@ export default function Home() {
     }
 
     if (searchOption === SearchOptions.Address) {
-      history.push(routes.explorerAddress.replace(':address', `${search}?chainId=${chain?.id}`))
+      history.push(routes.explorerAddress.replace(':address', search))
     }
 
     if (searchOption === SearchOptions.Order) {
-      history.push(routes.explorerOrder.replace(':orderId', `${search}?chainId=${chain?.id}`))
+      history.push(routes.explorerOrder.replace(':orderId', search))
     }
 
     if (searchOption === SearchOptions.Product) {
-      history.push(routes.explorerProduct.replace(':productId', `${search}?chainId=${chain?.id}`))
+      history.push(routes.explorerProduct.replace(':productId', search))
     }
-  }, [search, searchOption, history, chain])
+  }, [search, searchOption, history])
 
   const selectedChainId = useMemo(() => {
     if (tab === ChainOptions.AVAX) {
@@ -95,22 +84,13 @@ export default function Home() {
         >
           {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
         </ExternalLink>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
-          >
-            {product.productId}
-          </Link>
-        </Typography>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerOrder.replace(':orderId', `${product.orderId}`)}
-          >
-            {product.orderId || '-'}
-          </Link>
-        </Typography>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
+        >
+          {product.productId}
+        </Link>,
         <LogoText
           key={0}
           gapSize={'8px'}
@@ -157,20 +137,12 @@ export default function Home() {
           }}
         >
           <Box display="flex" gap={10} alignItems="center">
-            {/* <Antimatter /> */}
             <Typography fontSize={44} fontWeight={700}>
               Antimatter Explorer
             </Typography>
           </Box>
           <Box display="flex" gap={24} position="relative" mt={21} width="100%">
             <Box width="100%" display="flex" gap={8}>
-              <ChainSelect
-                chainList={ChainList}
-                selectedChain={chain}
-                onChange={setChain}
-                width="180px"
-                height="60px"
-              />
               <SelectInput
                 placeholder={`Search by ${searchOption}`}
                 options={['Address', 'Order', 'Product']}
@@ -185,59 +157,49 @@ export default function Home() {
               <Typography ml={10}>Search</Typography>
             </Button>
           </Box>
-          <Box display="flex" gap="12px" mt={46} width="100%">
-            <OutlinedCard padding="17px 20px" width={332}>
-              <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>
+          <Box mt={46} width="100%">
+            <OutlinedCard padding="17px 20px" width={'fit-content'}>
+              <Box display="flex" justifyContent="fit-content">
+                <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Currency Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText
-                    logo={SUPPORTED_CURRENCIES['BTC'].logoUrl}
-                    text={'BTC'}
-                    gapSize={4}
-                    fontSize={12}
-                    size="16px"
-                  />
-                  <LogoText
-                    logo={SUPPORTED_CURRENCIES['USDT'].logoUrl}
-                    text={'USDT'}
-                    gapSize={4}
-                    fontSize={12}
-                    size="16px"
-                  />
-                  <LogoText
-                    logo={SUPPORTED_CURRENCIES['ETH'].logoUrl}
-                    text={'ETH'}
-                    gapSize={4}
-                    fontSize={12}
-                    size="16px"
-                  />
+                  {SUPPORTED_CURRENCY_SYMBOL.map(symbol => (
+                    <LogoText
+                      key={symbol}
+                      logo={SUPPORTED_CURRENCIES[symbol].logoUrl}
+                      text={SUPPORTED_CURRENCIES[symbol].symbol}
+                      gapSize={4}
+                      fontSize={12}
+                      size="16px"
+                    />
+                  ))}
                 </Box>
               </Box>
             </OutlinedCard>
+            <Box display="flex" gap={12} mt={12}>
+              <OutlinedCard padding="17px 20px" width={'fit-content'}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Chain Supported:</Typography>
+                  <Box display="flex" gap={12}>
+                    <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
+                    <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
+                  </Box>
+                </Box>
+              </OutlinedCard>
 
-            <OutlinedCard padding="17px 20px" width={332}>
-              <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
-                <Box display="flex" gap={12}>
-                  <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
+              <OutlinedCard padding="17px 20px" width={'fit-content'}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Live Structured Products:</Typography>
+                  <Box display="flex" gap={12}>
+                    <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
+                      Dual Investment
+                    </Typography>
+                    <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
+                      Recurring Strategy
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </OutlinedCard>
-
-            <OutlinedCard padding="17px 20px" width={424}>
-              <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Live Structured Products:</Typography>
-                <Box display="flex" gap={12}>
-                  <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
-                    Dual Investment
-                  </Typography>
-                  <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
-                    Recurring Strategy
-                  </Typography>
-                </Box>
-              </Box>
-            </OutlinedCard>
+              </OutlinedCard>
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -281,6 +243,7 @@ export default function Home() {
               size="28px"
               text={tab == ChainOptions.BSC ? 'BNB' : 'AVAX'}
               fontSize={20}
+              fontWeight={600}
             />
           </Box>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />

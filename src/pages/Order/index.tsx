@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react'
-import { useParams, Link, useHistory, useLocation } from 'react-router-dom'
+import { useParams, Link, useHistory } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import LogoText from 'components/LogoText'
@@ -46,18 +46,10 @@ export default function Order() {
   const { orderId } = useParams<{ orderId: string }>()
   const history = useHistory()
 
-  const { search } = useLocation()
-
-  const chainId = useMemo(() => {
-    const query = new URLSearchParams(search)
-    return query.get('chainId')
-  }, [search])
-
   const { orderList } = useOrderRecords({
     orderId,
     pageNum: 1,
-    pageSize: 999999,
-    chainId: chainId ?? undefined
+    pageSize: 999999
   })
 
   const order = useMemo(() => {
@@ -218,24 +210,26 @@ export default function Order() {
               #{orderId}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              width: '96px',
-              height: '40px',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '10px'
-            }}
-            display="flex"
-            justifyContent={'space-evenly'}
-          >
-            <LogoText
-              logo={order ? ChainListMap[order?.chainId].logo : ''}
-              text={order && ChainListMap[order?.chainId].symbol}
-              gapSize={'8px'}
-              fontSize={14}
-              opacity={'0.5'}
-            />
-          </Box>
+          {order && (
+            <Box
+              sx={{
+                width: '96px',
+                height: '40px',
+                border: '1px solid rgba(0,0,0,0.1)',
+                borderRadius: '10px'
+              }}
+              display="flex"
+              justifyContent={'space-evenly'}
+            >
+              <LogoText
+                logo={order ? ChainListMap[order?.chainId].logo : ''}
+                text={order && ChainListMap[order?.chainId].symbol}
+                gapSize={'8px'}
+                fontSize={14}
+                opacity={'0.5'}
+              />
+            </Box>
+          )}
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
           <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
