@@ -157,9 +157,9 @@ export default function Home() {
               <Typography ml={10}>Search</Typography>
             </Button>
           </Box>
-          <Box display="flex" gap="12px" mt={46} width="100%" flexWrap={'wrap'}>
-            <OutlinedCard padding="17px 20px">
-              <Box display="flex" justifyContent="space-between">
+          <Box mt={46} width="100%">
+            <OutlinedCard padding="17px 20px" width={'fit-content'}>
+              <Box display="flex" justifyContent="fit-content">
                 <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Currency Supported:</Typography>
                 <Box display="flex" gap={12}>
                   {SUPPORTED_CURRENCY_SYMBOL.map(symbol => (
@@ -175,30 +175,31 @@ export default function Home() {
                 </Box>
               </Box>
             </OutlinedCard>
-
-            <OutlinedCard padding="17px 20px" width={332}>
-              <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Chain Supported:</Typography>
-                <Box display="flex" gap={12}>
-                  <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
-                  <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
+            <Box display="flex" gap={12} mt={12}>
+              <OutlinedCard padding="17px 20px" width={'fit-content'}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Chain Supported:</Typography>
+                  <Box display="flex" gap={12}>
+                    <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
+                    <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
+                  </Box>
                 </Box>
-              </Box>
-            </OutlinedCard>
+              </OutlinedCard>
 
-            <OutlinedCard padding="17px 20px" width={424}>
-              <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Live Structured Products:</Typography>
-                <Box display="flex" gap={12}>
-                  <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
-                    Dual Investment
-                  </Typography>
-                  <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
-                    Recurring Strategy
-                  </Typography>
+              <OutlinedCard padding="17px 20px" width={'fit-content'}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Live Structured Products:</Typography>
+                  <Box display="flex" gap={12}>
+                    <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
+                      Dual Investment
+                    </Typography>
+                    <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
+                      Recurring Strategy
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </OutlinedCard>
+              </OutlinedCard>
+            </Box>
           </Box>
         </Container>
       </Box>
