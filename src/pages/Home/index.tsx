@@ -18,7 +18,7 @@ import { useTopProducts } from 'hooks/useProduct'
 import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import { useStatistical } from 'hooks/useStatistical'
-import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import { SUPPORTED_CURRENCIES, SUPPORTED_CURRENCY_SYMBOL } from 'constants/currencies'
 import NoDataCard from 'components/Card/NoDataCard'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import { ExternalLink } from 'theme/components'
@@ -157,32 +157,21 @@ export default function Home() {
               <Typography ml={10}>Search</Typography>
             </Button>
           </Box>
-          <Box display="flex" gap="12px" mt={46} width="100%">
-            <OutlinedCard padding="17px 20px" width={332}>
+          <Box display="flex" gap="12px" mt={46} width="100%" flexWrap={'wrap'}>
+            <OutlinedCard padding="17px 20px">
               <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ opacity: 0.5, fontSize: 12 }}>Currency Supported:</Typography>
+                <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Currency Supported:</Typography>
                 <Box display="flex" gap={12}>
-                  <LogoText
-                    logo={SUPPORTED_CURRENCIES['BTC'].logoUrl}
-                    text={'BTC'}
-                    gapSize={4}
-                    fontSize={12}
-                    size="16px"
-                  />
-                  <LogoText
-                    logo={SUPPORTED_CURRENCIES['USDT'].logoUrl}
-                    text={'USDT'}
-                    gapSize={4}
-                    fontSize={12}
-                    size="16px"
-                  />
-                  <LogoText
-                    logo={SUPPORTED_CURRENCIES['ETH'].logoUrl}
-                    text={'ETH'}
-                    gapSize={4}
-                    fontSize={12}
-                    size="16px"
-                  />
+                  {SUPPORTED_CURRENCY_SYMBOL.map(symbol => (
+                    <LogoText
+                      key={symbol}
+                      logo={SUPPORTED_CURRENCIES[symbol].logoUrl}
+                      text={SUPPORTED_CURRENCIES[symbol].symbol}
+                      gapSize={4}
+                      fontSize={12}
+                      size="16px"
+                    />
+                  ))}
                 </Box>
               </Box>
             </OutlinedCard>
