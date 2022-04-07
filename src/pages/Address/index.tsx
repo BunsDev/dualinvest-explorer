@@ -263,8 +263,8 @@ export default function Address() {
                 justifyContent={'space-evenly'}
               >
                 <LogoText
-                  logo={ChainListMap[chainId].logo}
-                  text={ChainListMap[chainId].symbol}
+                  logo={ChainListMap[chainId]?.logo}
+                  text={ChainListMap[chainId]?.symbol}
                   gapSize={'8px'}
                   fontSize={14}
                   opacity={'0.5'}
