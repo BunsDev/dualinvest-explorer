@@ -19,6 +19,7 @@ import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import GoBack from 'components/GoBack'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const TableHeaderActive = [
   'Token',
@@ -28,7 +29,8 @@ const TableHeaderActive = [
   'Settlement Time',
   'Strike Price',
   'Exercise',
-  'Refund Amount'
+  'Refund Amount',
+  ''
 ]
 
 const TableHeaderInActive = [
@@ -38,13 +40,15 @@ const TableHeaderInActive = [
   'Token',
   'Exercise',
   'APY',
-  'Amount of Investing in Progress'
+  'Amount of Investing in Progress',
+  ''
 ]
 
 export default function Order() {
   const theme = useTheme()
   const { orderId } = useParams<{ orderId: string }>()
   const history = useHistory()
+  const isDownMd = useBreakpoint('md')
 
   const { orderList } = useOrderRecords({
     orderId,
@@ -94,7 +98,7 @@ export default function Order() {
       ),
       ['TXID:']: (
         <Box display="flex" gap={8} alignItems="center">
-          {hash || 'N/A'}
+          {!isDownMd && (hash || 'N/A')}
           {link && (
             <ExternalLink href={link}>
               <ExternalIcon />
@@ -184,15 +188,15 @@ export default function Order() {
 
   return (
     <Box
-      display="grid"
+      display="flex"
+      flexDirection="column"
       width="100%"
-      alignContent="flex-start"
       marginBottom="auto"
-      justifyItems="center"
-      padding={{ xs: '24px 20px', md: 0 }}
+      alignItems="center"
+      padding={{ xs: '24px 12px ', md: 0 }}
     >
       <GoBack backLink="/explorer" />
-      <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
+      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
             padding: '40px 24px 20px',
@@ -239,12 +243,17 @@ export default function Order() {
 
             {data &&
               Object.keys(data).map((key, idx) => (
-                <Box key={idx} display="flex" alignItems="center">
-                  <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+                <Box
+                  key={idx}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent={isDownMd ? 'space-between' : 'flex-start'}
+                >
+                  <Typography fontSize={isDownMd ? 14 : 16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
                     {key}
                   </Typography>
 
-                  <Typography fontWeight={400} fontSize={16} component="div">
+                  <Typography fontWeight={400} fontSize={isDownMd ? 14 : 16} component="div">
                     {data[key as keyof typeof data]}
                   </Typography>
                 </Box>
@@ -253,7 +262,7 @@ export default function Order() {
         </Box>
         <Box padding={'10px 24px'}>
           <Typography fontSize={16}>Filtered by Order Holder, Order ID</Typography>
-          <Box display="flex" paddingTop={'20px'} gap={12}>
+          <Box display="flex" paddingTop={'20px'} gap={12} width="100%" flexWrap="wrap">
             {order?.address && <Tag text={order?.address} />}
             {order?.orderId && <Tag text={`${order?.orderId}`} onClose={onCancelOrderFilter} />}
           </Box>
