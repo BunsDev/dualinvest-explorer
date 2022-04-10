@@ -21,6 +21,7 @@ import { ChainListMap } from 'constants/chain'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import { ExternalLink } from 'theme/components'
 import GoBack from 'components/GoBack'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 enum TableOptions {
   Positions,
@@ -40,6 +41,7 @@ const TableHeader = [
 
 export default function Address() {
   const theme = useTheme()
+  const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Positions)
 
   const { address } = useParams<{ address: string }>()
@@ -175,16 +177,23 @@ export default function Address() {
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
-        <Box key={0} display="flex" alignItems="flex-end">
+        <Box
+          key={0}
+          display="flex"
+          alignItems={isDownMd ? 'flex-start' : 'center'}
+          flexDirection={isDownMd ? 'column' : 'row'}
+        >
           <Typography>
             {investAmount.toFixed(2)} {order.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>${amountU} USDT</span>
+          </Typography>
+          <Typography sx={{ opacity: 0.5 }} component="span">
+            ${amountU} USDT
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [currentPageOrderList, theme, indexPrices])
+  }, [currentPageOrderList, theme, indexPrices, isDownMd])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']
@@ -218,24 +227,25 @@ export default function Address() {
 
   return (
     <Box
-      display="grid"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
       width="100%"
-      alignContent="flex-start"
       marginBottom="auto"
-      justifyItems="center"
-      padding={{ xs: '24px 20px', md: 0 }}
+      padding={{ xs: '24px 12px', md: 0 }}
     >
       <GoBack backLink="/explorer" />
-      <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
+      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
             padding: '40px 24px 20px',
             width: '100%'
           }}
           display="flex"
-          flexDirection="row"
+          flexDirection={isDownMd ? 'column' : 'row'}
           justifyContent="flex-start"
           alignItems="center"
+          gap={12}
         >
           <Box display="flex" gap={20} alignItems="center">
             <Matter />
@@ -280,12 +290,12 @@ export default function Address() {
             </Typography>
 
             {Object.keys(data).map((key, idx) => (
-              <Box key={idx} display="flex" justifyContent={'flex-start'}>
-                <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+              <Box key={idx} display="flex" justifyContent={isDownMd ? 'space-between' : 'flex-start'}>
+                <Typography fontSize={isDownMd ? 14 : 16} sx={{ opacity: 0.8, maxWidth: 140 }} paddingRight={'12px'}>
                   {key}
                 </Typography>
 
-                <Typography fontWeight={400} fontSize={16}>
+                <Typography fontWeight={400} fontSize={isDownMd ? 14 : 16}>
                   {data[key as keyof typeof data]}
                 </Typography>
               </Box>
