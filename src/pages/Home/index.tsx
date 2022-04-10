@@ -176,9 +176,11 @@ export default function Home() {
           </Box>
           <Box mt={46} width="100%">
             <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
-              <Box display="flex" justifyContent="fit-content">
-                <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Currency Supported:</Typography>
-                <Box display="flex" gap={12} width="100%" flexWrap="wrap">
+              <Box display="flex" justifyContent="space-between">
+                <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10, whiteSpace: 'nowrap' }}>
+                  Currency Supported:
+                </Typography>
+                <Box display="flex" gap={12} width="100%" flexWrap="wrap" justifyContent="flex-end">
                   {SUPPORTED_CURRENCY_SYMBOL.map(symbol => (
                     <LogoText
                       key={symbol}
@@ -195,8 +197,10 @@ export default function Home() {
             <Box display="flex" gap={12} mt={12} flexDirection={isDownMd ? 'column' : 'row'}>
               <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
                 <Box display="flex" justifyContent="space-between">
-                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Chain Supported:</Typography>
-                  <Box display="flex" gap={12}>
+                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10, whiteSpace: 'nowrap' }}>
+                    Chain Supported:
+                  </Typography>
+                  <Box display="flex" gap={12} width="100%" flexWrap="wrap" justifyContent="flex-end">
                     <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
                     <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                   </Box>
@@ -205,8 +209,10 @@ export default function Home() {
 
               <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
                 <Box display="flex" justifyContent="space-between">
-                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Live Structured Products:</Typography>
-                  <Box display="flex" gap={12}>
+                  <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10, whiteSpace: 'nowrap' }}>
+                    Live Structured Products:
+                  </Typography>
+                  <Box display="flex" gap={12} flexWrap="wrap" justifyContent="flex-end">
                     <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
                       Dual Investment
                     </Typography>

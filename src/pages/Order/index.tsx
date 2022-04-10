@@ -98,16 +98,16 @@ export default function Order() {
       ),
       ['TXID:']: (
         <Box display="flex" gap={8} alignItems="center">
-          {!isDownMd && (hash || 'N/A')}
+          {isDownMd ? hash.slice(0, 20) + '...' : hash}
           {link && (
-            <ExternalLink href={link}>
+            <ExternalLink href={link} alt={hash}>
               <ExternalIcon />
             </ExternalLink>
           )}
         </Box>
       )
     }
-  }, [orderList, theme])
+  }, [orderList, theme, isDownMd])
 
   const dataRows = useMemo(() => {
     if (!order) return []
