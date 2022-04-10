@@ -180,7 +180,7 @@ export default function Address() {
         <Box
           key={0}
           display="flex"
-          alignItems={isDownMd ? 'flex-start' : 'center'}
+          alignItems={isDownMd ? 'flex-end' : 'center'}
           flexDirection={isDownMd ? 'column' : 'row'}
         >
           <Typography>

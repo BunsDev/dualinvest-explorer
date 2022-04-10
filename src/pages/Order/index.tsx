@@ -169,16 +169,23 @@ export default function Order() {
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
-        <Typography key={0}>
-          {investAmount} {order.investCurrency}/
-          <span style={{ opacity: 0.5, fontSize: 14 }}>
+        <Box
+          key={0}
+          display="flex"
+          alignItems={isDownMd ? 'flex-end' : 'center'}
+          flexDirection={isDownMd ? 'column' : 'row'}
+        >
+          <Typography>
+            {investAmount} {order.investCurrency}/
+          </Typography>
+          <Typography sx={{ opacity: 0.5 }} component="span">
             ${(price ? investAmount * +price : investAmount).toFixed(2)} USDT
-          </span>
-        </Typography>,
+          </Typography>
+        </Box>,
         <OrderStatusTag key={0} order={order} />
       ]
     ]
-  }, [order, isActive, theme, price])
+  }, [order, isActive, theme, price, isDownMd])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
