@@ -17,7 +17,7 @@ import { routes } from 'constants/routes'
 import { useTopProducts } from 'hooks/useProduct'
 import { TopProduct } from 'utils/fetch/product'
 import { INVEST_TYPE } from 'hooks/useOrderData'
-import { useStatistical } from 'hooks/useStatistical'
+import { useHomeStatistics } from 'hooks/useStatistical'
 import { SUPPORTED_CURRENCIES, SUPPORTED_CURRENCY_SYMBOL } from 'constants/currencies'
 import NoDataCard from 'components/Card/NoDataCard'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
@@ -72,7 +72,8 @@ export default function Home() {
   }, [tab])
 
   const products = useTopProducts(selectedChainId)
-  const stat = useStatistical()
+
+  const { totalInvest, totalProgress } = useHomeStatistics()
 
   const dataRows = useMemo(() => {
     return products.map((product: TopProduct) => {
@@ -230,24 +231,26 @@ export default function Home() {
       >
         <Box display="flex" width="100%" gap={20} mb={41} flexDirection={isDownMd ? 'column' : 'row'}>
           <NumericalCard
-            unit="$"
-            value={Number(stat?.CumulativeInvestmentAmount).toLocaleString() || '-'}
-            title="Cumulative Investment Amount"
-            fontSize="44px"
+            width={'100%'}
+            title={isDownMd ? undefined : 'Total investment amount'}
+            value={totalInvest}
+            fontSize={isDownMd ? '20px' : '44px'}
+            unit="USDT"
+            unitSize={isDownMd ? '12px' : '16px'}
             border
+            subValue={isDownMd ? 'Total investment amount' : undefined}
+            padding="24px"
           />
           <NumericalCard
-            value={stat?.TotalNamberOfOders.toLocaleString() || '-'}
-            title="Total Number Of Orders"
-            fontSize="44px"
+            width={'100%'}
+            title={isDownMd ? undefined : 'Amount of investment in progress'}
+            value={totalProgress}
+            fontSize={isDownMd ? '20px' : '44px'}
+            unit="USDT"
+            unitSize={isDownMd ? '12px' : '16px'}
             border
-          />
-          <NumericalCard
-            unit="Addresses"
-            value={stat?.CumulativeNamberOUsers.toLocaleString() || '-'}
-            title="Cumulative Number Of Users"
-            fontSize="44px"
-            border
+            subValue={isDownMd ? 'Amount of investment in progress' : undefined}
+            padding="24px"
           />
         </Box>
         <Card padding="35px 24px 111px">
