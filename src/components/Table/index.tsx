@@ -205,7 +205,7 @@ export default function Table({
   return (
     <>
       {matches ? (
-        <>
+        <Box display="grid" gap={6}>
           {rows.map((data, index) => (
             <Card key={index}>
               <Box display="flex" flexDirection="column" gap="16px">
@@ -233,7 +233,7 @@ export default function Table({
               </Box>
             </Card>
           ))}
-        </>
+        </Box>
       ) : (
         <StyledTableContainer>
           <table>

@@ -1,7 +1,6 @@
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import { ChainId } from 'constants/chain'
 
-
 export interface OrderRecord {
   address: string
   amount: number

@@ -151,18 +151,22 @@ export default function Page() {
         <Typography key={0} color="#31B047">
           {(order.annualRor * 100).toFixed(2) + '%'}
         </Typography>,
-        <Box key={0} display="flex" alignItems="flex-end">
-          <Typography>
-            {(order.amount * order.multiplier * order.strikePrice).toFixed(0) + ' USDT/'}
-            <span style={{ opacity: 0.5, fontSize: 14 }}>
-              {'$' + data?.['Total Invest Amount:']?.replace('USDT', '')}
-            </span>
+        <Box
+          key={0}
+          display="flex"
+          alignItems={isDownMd ? 'flex-end' : 'center'}
+          flexDirection={isDownMd ? 'column' : 'row'}
+        >
+          <Typography>{(order.amount * order.multiplier * order.strikePrice).toFixed(0) + ' USDT/'}</Typography>
+          <Typography sx={{ opacity: 0.5 }} component="span">
+            {' '}
+            {'$' + data?.['Total Invest Amount:']?.replace('USDT', '')}
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [orderList, data, theme])
+  }, [orderList, data, theme, isDownMd])
 
   const tableTabs = useMemo(() => {
     return ['Details', 'Orders']
@@ -194,15 +198,15 @@ export default function Page() {
     )
   return (
     <Box
-      display="grid"
+      display="flex"
+      flexDirection="column"
       width="100%"
-      alignContent="flex-start"
       marginBottom="auto"
-      justifyItems="center"
-      padding={{ xs: '24px 20px', md: 0 }}
+      alignItems="center"
+      padding={{ xs: '24px 12px ', md: 0 }}
     >
       <GoBack backLink="/account" />
-      <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
+      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
             padding: '40px 24px 20px',
@@ -247,7 +251,12 @@ export default function Page() {
 
             {data &&
               Object.keys(data).map((key, idx) => (
-                <Box key={idx} display="flex" justifyContent={'flex-start'} alignItems={'center'}>
+                <Box
+                  key={idx}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent={isDownMd ? 'space-between' : 'flex-start'}
+                >
                   <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
                     {key}
                   </Typography>
