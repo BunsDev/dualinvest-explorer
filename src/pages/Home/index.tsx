@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useHistory, Link } from 'react-router-dom'
-import { Box, Container, useTheme, Typography } from '@mui/material'
+import { Box, useTheme, Typography } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
 import { ChainId } from 'constants/chain'
@@ -22,6 +22,7 @@ import { SUPPORTED_CURRENCIES, SUPPORTED_CURRENCY_SYMBOL } from 'constants/curre
 import NoDataCard from 'components/Card/NoDataCard'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import { ExternalLink } from 'theme/components'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 enum SearchOptions {
   Address = 'Address',
@@ -42,6 +43,7 @@ export default function Home() {
   const [searchOption, setSearchOption] = useState(SearchOptions.Address)
   const [search, setSearch] = useState('')
   const history = useHistory()
+  const isDownMd = useBreakpoint('md')
 
   const onSearch = useCallback(() => {
     if (!search || !searchOption) {
@@ -98,10 +100,17 @@ export default function Home() {
           text={product.investCurrency}
         />,
         <Typography key={0}>{product.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-        <Box key={0} display="flex" alignItems="flex-end">
+        <Box
+          key={0}
+          display="flex"
+          alignItems={isDownMd ? 'flex-start' : 'center'}
+          flexDirection={isDownMd ? 'column' : 'row'}
+        >
           <Typography>
             {(+product.amountRaw * multiplier).toFixed(2)} {product.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>${(+product.amountU).toFixed(2)} USDT</span>
+          </Typography>
+          <Typography sx={{ opacity: 0.5 }} component="span">
+            ${(+product.amountU).toFixed(2)} USDT
           </Typography>
         </Box>,
         <StatusTag
@@ -122,46 +131,53 @@ export default function Home() {
 
   return (
     <Box
-      display="grid"
+      display="flex"
+      flexDirection="column"
       width="100%"
       alignContent="flex-start"
       marginBottom="auto"
       justifyItems="center"
-      padding={{ xs: '24px 20px', md: 0 }}
     >
-      <Box width="100%" sx={{ background: theme.palette.background.paper }}>
-        <Container
+      <Box
+        width="100%"
+        sx={{
+          background: theme.palette.background.paper,
+          padding: '60px 15px'
+        }}
+      >
+        <Box
           sx={{
-            maxWidth: theme.width.maxContent,
-            padding: '60px 0'
+            maxWidth: {
+              xs: '100%',
+              md: theme.width.maxContent
+            },
+            margin: '0 auto'
           }}
         >
-          <Box display="flex" gap={10} alignItems="center">
-            <Typography fontSize={44} fontWeight={700}>
+          <Box display="flex" gap={10} alignItems="center" width="100%">
+            <Typography sx={{ fontSize: { xs: 32, md: 44 } }} fontWeight={700}>
               Antimatter Explorer
             </Typography>
           </Box>
-          <Box display="flex" gap={24} position="relative" mt={21} width="100%">
-            <Box width="100%" display="flex" gap={8}>
-              <SelectInput
-                placeholder={`Search by ${searchOption}`}
-                options={['Address', 'Order', 'Product']}
-                selected={searchOption}
-                onChangeSelect={setSearchOption}
-                value={search}
-                onChangeInput={e => setSearch(e.target.value)}
-              />
-            </Box>
-            <Button width="220px" height="60px" onClick={onSearch}>
+          <Box display="flex" gap={isDownMd ? 8 : 24} position="relative" mt={21} width="100%">
+            <SelectInput
+              placeholder={`Search by ${searchOption}`}
+              options={['Address', 'Order', 'Product']}
+              selected={searchOption}
+              onChangeSelect={setSearchOption}
+              value={search}
+              onChangeInput={e => setSearch(e.target.value)}
+            />
+            <Button width={isDownMd ? '60px' : '220px'} height="48px" onClick={onSearch}>
               <SearchIcon />
-              <Typography ml={10}>Search</Typography>
+              {!isDownMd && <Typography ml={10}>Search</Typography>}
             </Button>
           </Box>
           <Box mt={46} width="100%">
-            <OutlinedCard padding="17px 20px" width={'fit-content'}>
+            <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
               <Box display="flex" justifyContent="fit-content">
                 <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Currency Supported:</Typography>
-                <Box display="flex" gap={12}>
+                <Box display="flex" gap={12} width="100%" flexWrap="wrap">
                   {SUPPORTED_CURRENCY_SYMBOL.map(symbol => (
                     <LogoText
                       key={symbol}
@@ -175,8 +191,8 @@ export default function Home() {
                 </Box>
               </Box>
             </OutlinedCard>
-            <Box display="flex" gap={12} mt={12}>
-              <OutlinedCard padding="17px 20px" width={'fit-content'}>
+            <Box display="flex" gap={12} mt={12} flexDirection={isDownMd ? 'column' : 'row'}>
+              <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
                 <Box display="flex" justifyContent="space-between">
                   <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Chain Supported:</Typography>
                   <Box display="flex" gap={12}>
@@ -186,7 +202,7 @@ export default function Home() {
                 </Box>
               </OutlinedCard>
 
-              <OutlinedCard padding="17px 20px" width={'fit-content'}>
+              <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
                 <Box display="flex" justifyContent="space-between">
                   <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10 }}>Live Structured Products:</Typography>
                   <Box display="flex" gap={12}>
@@ -201,16 +217,18 @@ export default function Home() {
               </OutlinedCard>
             </Box>
           </Box>
-        </Container>
+        </Box>
       </Box>
 
-      <Container
+      <Box
         sx={{
+          width: '100%',
           maxWidth: theme.width.maxContent,
-          pt: 80
+          padding: '80px 15px 0',
+          margin: '0 auto'
         }}
       >
-        <Box display="flex" width="100%" gap={20} mb={41}>
+        <Box display="flex" width="100%" gap={20} mb={41} flexDirection={isDownMd ? 'column' : 'row'}>
           <NumericalCard
             unit="$"
             value={Number(stat?.CumulativeInvestmentAmount).toLocaleString() || '-'}
@@ -246,10 +264,11 @@ export default function Home() {
               fontWeight={600}
             />
           </Box>
+
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
           {products && products.length === 0 && <NoDataCard text={'No data'} />}
         </Card>
-      </Container>
+      </Box>
     </Box>
   )
 }
