@@ -1,12 +1,11 @@
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Box, Container, Typography, useTheme } from '@mui/material'
 import Card from 'components/Card'
 import NoDataCard from 'components/Card/NoDataCard'
-import BSCUrl from 'assets/svg/binance.svg'
 import LogoText from 'components/LogoText'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import { ReactComponent as Matter } from 'assets/svg/matter_logo.svg'
-import { useMemo, useState } from 'react'
 import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -16,7 +15,13 @@ import { OrderRecord } from 'utils/fetch/record'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { routes } from 'constants/routes'
+import Pagination from 'components/Pagination'
+import { usePriceForAll } from 'hooks/usePriceSet'
+import { ChainListMap } from 'constants/chain'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { ExternalLink } from 'theme/components'
 import GoBack from 'components/GoBack'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 enum TableOptions {
   Positions,
@@ -36,18 +41,29 @@ const TableHeader = [
 
 export default function Address() {
   const theme = useTheme()
+  const isDownMd = useBreakpoint('md')
   const [tab, setTab] = useState(TableOptions.Positions)
 
   const { address } = useParams<{ address: string }>()
 
-  // const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1)
 
   const { orderList } = useOrderRecords({
-    investType: INVEST_TYPE.recur,
     address,
     pageNum: 1,
     pageSize: 999999
   })
+
+  useEffect(() => {
+    setPage(1)
+  }, [tab])
+
+  const chainIds = useMemo(() => {
+    const chainIds = orderList?.map(order => order.chainId) || []
+    return [...new Set(chainIds)]
+  }, [orderList])
+
+  const indexPrices = usePriceForAll()
 
   const positionList = useMemo(() => {
     if (!orderList) return []
@@ -57,7 +73,9 @@ export default function Address() {
   }, [orderList])
 
   const historyList = useMemo(() => {
-    return orderList || []
+    if (!orderList) return []
+
+    return orderList
   }, [orderList])
 
   const filteredOrderList = useMemo(() => {
@@ -72,73 +90,110 @@ export default function Address() {
     return historyList
   }, [tab, positionList, historyList])
 
-  const totalAmount = useMemo(() => {
-    return historyList
-      .map((order: OrderRecord) => +order.amount)
-      .reduce(function(acc: number, val: number) {
-        return acc + val
-      }, 0)
-  }, [historyList])
+  const pageParams = useMemo(() => {
+    const perPage = 8
+    const count = Math.ceil(filteredOrderList.length / perPage)
+    const total = filteredOrderList.length
 
-  const AmountInProgress = useMemo(() => {
-    return positionList
-      .map((order: OrderRecord) => +order.amount)
-      .reduce(function(acc: number, val: number) {
-        return acc + val
-      }, 0)
-  }, [positionList])
+    return {
+      count,
+      perPage,
+      total
+    }
+  }, [filteredOrderList])
+
+  const currentPageOrderList = useMemo(() => {
+    if (!filteredOrderList) return
+
+    return filteredOrderList.slice((page - 1) * pageParams.perPage, page * pageParams.perPage)
+  }, [page, pageParams, filteredOrderList])
+
+  const calcAmount = useCallback(
+    orders => {
+      return orders
+        .map((order: OrderRecord) => {
+          const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
+
+          return (
+            +order.amount *
+            +order.multiplier *
+            multiplier *
+            +indexPrices[order.investCurrency as keyof typeof indexPrices]
+          )
+        })
+        .reduce(function(acc: number, val: number) {
+          return acc + val
+        }, 0)
+        .toFixed(2)
+    },
+    [indexPrices]
+  )
 
   const data = useMemo(() => {
     return {
-      ['Total Invest Amount:']: `${totalAmount} USDT`,
-      ['Amount of Investing in Progress:']: `${AmountInProgress} USDT`,
+      ['Total Invest Amount:']: `${calcAmount(historyList)} USDT`,
+      ['Amount of Investing in Progress:']: `${calcAmount(positionList)} USDT`,
       ['Positions:']: positionList?.length || 0
     }
-  }, [positionList, totalAmount, AmountInProgress])
+  }, [positionList, historyList, calcAmount])
 
   const dataRows = useMemo(() => {
-    if (!filteredOrderList) return []
+    if (!currentPageOrderList) return []
 
-    return filteredOrderList.map((order: OrderRecord) => {
-      const multiplier = order ? (order.type === 'CALL' ? 1 : +order.strikePrice) : 1
+    return currentPageOrderList.map((order: OrderRecord) => {
+      const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
+
+      const investAmount = +order.amount * +order.multiplier * multiplier
+
+      const amountU = order.investCurrency
+        ? (investAmount * indexPrices[order.investCurrency as keyof typeof indexPrices]).toFixed(2)
+        : ''
 
       return [
-        <Typography key={0}>
-          <Link style={{ color: theme.palette.text.primary }} to={'#'}>
-            {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
-          </Link>
-        </Typography>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
-          >
-            {order.productId}
-          </Link>
-        </Typography>,
-        <Typography key={0}>
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
-          >
-            {order.orderId}
-          </Link>
-        </Typography>,
+        <ExternalLink
+          key={0}
+          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          underline="always"
+        >
+          {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+        </ExternalLink>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+        >
+          {order.productId}
+        </Link>,
+        <Link
+          key={0}
+          style={{ color: theme.palette.text.primary }}
+          to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+        >
+          {order.orderId}
+        </Link>,
         <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
         <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
         <Typography key={0} color="#31B047">
           {order.annualRor + '%'}
         </Typography>,
-        <Box key={0} display="flex" alignItems="flex-end">
+        <Box
+          key={0}
+          display="flex"
+          alignItems={isDownMd ? 'flex-end' : 'center'}
+          flexDirection={isDownMd ? 'column' : 'row'}
+        >
           <Typography>
-            {(+order.amount * +order.multiplier * multiplier).toFixed(2)} {order.investCurrency}/
-            <span style={{ opacity: 0.5, fontSize: 14 }}>$XXX USDT</span>
+            {investAmount.toFixed(2)} {order.investCurrency}/
+          </Typography>
+          <Typography sx={{ opacity: 0.5 }} component="span">
+            ${amountU} USDT
           </Typography>
         </Box>,
         <OrderStatusTag key={0} order={order} />
       ]
     })
-  }, [filteredOrderList, theme])
+  }, [currentPageOrderList, theme, indexPrices, isDownMd])
 
   const tableTabs = useMemo(() => {
     return ['Positions', 'History']
@@ -172,24 +227,25 @@ export default function Address() {
 
   return (
     <Box
-      display="grid"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
       width="100%"
-      alignContent="flex-start"
       marginBottom="auto"
-      justifyItems="center"
-      padding={{ xs: '24px 20px', md: 0 }}
+      padding={{ xs: '24px 12px', md: 0 }}
     >
       <GoBack backLink="/explorer" />
-      <Card style={{ margin: '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
+      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
         <Box
           sx={{
             padding: '40px 24px 20px',
             width: '100%'
           }}
           display="flex"
-          flexDirection="row"
+          flexDirection={isDownMd ? 'column' : 'row'}
           justifyContent="flex-start"
           alignItems="center"
+          gap={12}
         >
           <Box display="flex" gap={20} alignItems="center">
             <Matter />
@@ -203,18 +259,28 @@ export default function Address() {
               </Typography>
             </Box>
           </Box>
-          <Box
-            sx={{
-              width: '96px',
-              height: '40px',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '10px',
-              marginLeft: 'auto'
-            }}
-            display="flex"
-            justifyContent={'space-evenly'}
-          >
-            <LogoText logo={BSCUrl} text={'BNB'} gapSize={'8px'} fontSize={14} opacity={'0.5'} />
+          <Box sx={{ display: 'flex', gap: 12, marginLeft: 'auto' }}>
+            {chainIds.map(chainId => (
+              <Box
+                key={chainId}
+                sx={{
+                  width: '96px',
+                  height: '40px',
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  borderRadius: '10px'
+                }}
+                display="flex"
+                justifyContent={'space-evenly'}
+              >
+                <LogoText
+                  logo={ChainListMap[chainId]?.logo}
+                  text={ChainListMap[chainId]?.symbol}
+                  gapSize={'8px'}
+                  fontSize={14}
+                  opacity={'0.5'}
+                />
+              </Box>
+            ))}
           </Box>
         </Box>
         <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
@@ -224,12 +290,12 @@ export default function Address() {
             </Typography>
 
             {Object.keys(data).map((key, idx) => (
-              <Box key={idx} display="flex" justifyContent={'flex-start'}>
-                <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+              <Box key={idx} display="flex" justifyContent={isDownMd ? 'space-between' : 'flex-start'}>
+                <Typography fontSize={isDownMd ? 14 : 16} sx={{ opacity: 0.8, maxWidth: 140 }} paddingRight={'12px'}>
                   {key}
                 </Typography>
 
-                <Typography fontWeight={400} fontSize={16}>
+                <Typography fontWeight={400} fontSize={isDownMd ? 14 : 16}>
                   {data[key as keyof typeof data]}
                 </Typography>
               </Box>
@@ -247,7 +313,7 @@ export default function Address() {
         </Box>
         <Box padding={'24px'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
-          {!orderList && (
+          {!currentPageOrderList && (
             <Box
               display="flex"
               justifyContent="center"
@@ -263,7 +329,19 @@ export default function Address() {
               <Spinner size={60} />
             </Box>
           )}
-          {orderList && orderList.length === 0 && <NoDataCard text={'You don’t have any positions'} />}
+          {currentPageOrderList && currentPageOrderList.length === 0 && (
+            <NoDataCard text={'You don’t have any positions'} />
+          )}
+          {currentPageOrderList && currentPageOrderList.length > 0 && (
+            <Pagination
+              count={pageParams.count}
+              page={page}
+              perPage={pageParams?.perPage}
+              boundaryCount={0}
+              total={pageParams?.total}
+              onChange={(event, value) => setPage(value)}
+            />
+          )}
         </Box>
       </Card>
 

@@ -20,19 +20,19 @@ export enum INVEST_TYPE {
 }
 
 export function useOrderRecords({
-  investType,
   address,
   orderId,
   productId,
   pageNum,
-  pageSize
+  pageSize,
+  chainId
 }: {
-  investType?: INVEST_TYPE | undefined
   address?: string
   orderId?: string
   productId?: string
   pageNum?: number
   pageSize?: number
+  chainId?: string
 }) {
   const [orderList, setOrderList] = useState<OrderRecord[] | undefined>(undefined)
   const [pageParams, setPageParams] = useState<{ count: number; perPage: number; total: number }>({
@@ -43,14 +43,14 @@ export function useOrderRecords({
 
   const promiseFn = useCallback(() => {
     return Axios.get<{ records: OrderRecord[]; pages: string; size: string; total: string }>('getOrderRecord', {
-      investType,
       pageNum,
       pageSize,
       address,
       orderId,
-      productId
+      productId,
+      chainId
     })
-  }, [investType, pageNum, pageSize, address, orderId, productId])
+  }, [pageNum, pageSize, address, orderId, productId, chainId])
 
   const callbackFn = useCallback(r => {
     setOrderList(r.data.data.records)

@@ -14,7 +14,7 @@ export default function Tag({ text, onClose }: { text: string; onClose?: () => v
       gap={12}
       width="fit-content"
     >
-      <Typography fontSize={16}>{text}</Typography>
+      <Typography sx={{ fontSize: { xs: 12, md: 16 } }}>{text}</Typography>
       {onClose && (
         <TextButton onClick={onClose} style={{ color: '#11BF2D' }}>
           X

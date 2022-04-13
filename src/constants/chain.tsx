@@ -1,7 +1,7 @@
 import { Chain } from 'models/chain'
 // import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 // import EthUrl from 'assets/svg/eth_logo.svg'
-import BSCUrl from 'assets/svg/binance.svg'
+import BSCUrl from 'assets/svg/bsc_logo.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
 import { ReactComponent as AVAX } from 'assets/svg/avax.svg'
 import AVAXUrl from 'assets/svg/avax.svg'
