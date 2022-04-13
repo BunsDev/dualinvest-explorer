@@ -110,7 +110,11 @@ export default function Home() {
             <span style={{ opacity: 0.5, fontSize: 14 }}>${product.amountU} USDT</span>
           </Typography>
         </Box>,
-        <StatusTag key={0} type={'pending'} text={'Progressing'} />
+        <StatusTag
+          key={0}
+          type={+product.expiredAt > Date.now() ? 'success' : 'pending'}
+          text={+product.expiredAt > Date.now() ? 'Finished' : 'Progressing'}
+        />
       ]
     })
   }, [products, theme])
