@@ -1,7 +1,6 @@
 import { useMemo, useCallback } from 'react'
 import { useParams, Link, useHistory } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
-import Card from 'components/Card'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
@@ -14,12 +13,12 @@ import Tag from 'components/Tag'
 import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
-import { getEtherscanLink } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
-import GoBack from 'components/GoBack'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { PageLayout } from 'components/PageLayout'
 
 const TableHeaderActive = [
   'Token',
@@ -124,17 +123,15 @@ export default function Order() {
             logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
             text={order.currency}
           />,
-          <Typography key={0}>
-            {investAmount.toFixed(2)} {order.investCurrency}
-          </Typography>,
-          <Typography key={0}>{dayjs(+order.ts * 1000).format('MMM DD, YYYY')}</Typography>,
-          <Typography key={0} color="#31B047">
+          `${investAmount.toFixed(2)} ${order.investCurrency}`,
+          dayjs(+order.ts * 1000).format('MMM DD, YYYY'),
+          <Typography key={0} color="#31B047" component={'span'} fontWeight={isDownMd ? 600 : undefined}>
             {order.annualRor + '%'}
           </Typography>,
-          <Typography key={0}>{dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY')}</Typography>,
-          <Typography key={0}>{order.strikePrice}</Typography>,
-          <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-          <Typography key={0}>{(+order.returnedAmount * multiplier).toFixed(2)}</Typography>,
+          dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY'),
+          order.strikePrice,
+          order.type === 'CALL' ? 'Upward' : 'Downward',
+          `${(+order.returnedAmount * multiplier).toFixed(2)} ${order.returnedCurrency}`,
           <OrderStatusTag key={0} order={order} />
         ]
       ]
@@ -144,7 +141,14 @@ export default function Order() {
       [
         <ExternalLink
           key={0}
-          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          style={{
+            color: theme.palette.text.primary,
+            textDecorationColor: theme.palette.text.primary,
+            fontSize: isDownMd ? 16 : undefined,
+            fontWeight: isDownMd ? 400 : undefined,
+            display: 'block',
+            marginBottom: isDownMd ? '10px' : undefined
+          }}
           href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
           underline="always"
         >
@@ -164,9 +168,17 @@ export default function Order() {
         >
           {order.orderId}
         </Link>,
-        <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
-        <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-        <Typography key={0} color="#31B047">
+        <LogoText
+          key={0}
+          gapSize={'8px'}
+          logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
+          text={order.currency}
+          color={isDownMd ? '#000000' : undefined}
+          fontWeight={isDownMd ? 600 : 400}
+          fontSize={isDownMd ? 12 : 14}
+        />,
+        order.type === 'CALL' ? 'Upward' : 'Downward',
+        <Typography key={0} color="#31B047" fontWeight={isDownMd ? 600 : 400}>
           {order.annualRor + '%'}
         </Typography>,
         <Box
@@ -174,11 +186,13 @@ export default function Order() {
           display="flex"
           alignItems={isDownMd ? 'flex-end' : 'center'}
           flexDirection={isDownMd ? 'column' : 'row'}
+          marginBottom={isDownMd ? '10px' : undefined}
         >
-          <Typography>
-            {investAmount} {order.investCurrency}/
+          <Typography fontSize={isDownMd ? 12 : 14} fontWeight={isDownMd ? 600 : 400} color={'#000000'}>
+            {investAmount.toFixed(6)} {order.investCurrency}
+            {!isDownMd && '/'}
           </Typography>
-          <Typography sx={{ opacity: 0.5 }} component="span">
+          <Typography sx={{ opacity: 0.5 }} component="span" fontSize={isDownMd ? 11 : 14}>
             ${(price ? investAmount * +price : investAmount).toFixed(2)} USDT
           </Typography>
         </Box>,
@@ -194,25 +208,11 @@ export default function Order() {
   }, [order, history])
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      width="100%"
-      marginBottom="auto"
-      alignItems="center"
-      padding={{ xs: '24px 12px ', md: 0 }}
-    >
-      <GoBack backLink="/explorer" />
-      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
-        <Box
-          sx={{
-            padding: '40px 24px 20px',
-            width: '100%'
-          }}
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-        >
+    <PageLayout
+      backLink="/explorer"
+      data={data}
+      titleHead={
+        <>
           <Box display="flex" flexDirection="column">
             <Typography sx={{ opacity: '0.5' }} fontSize={16}>
               Order ID
@@ -241,37 +241,24 @@ export default function Order() {
               />
             </Box>
           )}
-        </Box>
-        <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
-          <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
-            <Typography fontSize={16} fontWeight={700}>
-              Overview
-            </Typography>
-
-            {data &&
-              Object.keys(data).map((key, idx) => (
-                <Box
-                  key={idx}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent={isDownMd ? 'space-between' : 'flex-start'}
-                >
-                  <Typography fontSize={isDownMd ? 14 : 16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
-                    {key}
-                  </Typography>
-
-                  <Typography fontWeight={400} fontSize={isDownMd ? 14 : 16} component="div">
-                    {data[key as keyof typeof data]}
-                  </Typography>
-                </Box>
-              ))}
-          </Box>
-        </Box>
+        </>
+      }
+    >
+      <>
         <Box padding={'10px 24px'}>
-          <Typography fontSize={16}>Filtered by Order Holder, Order ID</Typography>
+          <Typography fontSize={16} fontWeight={500}>
+            Filtered by Order Holder, Order ID
+          </Typography>
           <Box display="flex" paddingTop={'20px'} gap={12} width="100%" flexWrap="wrap">
-            {order?.address && <Tag text={order?.address} />}
-            {order?.orderId && <Tag text={`${order?.orderId}`} onClose={onCancelOrderFilter} />}
+            {order?.address && (
+              <Tag
+                text={isDownMd ? shortenAddress(order.address, 6) : order.address}
+                onClick={() => {
+                  history.push(routes.explorerAddress.replace(':address', order.address))
+                }}
+              />
+            )}
+            {order?.orderId && <Tag text={`Order ID: ${order?.orderId}`} onClose={onCancelOrderFilter} />}
           </Box>
         </Box>
         <Box padding={'24px'}>
@@ -298,7 +285,7 @@ export default function Order() {
           )}
           {orderList && orderList.length === 0 && <NoDataCard text={'Not Found'} />}
         </Box>
-      </Card>
-    </Box>
+      </>
+    </PageLayout>
   )
 }

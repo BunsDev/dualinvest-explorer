@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Box, Container, Typography, useTheme } from '@mui/material'
-import Card from 'components/Card'
+import { Box, Typography, useTheme } from '@mui/material'
 import NoDataCard from 'components/Card/NoDataCard'
 import LogoText from 'components/LogoText'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
@@ -22,22 +21,14 @@ import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import { ExternalLink } from 'theme/components'
 import GoBack from 'components/GoBack'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { PageLayout } from 'components/PageLayout'
 
 enum TableOptions {
   Positions,
   History
 }
 
-const TableHeader = [
-  'Product Type',
-  'Product ID',
-  'Order ID',
-  'Token',
-  'Exercise',
-  'APY',
-  'Amount of Investing in Progress',
-  'Status'
-]
+const TableHeader = ['Product Type', 'Product ID', 'Order ID', 'Token', 'Exercise', 'APY', 'Invest Amount', '']
 
 export default function Address() {
   const theme = useTheme()
@@ -151,46 +142,66 @@ export default function Address() {
 
       return [
         <ExternalLink
-          key={0}
-          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          key={order.orderId}
+          style={{
+            color: theme.palette.text.primary,
+            textDecorationColor: theme.palette.text.primary,
+            fontSize: isDownMd ? 16 : undefined,
+            fontWeight: isDownMd ? 400 : undefined,
+            display: 'block',
+            marginBottom: isDownMd ? '10px' : undefined
+          }}
           href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
           underline="always"
         >
           {order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
         </ExternalLink>,
         <Link
-          key={0}
+          key={order.orderId}
           style={{ color: theme.palette.text.primary }}
           to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
         >
           {order.productId}
         </Link>,
         <Link
-          key={0}
+          key={order.orderId}
           style={{ color: theme.palette.text.primary }}
           to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
         >
           {order.orderId}
         </Link>,
-        <LogoText key={0} gapSize={'8px'} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.currency} />,
-        <Typography key={0}>{order.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-        <Typography key={0} color="#31B047">
+        <LogoText
+          key={order.orderId}
+          gapSize={'8px'}
+          logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
+          text={order.currency}
+          fontWeight={isDownMd ? 600 : undefined}
+        />,
+        order.type === 'CALL' ? 'Upward' : 'Downward',
+        <Typography
+          key={order.orderId}
+          color="#31B047"
+          fontSize={isDownMd ? 12 : 16}
+          fontWeight={isDownMd ? 600 : undefined}
+        >
           {order.annualRor + '%'}
         </Typography>,
         <Box
-          key={0}
+          key={order.orderId}
           display="flex"
           alignItems={isDownMd ? 'flex-end' : 'center'}
           flexDirection={isDownMd ? 'column' : 'row'}
+          fontSize={isDownMd ? 12 : 16}
         >
-          <Typography>
-            {investAmount.toFixed(2)} {order.investCurrency}/
+          <Typography fontWeight={isDownMd ? 600 : undefined} fontSize={isDownMd ? 12 : 16}>
+            {investAmount.toFixed(2)} {order.investCurrency}
+            {!isDownMd && '/'}
           </Typography>
-          <Typography sx={{ opacity: 0.5 }} component="span">
+          <Typography sx={{ opacity: 0.5 }} component="span" fontSize={isDownMd ? 11 : 16}>
             ${amountU} USDT
           </Typography>
         </Box>,
-        <OrderStatusTag key={0} order={order} />
+        <OrderStatusTag key={order.orderId} order={order} />
       ]
     })
   }, [currentPageOrderList, theme, indexPrices, isDownMd])
@@ -211,7 +222,7 @@ export default function Address() {
         padding={{ xs: '24px 20px', md: 0 }}
       >
         <GoBack backLink="/explorer" />
-        <NoDataCard>
+        <NoDataCard text={' '}>
           <Box display="flex" flexDirection="column">
             <Typography sx={{ opacity: '0.5' }} fontSize={16}>
               Address
@@ -226,92 +237,61 @@ export default function Address() {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      width="100%"
-      marginBottom="auto"
-      padding={{ xs: '24px 12px', md: 0 }}
-    >
-      <GoBack backLink="/explorer" />
-      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
-        <Box
-          sx={{
-            padding: '40px 24px 20px',
-            width: '100%'
-          }}
-          display="flex"
-          flexDirection={isDownMd ? 'column' : 'row'}
-          justifyContent="flex-start"
-          alignItems="center"
-          gap={12}
-        >
-          <Box display="flex" gap={20} alignItems="center">
-            <Matter />
+    <>
+      <PageLayout
+        data={data}
+        titleHead={
+          <>
+            <Box display={isDownMd ? 'grid' : 'flex'} gap={20} alignItems="center">
+              <Matter width={isDownMd ? 32 : undefined} height={isDownMd ? 32 : undefined} />
 
-            <Box display="grid" gap={6}>
-              <Typography sx={{ opacity: '0.5' }} fontSize={16}>
-                Address
-              </Typography>
-              <Typography fontWeight={'700'} fontSize={'24px'}>
-                {shortenAddress(address)}
-              </Typography>
+              <Box display="grid" gap={6}>
+                <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+                  Address
+                </Typography>
+                <Typography fontWeight={'700'} fontSize={'24px'}>
+                  {shortenAddress(address, 6)}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 12, marginLeft: 'auto' }}>
-            {chainIds.map(chainId => (
-              <Box
-                key={chainId}
-                sx={{
-                  width: '96px',
-                  height: '40px',
-                  border: '1px solid rgba(0,0,0,0.1)',
-                  borderRadius: '10px'
-                }}
-                display="flex"
-                justifyContent={'space-evenly'}
-              >
-                <LogoText
-                  logo={ChainListMap[chainId]?.logo}
-                  text={ChainListMap[chainId]?.symbol}
-                  gapSize={'8px'}
-                  fontSize={14}
-                  opacity={'0.5'}
-                />
+            {!isDownMd && (
+              <Box sx={{ display: 'flex', gap: 12, marginLeft: 'auto' }}>
+                {chainIds.map(chainId => (
+                  <Box
+                    key={chainId}
+                    sx={{
+                      width: '96px',
+                      height: '40px',
+                      border: '1px solid rgba(0,0,0,0.1)',
+                      borderRadius: '10px'
+                    }}
+                    display="flex"
+                    justifyContent={'space-evenly'}
+                  >
+                    <LogoText
+                      logo={ChainListMap[chainId]?.logo}
+                      text={ChainListMap[chainId]?.symbol}
+                      gapSize={'8px'}
+                      fontSize={14}
+                      opacity={'0.5'}
+                    />
+                  </Box>
+                ))}
               </Box>
-            ))}
-          </Box>
-        </Box>
-        <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
-          <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
-            <Typography fontSize={16} fontWeight={700}>
-              Overview
-            </Typography>
-
-            {Object.keys(data).map((key, idx) => (
-              <Box key={idx} display="flex" justifyContent={isDownMd ? 'space-between' : 'flex-start'}>
-                <Typography fontSize={isDownMd ? 14 : 16} sx={{ opacity: 0.8, maxWidth: 140 }} paddingRight={'12px'}>
-                  {key}
-                </Typography>
-
-                <Typography fontWeight={400} fontSize={isDownMd ? 14 : 16}>
-                  {data[key as keyof typeof data]}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-        <Box padding={'10px 24px'}>
+            )}
+          </>
+        }
+      >
+        <Box>
           <Typography fontSize={16}>Filtered by Order Holder</Typography>
-          <Box paddingTop={'20px'}>
-            <Tag text={address || ''} />
+          <Box paddingTop={isDownMd ? '12px' : '20px'}>
+            <Tag text={address ? (isDownMd ? shortenAddress(address, 6) : address) : ''} />
           </Box>
         </Box>
-        <Box padding={'24px 24px 0px'}>
+        <Box paddingTop={isDownMd ? '29px' : '45px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
         </Box>
-        <Box padding={'24px'}>
+        <Box padding={isDownMd ? '16px 0' : '24px 0'}>
           <Table fontSize="16px" header={TableHeader} rows={dataRows} />
           {!currentPageOrderList && (
             <Box
@@ -343,13 +323,7 @@ export default function Address() {
             />
           )}
         </Box>
-      </Card>
-
-      <Container
-        sx={{
-          maxWidth: theme.width.maxContent
-        }}
-      ></Container>
-    </Box>
+      </PageLayout>
+    </>
   )
 }

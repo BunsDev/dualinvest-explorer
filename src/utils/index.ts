@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { CurrencyAmount, Percent } from '../constants/token/fractions'
 import JSBI from 'jsbi'
-import { ChainId } from '../constants/chain'
+import { ChainId, SUPPORTED_NETWORKS } from '../constants/chain'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -60,27 +60,22 @@ const explorers = {
   }
 }
 
-interface ChainObject {
-  [chainId: number]: {
+type ChainObject = {
+  [chainId in ChainId]: {
     link: string
     builder: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => string
   }
 }
 
-const chains: ChainObject = {
-  // [ChainId.MAINNET]: {
-  //   link: 'https://etherscan.io',
-  //   builder: explorers.etherscan
-  // },
-  [ChainId.ROPSTEN]: {
-    link: 'https://ropsten.etherscan.io',
-    builder: explorers.etherscan
-  },
-  [ChainId.BSC]: {
-    link: 'https://bscscan.com',
+const chains: ChainObject = Object.keys(SUPPORTED_NETWORKS).reduce((acc, id) => {
+  const item = SUPPORTED_NETWORKS[+id as ChainId]
+  if (!item) return acc
+  acc[+id] = {
+    link: item.blockExplorerUrls[0],
     builder: explorers.etherscan
   }
-}
+  return acc
+}, {} as any)
 
 export function getEtherscanLink(
   chainId: ChainId,

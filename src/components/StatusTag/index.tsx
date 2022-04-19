@@ -5,12 +5,14 @@ export default function StatusTag({
   type,
   height,
   fontSize,
-  text
+  text,
+  width
 }: {
   type: 'success' | 'pending' | 'warning' | 'failed'
   height?: string | number
   fontSize?: string | number
   text: string
+  width?: string | number
 }) {
   const bgcolor = useMemo(() => {
     switch (type) {
@@ -41,7 +43,7 @@ export default function StatusTag({
   return (
     <Box
       borderRadius="22px"
-      width="fit-content"
+      width={width || 'fit-content'}
       height={height || 36}
       display="flex"
       alignItems="center"

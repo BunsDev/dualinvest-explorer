@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Box, Container, Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { routes } from 'constants/routes'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
-import Card from 'components/Card'
 import useBreakpoint from 'hooks/useBreakpoint'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
@@ -17,27 +16,19 @@ import { INVEST_TYPE } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
 import NoDataCard from 'components/Card/NoDataCard'
 import PaginationView from 'components/Pagination'
-import { SUPPORTED_CHAINS } from 'constants/chain'
+import { ChainListSymbolMap } from 'constants/chain'
 import Tag from 'components/Tag'
 import GoBack from 'components/GoBack'
 import { ExternalLink } from 'theme/components'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
+import { PageLayout } from 'components/PageLayout'
 
 enum TableOptions {
   Details,
   Orders
 }
 
-const OrdersTableHeader = [
-  'Product Type',
-  'Product ID',
-  'Order ID',
-  'Token',
-  'Exercise',
-  'APY',
-  'Amount of Investing in Progress',
-  'Status'
-]
+const OrdersTableHeader = ['Product Type', 'Product ID', 'Order ID', 'Token', 'Exercise', 'APY', 'Invest Amount', '']
 
 const DetailsTableHeader = ['Token', 'APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
 
@@ -126,7 +117,14 @@ export default function Page() {
       return [
         <ExternalLink
           key={0}
-          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          style={{
+            color: theme.palette.text.primary,
+            textDecorationColor: theme.palette.text.primary,
+            fontSize: isDownMd ? 16 : undefined,
+            fontWeight: isDownMd ? 400 : undefined,
+            display: 'block',
+            marginBottom: isDownMd ? '10px' : undefined
+          }}
           href={order.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
           underline="always"
         >
@@ -146,9 +144,16 @@ export default function Page() {
         >
           {order.orderId}
         </Link>,
-        <LogoText key={0} logo={SUPPORTED_CURRENCIES[order.currency].logoUrl} text={order.investCurrency} />,
-        <Typography key={0}>{order.type == 'CALL' ? 'Upward' : 'Downward'}</Typography>,
-        <Typography key={0} color="#31B047">
+        <LogoText
+          key={0}
+          logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
+          text={order.investCurrency}
+          fontWeight={isDownMd ? 600 : undefined}
+        />,
+        <Typography key={0} fontWeight={isDownMd ? 600 : undefined} fontSize={isDownMd ? 12 : 16}>
+          {order.type == 'CALL' ? 'Upward' : 'Downward'}
+        </Typography>,
+        <Typography key={0} color="#31B047" fontSize={isDownMd ? 12 : 16} fontWeight={isDownMd ? 600 : undefined}>
           {(order.annualRor * 100).toFixed(2) + '%'}
         </Typography>,
         <Box
@@ -157,8 +162,11 @@ export default function Page() {
           alignItems={isDownMd ? 'flex-end' : 'center'}
           flexDirection={isDownMd ? 'column' : 'row'}
         >
-          <Typography>{(order.amount * order.multiplier * order.strikePrice).toFixed(0) + ' USDT/'}</Typography>
-          <Typography sx={{ opacity: 0.5 }} component="span">
+          <Typography fontWeight={isDownMd ? 600 : undefined} fontSize={isDownMd ? 12 : 16}>
+            {(order.amount * order.multiplier * order.strikePrice).toFixed(0) + ' ' + order.investCurrency}
+            {!isDownMd && '/'}
+          </Typography>
+          <Typography sx={{ opacity: 0.5 }} component="span" fontSize={isDownMd ? 11 : 16}>
             {' '}
             {'$' + data?.['Total Invest Amount:']?.replace('USDT', '')}
           </Typography>
@@ -197,84 +205,48 @@ export default function Page() {
       </Box>
     )
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      width="100%"
-      marginBottom="auto"
-      alignItems="center"
-      padding={{ xs: '24px 12px ', md: 0 }}
-    >
-      <GoBack backLink="/account" />
-      <Card style={{ margin: isDownMd ? 0 : '60px', maxWidth: theme.width.maxContent }} width={'100%'}>
-        <Box
-          sx={{
-            padding: '40px 24px 20px',
-            width: '100%'
-          }}
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-        >
-          <Box display="flex" flexDirection="column">
-            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
-              Product ID
-            </Typography>
-            <Typography fontWeight={'700'} fontSize={'24px'}>
-              #{productId}
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              width: '96px',
-              height: '40px',
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '10px'
-            }}
-            display="flex"
-            justifyContent={'space-evenly'}
-          >
-            <LogoText
-              logo={product ? SUPPORTED_CHAINS[product.chain].logo : '?'}
-              text={product ? SUPPORTED_CHAINS[product.chain].symbol : '?'}
-              gapSize={'8px'}
-              fontSize={14}
-              opacity={'0.5'}
-            />
-          </Box>
-        </Box>
-        <Box border={'1px solid rgba(0,0,0,0.1)'} margin={'24px'} borderRadius={'20px'}>
-          <Box display="flex" gap="21px" padding="28px" flexDirection="column" alignItems={'stretch'}>
-            <Typography fontSize={16} fontWeight={700}>
-              Overview
-            </Typography>
-
-            {data &&
-              Object.keys(data).map((key, idx) => (
-                <Box
-                  key={idx}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent={isDownMd ? 'space-between' : 'flex-start'}
-                >
-                  <Typography fontSize={16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
-                    {key}
-                  </Typography>
-
-                  <Typography component="div" fontWeight={400} fontSize={16}>
-                    {data[key as keyof typeof data]}
-                  </Typography>
-                </Box>
-              ))}
-          </Box>
-        </Box>
+    <>
+      <PageLayout
+        backLink="/account"
+        data={data}
+        titleHead={
+          <>
+            <Box display="flex" flexDirection="column">
+              <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+                Product ID
+              </Typography>
+              <Typography fontWeight={'700'} fontSize={'24px'}>
+                #{productId}
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                width: '96px',
+                height: '40px',
+                border: '1px solid rgba(0,0,0,0.1)',
+                borderRadius: '10px'
+              }}
+              display="flex"
+              justifyContent={'space-evenly'}
+            >
+              <LogoText
+                logo={product ? ChainListSymbolMap[product.chain]?.logo : '?'}
+                text={product ? ChainListSymbolMap[product.chain]?.symbol : '?'}
+                gapSize={'8px'}
+                fontSize={14}
+                opacity={'0.5'}
+              />
+            </Box>
+          </>
+        }
+      >
         <Box>
           <FilteredBy data={filterBy} />
         </Box>
-        <Box padding={'24px 24px 0px'}>
+        <Box paddingTop={isDownMd ? '29px' : '45px'}>
           <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
         </Box>
-        <Box padding={'24px'}>
+        <Box padding={isDownMd ? '16px 0' : '24px 0'}>
           <Table
             fontSize="16px"
             header={tab === TableOptions.Details ? DetailsTableHeader : OrdersTableHeader}
@@ -291,13 +263,7 @@ export default function Page() {
             />
           )}
         </Box>
-      </Card>
-
-      <Container
-        sx={{
-          maxWidth: theme.width.maxContent
-        }}
-      ></Container>
-    </Box>
+      </PageLayout>
+    </>
   )
 }

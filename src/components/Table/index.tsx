@@ -137,15 +137,16 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
   }
 }))
 
-const Card = styled('div')({
-  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-  border: '1px solid rgba(0, 0, 0, 0.1)',
+const Card = styled('div')(({ theme }) => ({
+  // backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  // border: '1px solid rgba(0, 0, 0, 0.1)',
+  backgroundColor: theme.palette.background.default,
   borderRadius: 16,
-  padding: 16,
+  padding: '24px 16px',
   '& > div': {
     width: '100%'
   }
-})
+}))
 
 const sortIcon = ({ className }: { className: string }) => (
   <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -162,20 +163,25 @@ const sortIcon = ({ className }: { className: string }) => (
   </svg>
 )
 
-const CardRow = styled('div')(`
-  display: flex;
-  justify-content: space-between;
-  grid-template-columns: auto 100%;
-  > div:first-of-type {
-    white-space: nowrap;
+const CardRow = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  gridTemplateColumns: 'auto 100%',
+  '&> div:first-of-type': {
+    whiteSpace: 'normal',
+    width: '126px'
+  },
+  '&> div:last-child': {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  '& span': {
+    fontSize: 12,
+    fontWdith: 700,
+    color: '#000000'
   }
-  > div:last-child {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-`)
+})
 
 export default function Table({
   header,
@@ -205,34 +211,51 @@ export default function Table({
   return (
     <>
       {matches ? (
-        <Box display="grid" gap={6}>
-          {rows.map((data, index) => (
-            <Card key={index}>
-              <Box display="flex" flexDirection="column" gap="16px">
-                {header.map((headerString, index) => (
-                  <CardRow key={index}>
-                    <Typography variant="inherit" component="div" fontSize={12} color="#000000" sx={{ opacity: 0.5 }}>
-                      {headerString}
-                    </Typography>
-                    <Typography sx={{ color: theme => theme.palette.text.secondary }} component="div">
-                      {data[index] ?? null}
-                    </Typography>
-                    {collapsible && index + 1 === header.length && (
-                      <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        // onClick={() => setIsOpen(open => !open)}
-                        sx={{ flexGrow: 0 }}
-                      >
-                        <KeyboardArrowUpIcon />
-                        {/* {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} */}
-                      </IconButton>
-                    )}
-                  </CardRow>
-                ))}
-              </Box>
-            </Card>
-          ))}
+        <Box display="grid" gap={8}>
+          {rows.map((data, index) => {
+            return (
+              <Card key={index}>
+                <Box display="flex" flexDirection="column" gap="16px">
+                  {header.map((headerString, index) => {
+                    const noHeader = headerString == 'Product Type' || headerString === ''
+                    return noHeader ? (
+                      <Typography width="100%" component="div" fontSize={12} fontWeight={600} key={'2' + index}>
+                        {data[index] ?? null}
+                      </Typography>
+                    ) : (
+                      <CardRow key={'1' + index}>
+                        <Typography
+                          variant="inherit"
+                          component="div"
+                          fontSize={12}
+                          color="#000000"
+                          fontWeight={500}
+                          sx={{ opacity: 0.5 }}
+                        >
+                          {headerString}
+                        </Typography>
+
+                        <Typography sx={{ color: '#000000' }} component="div" fontSize={12} fontWeight={600}>
+                          {data[index] ?? null}
+                        </Typography>
+                        {collapsible && index + 1 === header.length && (
+                          <IconButton
+                            aria-label="expand row"
+                            size="small"
+                            // onClick={() => setIsOpen(open => !open)}
+                            sx={{ flexGrow: 0 }}
+                          >
+                            <KeyboardArrowUpIcon />
+                            {/* {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} */}
+                          </IconButton>
+                        )}
+                      </CardRow>
+                    )
+                  })}
+                </Box>
+              </Card>
+            )
+          })}
         </Box>
       ) : (
         <StyledTableContainer>

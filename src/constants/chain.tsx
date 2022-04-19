@@ -4,7 +4,9 @@ import { Chain } from 'models/chain'
 import BSCUrl from 'assets/svg/bsc_logo.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
 import { ReactComponent as AVAX } from 'assets/svg/avax.svg'
+import { ReactComponent as MATIC } from 'assets/svg/matic.svg'
 import AVAXUrl from 'assets/svg/avax.svg'
+import MATICUrl from 'assets/svg/matic.svg'
 
 export enum ChainId {
   MAINNET = 1,
@@ -13,7 +15,8 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   BSC = 56,
-  AVAX = 43114
+  AVAX = 43114,
+  MATIC = 137
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -22,32 +25,11 @@ export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
 
 export const IS_TEST_NET = !!(NETWORK_CHAIN_ID === ChainId.ROPSTEN)
 
-export const SUPPORTED_CHAINS: {
-  [key: string]: {
-    icon: JSX.Element
-    logo: string
-    symbol: string
-    name: string
-    id: number
-    hex: string
-  }
-} = {
-  BSC: {
-    icon: <BSC height={20} width={20} />,
-    logo: BSCUrl,
-    symbol: 'BNB',
-    name: 'Binance Smart Chain',
-    id: ChainId.BSC,
-    hex: '0x38'
-  },
-  AVAX: { icon: <AVAX />, logo: AVAXUrl, symbol: 'AVAX', name: 'Avalanche', id: ChainId.AVAX, hex: '0xA86A' }
-}
-
 export const ChainList = [
   {
     icon: <BSC height={20} width={20} />,
     logo: BSCUrl,
-    symbol: 'BNB',
+    symbol: 'BSC',
     name: 'Binance Smart Chain',
     id: ChainId.BSC,
     hex: '0x38'
@@ -59,6 +41,14 @@ export const ChainList = [
     name: 'Avalanche',
     id: ChainId.AVAX,
     hex: '0xA86A'
+  },
+  {
+    icon: <MATIC />,
+    logo: MATICUrl,
+    symbol: 'MATIC',
+    name: 'Matic',
+    id: ChainId.MATIC,
+    hex: '0xA86A'
   }
 ]
 
@@ -66,6 +56,13 @@ export const ChainListMap: {
   [key: number]: { icon: JSX.Element; link?: string; selectedIcon?: JSX.Element } & Chain
 } = ChainList.reduce((acc, item) => {
   acc[item.id] = item
+  return acc
+}, {} as any)
+
+export const ChainListSymbolMap: {
+  [key: string]: { icon: JSX.Element; link?: string; selectedIcon?: JSX.Element } & Chain
+} = ChainList.reduce((acc, item) => {
+  acc[item.symbol] = item
   return acc
 }, {} as any)
 
@@ -147,5 +144,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
     blockExplorerUrls: ['https://cchain.explorer.avax.network']
+  },
+  [ChainId.MATIC]: {
+    chainId: '0x89',
+    chainName: 'Matic',
+    nativeCurrency: {
+      name: 'Matic Token',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ['https://polygon-rpc.com/'],
+    blockExplorerUrls: ['https://polygonscan.com']
   }
 }

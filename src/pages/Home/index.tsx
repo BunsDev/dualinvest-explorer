@@ -35,7 +35,7 @@ enum ChainOptions {
   AVAX
 }
 
-const TableHeader = ['Product Type', 'Product ID', 'Token', 'Exercise', 'Amount of Investing in Progress', 'Status']
+const TableHeader = ['Product Type', 'Product ID', 'Token', 'Exercise', 'Amount of Investing in Progress', '']
 
 export default function Home() {
   const theme = useTheme()
@@ -44,6 +44,7 @@ export default function Home() {
   const [search, setSearch] = useState('')
   const history = useHistory()
   const isDownMd = useBreakpoint('md')
+  const isDownSm = useBreakpoint('sm')
 
   const onSearch = useCallback(() => {
     if (!search || !searchOption) {
@@ -81,7 +82,14 @@ export default function Home() {
       return [
         <ExternalLink
           key={0}
-          style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          style={{
+            color: theme.palette.text.primary,
+            textDecorationColor: theme.palette.text.primary,
+            fontSize: isDownMd ? 16 : undefined,
+            fontWeight: isDownMd ? 400 : undefined,
+            display: 'block',
+            marginBottom: isDownMd ? '10px' : undefined
+          }}
           href={product.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
           underline="always"
         >
@@ -97,31 +105,39 @@ export default function Home() {
         <LogoText
           key={0}
           gapSize={'8px'}
+          fontSize={isDownMd ? 12 : 16}
+          fontWeight={isDownMd ? 600 : 400}
           logo={SUPPORTED_CURRENCIES[product.investCurrency]?.logoUrl}
           text={product.investCurrency}
+          color={isDownMd ? '#000000' : undefined}
         />,
-        <Typography key={0}>{product.type === 'CALL' ? 'Upward' : 'Downward'}</Typography>,
+        <Typography key={0} fontSize={isDownMd ? 12 : 14} fontWeight={isDownMd ? 600 : 400} color={'#000000'}>
+          {product.type === 'CALL' ? 'Upward' : 'Downward'}
+        </Typography>,
         <Box
           key={0}
           display="flex"
           alignItems={isDownMd ? 'flex-end' : 'center'}
           flexDirection={isDownMd ? 'column' : 'row'}
+          marginBottom={isDownMd ? '10px' : undefined}
         >
-          <Typography>
-            {(+product.amountRaw * multiplier).toFixed(2)} {product.investCurrency}/
+          <Typography fontSize={isDownMd ? 12 : 14} fontWeight={isDownMd ? 600 : 400} color={'#000000'}>
+            {(+product.amountRaw * multiplier).toFixed(2)} {product.investCurrency}
+            {!isDownMd && '/'}
           </Typography>
-          <Typography sx={{ opacity: 0.5 }} component="span">
+          <Typography sx={{ opacity: 0.5 }} component="span" fontSize={isDownMd ? 11 : 14}>
             ${(+product.amountU).toFixed(2)} USDT
           </Typography>
         </Box>,
         <StatusTag
+          width={isDownMd ? '100%' : undefined}
           key={0}
           type={+product.ts > Date.now() ? 'pending' : 'success'}
           text={+product.ts > Date.now() ? 'Progressing' : 'Exercised'}
         />
       ]
     })
-  }, [products, theme, isDownMd])
+  }, [products, theme.palette.text.primary, isDownMd])
 
   const tableTabs = useMemo(() => {
     return [
@@ -143,7 +159,7 @@ export default function Home() {
         width="100%"
         sx={{
           background: theme.palette.background.paper,
-          padding: '60px 15px'
+          padding: { xs: '32px 20px', md: '60px 15px' }
         }}
       >
         <Box
@@ -160,7 +176,7 @@ export default function Home() {
               Antimatter Explorer
             </Typography>
           </Box>
-          <Box display="flex" gap={isDownMd ? 8 : 24} position="relative" mt={21} width="100%">
+          <Box display={{ xs: 'grid', sm: 'flex' }} gap={isDownMd ? 12 : 24} position="relative" mt={21} width="100%">
             <SelectInput
               placeholder={`Search by ${searchOption}`}
               options={['Address', 'Order', 'Product']}
@@ -169,18 +185,24 @@ export default function Home() {
               value={search}
               onChangeInput={e => setSearch(e.target.value)}
             />
-            <Button width={isDownMd ? '60px' : '220px'} height="48px" onClick={onSearch}>
+            <Button width={isDownSm ? '100%' : '220px'} height={'60px'} onClick={onSearch}>
               <SearchIcon />
-              {!isDownMd && <Typography ml={10}>Search</Typography>}
+              <Typography ml={10}>Search</Typography>
             </Button>
           </Box>
-          <Box mt={46} width="100%">
+          <Box mt={{ xs: 28, sm: 46 }} width="100%">
             <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
-              <Box display="flex" justifyContent="space-between">
+              <Box display={{ xs: 'grid', sm: 'flex' }} justifyContent="space-between" gap={8}>
                 <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10, whiteSpace: 'nowrap' }}>
                   Currency Supported:
                 </Typography>
-                <Box display="flex" gap={12} width="100%" flexWrap="wrap" justifyContent="flex-end">
+                <Box
+                  display="flex"
+                  gap={12}
+                  width="100%"
+                  flexWrap="wrap"
+                  justifyContent={{ xs: 'flex-start', sm: 'flex-end' }}
+                >
                   {SUPPORTED_CURRENCY_SYMBOL.map(symbol => (
                     <LogoText
                       key={symbol}
@@ -196,11 +218,17 @@ export default function Home() {
             </OutlinedCard>
             <Box display="flex" gap={12} mt={12} flexDirection={isDownMd ? 'column' : 'row'}>
               <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
-                <Box display="flex" justifyContent="space-between">
+                <Box display={{ xs: 'grid', sm: 'flex' }} justifyContent="space-between" gap={8}>
                   <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10, whiteSpace: 'nowrap' }}>
                     Chain Supported:
                   </Typography>
-                  <Box display="flex" gap={12} width="100%" flexWrap="wrap" justifyContent="flex-end">
+                  <Box
+                    display="flex"
+                    gap={12}
+                    width="100%"
+                    flexWrap="wrap"
+                    justifyContent={{ xs: 'flex-start', sm: 'flex-end' }}
+                  >
                     <LogoText logo={BSCLogo} text={'BNB Chain'} gapSize={4} fontSize={12} size="16px" />
                     <LogoText logo={AVAXLogo} text={'AVAX Chain'} gapSize={4} fontSize={12} size="16px" />
                   </Box>
@@ -208,11 +236,11 @@ export default function Home() {
               </OutlinedCard>
 
               <OutlinedCard padding="17px 20px" width={isDownMd ? '100%' : 'fit-content'}>
-                <Box display="flex" justifyContent="space-between">
+                <Box display={{ xs: 'grid', sm: 'flex' }} justifyContent="space-between" gap={8}>
                   <Typography sx={{ opacity: 0.5, fontSize: 12, mr: 10, whiteSpace: 'nowrap' }}>
                     Live Structured Products:
                   </Typography>
-                  <Box display="flex" gap={12} flexWrap="wrap" justifyContent="flex-end">
+                  <Box display="flex" gap={12} flexWrap="wrap" justifyContent={{ xs: 'flex-start', sm: 'flex-end' }}>
                     <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
                       Dual Investment
                     </Typography>
@@ -231,7 +259,7 @@ export default function Home() {
         sx={{
           width: '100%',
           maxWidth: theme.width.maxContent,
-          padding: '80px 15px 0',
+          padding: { xs: '38px 20px', sm: '80px 15px 0' },
           margin: '0 auto'
         }}
       >
@@ -259,10 +287,10 @@ export default function Home() {
             padding="24px"
           />
         </Box>
-        <Card padding="35px 24px 111px">
+        <Card padding={isDownSm ? '32px 16px 80px' : '35px 24px 111px'}>
           <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
           <Box display="flex" gap={8} mt={40} mb={20}>
-            <Typography fontSize={24} fontWeight={700}>
+            <Typography fontSize={24} fontWeight={700} mr={16}>
               Top Products
             </Typography>
             <LogoText

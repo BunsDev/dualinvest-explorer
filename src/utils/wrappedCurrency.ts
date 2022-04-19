@@ -2,7 +2,11 @@ import { Currency, CurrencyAmount, ETHER, Token, TokenAmount, WETH } from '../co
 import { ChainId } from '../constants/chain'
 
 export function wrappedCurrency(currency: Currency | undefined, chainId: ChainId | undefined): Token | undefined {
-  return chainId && currency === ETHER ? WETH[chainId] : currency instanceof Token ? currency : undefined
+  return chainId && currency === ETHER && WETH[chainId]
+    ? WETH[chainId]
+    : currency instanceof Token
+    ? currency
+    : undefined
 }
 
 export function wrappedCurrencyAmount(
@@ -14,6 +18,7 @@ export function wrappedCurrencyAmount(
 }
 
 export function unwrappedToken(token: Token): Currency {
-  if (token.equals(WETH[token.chainId])) return ETHER
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  if (WETH[token.chainId] && token.equals(WETH[token.chainId]!)) return ETHER
   return token
 }

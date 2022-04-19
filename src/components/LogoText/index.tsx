@@ -10,7 +10,8 @@ export default function LogoText({
   fontSize,
   gapSize,
   size,
-  opacity
+  opacity,
+  color
 }: {
   logo: string | JSX.Element
   text?: string | React.ReactNode
@@ -19,6 +20,7 @@ export default function LogoText({
   gapSize?: string | number
   size?: string
   opacity?: string
+  color?: string
 }) {
   return (
     <Wrapper
@@ -27,6 +29,7 @@ export default function LogoText({
         alignItems: 'center',
         fontWeight: fontWeight ?? 400,
         fontSize: fontSize ?? 16,
+        color: color,
         '& > img, > svg': {
           marginRight: gapSize || '12px',
           height: size ? size : '20px',

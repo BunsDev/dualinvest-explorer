@@ -18,6 +18,7 @@ const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
   overflowX: 'auto',
+  minWidth: 300,
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column'
     // height: '100vh'

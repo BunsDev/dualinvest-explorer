@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import TextButton from 'components/Button/TextButton'
 
-export default function Tag({ text, onClose }: { text: string; onClose?: () => void }) {
+export default function Tag({ text, onClose, onClick }: { text: string; onClose?: () => void; onClick?: () => void }) {
   return (
     <Box
       borderRadius="10px"
@@ -13,8 +13,14 @@ export default function Tag({ text, onClose }: { text: string; onClose?: () => v
       padding={'0px 12px'}
       gap={12}
       width="fit-content"
+      sx={{
+        '&:hover': {
+          cursor: onClick ? 'pointer' : 'auto'
+        }
+      }}
+      onClick={onClick}
     >
-      <Typography sx={{ fontSize: { xs: 12, md: 16 } }}>{text}</Typography>
+      <Typography sx={{ fontSize: 16 }}>{text}</Typography>
       {onClose && (
         <TextButton onClick={onClose} style={{ color: '#11BF2D' }}>
           X
