@@ -1,24 +1,30 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import { useParams, Link, useHistory } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
+import dayjs from 'dayjs'
+import dayjsPluginUTC from 'dayjs-plugin-utc'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
-import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
+import { useOrderRecords, INVEST_TYPE, InvestStatus, useDovOrderRecords } from 'hooks/useOrderData'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
-import dayjs from 'dayjs'
 import NoDataCard from 'components/Card/NoDataCard'
 import Spinner from 'components/Spinner'
-import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import { getMappedSymbol, SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import { getContract, getEtherscanLink, shortenAddress } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
 import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { PageLayout } from 'components/PageLayout'
+import { DovRecordRaw } from 'utils/fetch/record'
+import { getOtherNetworkLibrary } from 'connectors/multiNetworkConnectors'
+import DEFI_VAULT_ABI from 'constants/abis/defi_vault.json'
+
+dayjs.extend(dayjsPluginUTC)
 
 const TableHeaderActive = [
   'Token',
@@ -32,6 +38,8 @@ const TableHeaderActive = [
   ''
 ]
 
+const DovTableHeaderActive = ['Token', 'Invest Amount', 'Settlement Time', 'Strike Price', 'Exercise', '']
+
 const TableHeaderInActive = [
   'Product Type',
   'Product ID',
@@ -43,23 +51,67 @@ const TableHeaderInActive = [
   ''
 ]
 
+const getDovDetails = (record: DovRecordRaw) => {
+  if (!record) return undefined
+  const library = getOtherNetworkLibrary(record.chainId)
+  const contract = record.swapAddress && library ? getContract(record.vaultAddress, DEFI_VAULT_ABI, library) : null
+  return new Promise(async (resolve, reject) => {
+    try {
+      const res = await contract?.vaultParams()
+      const { asset, underlying } = res
+      const assetContract = library ? getContract(asset, DEFI_VAULT_ABI, library) : null
+      const assetSymbol = await assetContract?.symbol()
+      if (asset === underlying) {
+        resolve({ asset: assetSymbol, underlying: assetSymbol })
+        return
+      }
+      const underlyingContract = library ? getContract(underlying, DEFI_VAULT_ABI, library) : null
+      const underlyingSymbol = await underlyingContract?.symbol()
+      resolve({ asset: assetSymbol, underlying: underlyingSymbol })
+      return
+    } catch (e) {
+      reject()
+      return null
+    }
+  })
+}
+
 export default function Order() {
   const theme = useTheme()
+  const [order, setOrder] = useState<undefined | any>(undefined)
   const { orderId } = useParams<{ orderId: string }>()
   const history = useHistory()
   const isDownMd = useBreakpoint('md')
+  const args = useMemo(() => {
+    return {
+      orderId
+    }
+  }, [orderId])
 
-  const { orderList } = useOrderRecords({
-    orderId,
-    pageNum: 1,
-    pageSize: 999999
-  })
+  const { orderList } = useOrderRecords(args)
 
-  const order = useMemo(() => {
-    if (!orderList || orderList.length === 0) return
+  const { dovOrderList } = useDovOrderRecords(args)
+  const isDov = order && !orderList?.[0]
 
-    return orderList[0]
-  }, [orderList])
+  useEffect(() => {
+    if (!orderList || orderList.length === 0) {
+      if (!dovOrderList || dovOrderList.length === 0) {
+        return
+      } else {
+        getDovDetails(dovOrderList[0])?.then((r: any) => {
+          setOrder({
+            ...dovOrderList[0],
+            annualRor: undefined,
+            currency: r.underlying,
+            investCurrency: r.asset
+          })
+        })
+        return
+      }
+    } else {
+      return setOrder(orderList[0])
+    }
+  }, [dovOrderList, orderList])
 
   const price = usePrice(order?.investCurrency)
 
@@ -74,28 +126,51 @@ export default function Order() {
   }, [order])
 
   const data = useMemo(() => {
-    if (!orderList || orderList.length === 0) return
-
-    const order = orderList[0]
+    if (!order) return
 
     const hash = order.confirmOrderHash || order.hash
-    const link = order.chainId && hash && getEtherscanLink(order.chainId, order.hash, 'transaction')
+    const link = order.chainId && hash && getEtherscanLink(order.chainId, hash, 'transaction')
 
-    return {
-      ['Settlement Price:']: order.strikePrice,
-      ['Settlement Time:']: dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY hh:mm A'),
+    const res: any = {
+      ['Strike Price:']: order.strikePrice ? order.strikePrice + ' USDT' : undefined,
+      ['Settlement Price:']: order.deliveryPrice ? order.deliveryPrice + ' USDT' : undefined,
+      ['Settlement Time:']: order.expiredAt
+        ? (dayjs(+order.expiredAt * 1000) as any).utc().format('MMM DD, YYYY hh:mm A') + ' UTC'
+        : undefined,
       ['Product ID:']: (
         <Box display="flex" gap={12} alignItems="center">
-          <Link
-            style={{ color: theme.palette.text.primary }}
-            to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
-          >
-            {order.productId}
-          </Link>
-          <Tag text={order.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'} />
+          {isDov ? (
+            <ExternalLink
+              href="https://dov.antimatter.finance/#/defi"
+              underline="always"
+              sx={{
+                color: theme.palette.text.primary,
+                textDecorationColor: theme.palette.text.primary,
+                '&:hover': { opacity: 0.8 }
+              }}
+            >
+              Vault
+            </ExternalLink>
+          ) : (
+            <Link
+              style={{ color: theme.palette.text.primary }}
+              to={routes.explorerProduct.replace(':productId', `${order.productId}`)}
+            >
+              {order.productId}
+            </Link>
+          )}
+          <Tag
+            text={
+              order.investType === INVEST_TYPE.dov
+                ? 'Defi Option Vault'
+                : order.investType === INVEST_TYPE.recur
+                ? 'Recurring Strategy'
+                : 'Dual Investment'
+            }
+          />
         </Box>
       ),
-      ['TXID:']: (
+      ['TXID:']: hash ? (
         <Box display="flex" gap={8} alignItems="center">
           {isDownMd ? hash.slice(0, 20) + '...' : hash}
           {link && (
@@ -104,9 +179,13 @@ export default function Order() {
             </ExternalLink>
           )}
         </Box>
+      ) : (
+        undefined
       )
     }
-  }, [orderList, theme, isDownMd])
+
+    return res
+  }, [order, isDov, theme.palette.text.primary, isDownMd])
 
   const dataRows = useMemo(() => {
     if (!order) return []
@@ -115,26 +194,31 @@ export default function Order() {
     const investAmount = +order.amount * +order.multiplier * multiplier
 
     if (isActive) {
-      return [
-        [
-          <LogoText
-            key={0}
-            gapSize={'8px'}
-            logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
-            text={order.currency}
-          />,
-          `${investAmount.toFixed(2)} ${order.investCurrency}`,
-          dayjs(+order.ts * 1000).format('MMM DD, YYYY'),
+      const res = [
+        <LogoText
+          key={0}
+          gapSize={'8px'}
+          logo={SUPPORTED_CURRENCIES[getMappedSymbol(order.currency)].logoUrl}
+          text={getMappedSymbol(order.currency)}
+        />,
+        `${investAmount.toFixed(2)} ${order.investCurrency}`,
+        order.ts ? dayjs(+order.ts * 1000).format('MMM DD, YYYY') : null,
+        order.annualRor ? (
           <Typography key={0} color="#31B047" component={'span'} fontWeight={isDownMd ? 600 : undefined}>
             {order.annualRor + '%'}
-          </Typography>,
-          dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY'),
-          order.strikePrice,
-          order.type === 'CALL' ? 'Upward' : 'Downward',
-          `${(+order.returnedAmount * multiplier).toFixed(2)} ${order.returnedCurrency}`,
-          <OrderStatusTag key={0} order={order} />
-        ]
+          </Typography>
+        ) : null,
+        order.expiredAt ? dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY') : '-',
+        order.strikePrice,
+        order.type === 'CALL' ? 'Upward' : 'Downward',
+        order.returnedAmount ? `${(+order.returnedAmount * multiplier).toFixed(2)} ${order.returnedCurrency}` : null,
+        <OrderStatusTag key={0} order={order} />
       ]
+      if (isDov) {
+        res.splice(7, 1)
+        res.splice(2, 2)
+      }
+      return [res]
     }
 
     return [
@@ -161,26 +245,34 @@ export default function Order() {
         >
           {order.productId}
         </Link>,
-        <Link
-          key={0}
-          style={{ color: theme.palette.text.primary }}
-          to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
-        >
-          {order.orderId}
-        </Link>,
+        isDov ? (
+          <Link key={0} style={{ color: theme.palette.text.primary }} to={'https://dov.antimatter.finance/#/defi'}>
+            Vault
+          </Link>
+        ) : (
+          <Link
+            key={0}
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerOrder.replace(':orderId', `${order.orderId}`)}
+          >
+            {order.orderId}
+          </Link>
+        ),
         <LogoText
           key={0}
           gapSize={'8px'}
-          logo={SUPPORTED_CURRENCIES[order.currency].logoUrl}
+          logo={SUPPORTED_CURRENCIES[getMappedSymbol(order.currency)].logoUrl}
           text={order.currency}
           color={isDownMd ? '#000000' : undefined}
           fontWeight={isDownMd ? 600 : 400}
           fontSize={isDownMd ? 12 : 14}
         />,
         order.type === 'CALL' ? 'Upward' : 'Downward',
-        <Typography key={0} color="#31B047" fontWeight={isDownMd ? 600 : 400}>
-          {order.annualRor + '%'}
-        </Typography>,
+        order.annualRor ? (
+          <Typography key={0} color="#31B047" fontWeight={isDownMd ? 600 : 400}>
+            {order.annualRor + '%'}
+          </Typography>
+        ) : null,
         <Box
           key={0}
           display="flex"
@@ -199,7 +291,7 @@ export default function Order() {
         <OrderStatusTag key={0} order={order} />
       ]
     ]
-  }, [order, isActive, theme, price, isDownMd])
+  }, [order, isActive, theme.palette.text.primary, isDownMd, isDov, price])
 
   const onCancelOrderFilter = useCallback(() => {
     if (!order) return
@@ -263,7 +355,7 @@ export default function Order() {
         </Box>
         <Box padding={'24px'}>
           {isActive ? (
-            <Table fontSize="16px" header={TableHeaderActive} rows={dataRows} />
+            <Table fontSize="16px" header={isDov ? DovTableHeaderActive : TableHeaderActive} rows={dataRows} />
           ) : (
             <Table fontSize="16px" header={TableHeaderInActive} rows={dataRows} />
           )}
@@ -283,7 +375,7 @@ export default function Order() {
               <Spinner size={60} />
             </Box>
           )}
-          {orderList && orderList.length === 0 && <NoDataCard text={'Not Found'} />}
+          {!isDov && orderList && orderList.length === 0 && <NoDataCard text={'Not Found'} />}
         </Box>
       </>
     </PageLayout>

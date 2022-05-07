@@ -60,23 +60,27 @@ export function PageLayout({
             </Typography>
 
             {data &&
-              Object.keys(data).map((key, idx) => (
-                <Box
-                  key={idx}
-                  display={isDownMd ? 'grid' : 'flex'}
-                  gap={4}
-                  alignItems="center"
-                  justifyContent={isDownMd ? 'space-between' : 'flex-start'}
-                >
-                  <Typography fontSize={isDownMd ? 12 : 16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
-                    {key}
-                  </Typography>
+              Object.keys(data).map((key, idx) => {
+                const item = data[key]
+                if (!item) return null
+                return (
+                  <Box
+                    key={idx}
+                    display={isDownMd ? 'grid' : 'flex'}
+                    gap={4}
+                    alignItems="center"
+                    justifyContent={isDownMd ? 'space-between' : 'flex-start'}
+                  >
+                    <Typography fontSize={isDownMd ? 12 : 16} sx={{ opacity: 0.8 }} paddingRight={'12px'}>
+                      {key}
+                    </Typography>
 
-                  <Typography fontWeight={500} fontSize={16} component="div">
-                    {data[key as keyof typeof data]}
-                  </Typography>
-                </Box>
-              ))}
+                    <Typography fontWeight={500} fontSize={16} component="div">
+                      {data[key as keyof typeof data]}
+                    </Typography>
+                  </Box>
+                )
+              })}
           </Box>
         </Box>
         <Box padding={{ xs: '0 16px', md: '24px' }}> {children}</Box>

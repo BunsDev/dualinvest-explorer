@@ -20,7 +20,13 @@ export const SYMBOL_MAP = {
   AVAX: 'AVAX',
   LUNA: 'LUNA',
   MATIC: 'MATIC',
-  CAKE: 'CAKE'
+  CAKE: 'CAKE',
+  WETH: 'ETH',
+  USDC: 'USDC'
+}
+
+export const getMappedSymbol = (symbol: string) => {
+  return SYMBOL_MAP[symbol as keyof typeof SYMBOL_MAP] ?? symbol
 }
 
 export const SUPPORTED_CURRENCY_SYMBOL = [
@@ -87,6 +93,18 @@ export const SUPPORTED_CURRENCIES: {
     },
     decimals: 18,
     symbol: 'ETH',
+    name: 'Ethereum',
+    logoUrl: EthLogo,
+    color: '#656565'
+  },
+  WETH: {
+    address: {
+      [ChainId.ROPSTEN]: '0x55795b02C44Bd098D21bC1854036C2E75d7E7c43',
+      [ChainId.BSC]: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
+      [ChainId.MAINNET]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+    },
+    decimals: 18,
+    symbol: 'WETH',
     name: 'Ethereum',
     logoUrl: EthLogo,
     color: '#656565'

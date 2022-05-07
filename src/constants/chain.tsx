@@ -1,6 +1,6 @@
 import { Chain } from 'models/chain'
-// import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
-// import EthUrl from 'assets/svg/eth_logo.svg'
+import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
+import EthUrl from 'assets/svg/eth_logo.svg'
 import BSCUrl from 'assets/svg/bsc_logo.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
 import { ReactComponent as AVAX } from 'assets/svg/avax.svg'
@@ -26,6 +26,14 @@ export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
 export const IS_TEST_NET = !!(NETWORK_CHAIN_ID === ChainId.ROPSTEN)
 
 export const ChainList = [
+  {
+    icon: <ETH />,
+    logo: EthUrl,
+    symbol: 'ETH',
+    name: 'Ethereum Mainnet',
+    id: ChainId.MAINNET,
+    hex: '0x1'
+  },
   {
     icon: <BSC height={20} width={20} />,
     logo: BSCUrl,
@@ -155,5 +163,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://polygon-rpc.com/'],
     blockExplorerUrls: ['https://polygonscan.com']
+  },
+  [ChainId.KOVAN]: {
+    chainId: '0x2a',
+    chainName: 'Kovan',
+    nativeCurrency: {
+      name: 'Kovan',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://kovan.infura.io/v3/ab440a3a67f74b6b8a0a8e8e13a76a52'],
+    blockExplorerUrls: ['https://kovan.etherscan.io/']
   }
 }

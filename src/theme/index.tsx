@@ -129,7 +129,7 @@ export const theme = {
   },
   width: {
     sidebar: '250px',
-    maxContent: '1110px'
+    maxContent: '1200px'
   },
   shape: {
     border: '1px solid',

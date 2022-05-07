@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react'
-import { OrderRecord } from 'utils/fetch/record'
+import { useState, useCallback, useEffect, useMemo } from 'react'
+import { DovRecordRaw, OrderRecord } from 'utils/fetch/record'
 import { Axios } from 'utils/axios'
 import usePollingWithMaxRetries from './usePollingWithMaxRetries'
 
@@ -16,7 +16,8 @@ export enum InvestStatus {
 export enum INVEST_TYPE {
   DO_NOT_USE_THIS,
   dualInvest,
-  recur
+  recur,
+  dov
 }
 
 export function useOrderRecords({
@@ -63,8 +64,65 @@ export function useOrderRecords({
 
   usePollingWithMaxRetries(promiseFn, callbackFn)
 
-  return {
-    orderList,
-    pageParams
-  }
+  return useMemo(() => {
+    return {
+      orderList,
+      pageParams
+    }
+  }, [orderList, pageParams])
+}
+
+const perPage = 8
+export function useDovOrderRecords({
+  address,
+  orderId,
+  productId,
+  chainId,
+  currentPage
+}: {
+  address?: string
+  orderId?: string
+  productId?: string
+  chainId?: string
+  currentPage?: number
+}) {
+  const [orderList, setOrderList] = useState<DovRecordRaw[] | undefined>(undefined)
+  const [pageParams, setPageParams] = useState<{ count: number; perPage: number; total: number }>({
+    count: 0,
+    perPage: 0,
+    total: 0
+  })
+
+  const promiseFn = useCallback(() => {
+    return Axios.post<{ records: DovRecordRaw[]; pages: string; size: string; total: string }>('vaultOrderList', {
+      address,
+      orderId,
+      productId,
+      chainId
+    })
+  }, [address, orderId, productId, chainId])
+
+  const callbackFn = useCallback(r => {
+    setOrderList(r.data.data)
+  }, [])
+
+  useEffect(() => {
+    setPageParams({
+      count: orderList ? Math.ceil(orderList.length / perPage) : 0,
+      perPage: perPage,
+      total: orderList ? orderList.length : 0
+    })
+  }, [orderList])
+
+  usePollingWithMaxRetries(promiseFn, callbackFn)
+
+  const res = useMemo(() => {
+    const curPage = currentPage ?? 1
+    return {
+      dovOrderList: orderList?.slice((curPage - 1) * perPage, curPage * perPage - 1),
+      pageParams
+    }
+  }, [currentPage, orderList, pageParams])
+
+  return res
 }

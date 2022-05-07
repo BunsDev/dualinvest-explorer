@@ -259,7 +259,7 @@ export default function Home() {
         sx={{
           width: '100%',
           maxWidth: theme.width.maxContent,
-          padding: { xs: '38px 20px', sm: '80px 15px 0' },
+          padding: { xs: '38px 20px', sm: '80px 0' },
           margin: '0 auto'
         }}
       >

@@ -88,7 +88,6 @@ export default function AccountDetails({
             <SecondaryButton
               style={{ marginRight: '8px' }}
               onClick={() => {
-                console.log(connector?.deactivate.toString())
                 connector?.deactivate()
               }}
             >
