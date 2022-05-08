@@ -17,7 +17,7 @@ import { routes } from 'constants/routes'
 import { getContract, getEtherscanLink, shortenAddress } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
-import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { DEFI_OPTION_VAULT_LINK, DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { PageLayout } from 'components/PageLayout'
 import { DovRecordRaw } from 'utils/fetch/record'
@@ -141,7 +141,7 @@ export default function Order() {
         <Box display="flex" gap={12} alignItems="center">
           {isDov ? (
             <ExternalLink
-              href="https://dov.antimatter.finance/#/defi"
+              href={DEFI_OPTION_VAULT_LINK}
               underline="always"
               sx={{
                 color: theme.palette.text.primary,
@@ -202,13 +202,13 @@ export default function Order() {
           text={getMappedSymbol(order.currency)}
         />,
         `${investAmount.toFixed(2)} ${order.investCurrency}`,
-        order.ts ? dayjs(+order.ts * 1000).format('MMM DD, YYYY') : null,
+        order.ts ? (dayjs(+order.ts * 1000) as any).utc().format('MMM DD, YYYY') : null,
         order.annualRor ? (
           <Typography key={0} color="#31B047" component={'span'} fontWeight={isDownMd ? 600 : undefined}>
             {order.annualRor + '%'}
           </Typography>
         ) : null,
-        order.expiredAt ? dayjs(+order.expiredAt * 1000).format('MMM DD, YYYY') : '-',
+        order.expiredAt ? (dayjs(+order.expiredAt * 1000) as any).utc().format('MMM DD, YYYY') : '-',
         order.strikePrice,
         order.type === 'CALL' ? 'Upward' : 'Downward',
         order.returnedAmount ? `${(+order.returnedAmount * multiplier).toFixed(2)} ${order.returnedCurrency}` : null,
@@ -246,9 +246,17 @@ export default function Order() {
           {order.productId}
         </Link>,
         isDov ? (
-          <Link key={0} style={{ color: theme.palette.text.primary }} to={'https://dov.antimatter.finance/#/defi'}>
+          <ExternalLink
+            key={0}
+            sx={{
+              color: theme.palette.text.primary,
+              textDecorationColor: theme.palette.text.primary,
+              '&:hover': { opacity: 0.8 }
+            }}
+            href={DEFI_OPTION_VAULT_LINK}
+          >
             Vault
-          </Link>
+          </ExternalLink>
         ) : (
           <Link
             key={0}

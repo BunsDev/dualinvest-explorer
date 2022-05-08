@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useHistory, Link } from 'react-router-dom'
-import { Box, useTheme, Typography } from '@mui/material'
+import { Box, useTheme, Typography, TabProps, Tab } from '@mui/material'
 import Card, { OutlinedCard } from 'components/Card'
 import NumericalCard from 'components/Card/NumericalCard'
 import { ChainId } from 'constants/chain'
@@ -10,6 +10,7 @@ import Table from 'components/Table'
 import LogoText from 'components/LogoText'
 import BSCLogo from 'assets/svg/bsc_logo.svg'
 import AVAXLogo from 'assets/svg/avax_logo.svg'
+import ETHLogo from 'assets/svg/eth_logo.svg'
 import StatusTag from 'components/StatusTag'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import SelectInput from 'components/Input/SelectInput'
@@ -20,9 +21,11 @@ import { INVEST_TYPE } from 'hooks/useOrderData'
 import { useHomeStatistics } from 'hooks/useStatistical'
 import { SUPPORTED_CURRENCIES, SUPPORTED_CURRENCY_SYMBOL } from 'constants/currencies'
 import NoDataCard from 'components/Card/NoDataCard'
-import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK, DEFI_OPTION_VAULT_LINK } from 'constants/links'
 import { ExternalLink } from 'theme/components'
 import useBreakpoint from 'hooks/useBreakpoint'
+import Tabs from 'components/Tabs/Tabs'
+import RecentTransaction from './RecentTransaction'
 
 enum SearchOptions {
   Address = 'Address',
@@ -32,10 +35,16 @@ enum SearchOptions {
 
 enum ChainOptions {
   BSC,
-  AVAX
+  AVAX,
+  ETH
 }
 
 const TableHeader = ['Product Type', 'Product ID', 'Token', 'Exercise', 'Amount of Investing in Progress', '']
+
+export enum ProductType {
+  dualInvest,
+  dov
+}
 
 export default function Home() {
   const theme = useTheme()
@@ -68,6 +77,9 @@ export default function Home() {
     if (tab === ChainOptions.AVAX) {
       return ChainId.AVAX
     }
+    if (tab === ChainOptions.ETH) {
+      return ChainId.MAINNET
+    }
 
     return ChainId.BSC
   }, [tab])
@@ -90,18 +102,38 @@ export default function Home() {
             display: 'block',
             marginBottom: isDownMd ? '10px' : undefined
           }}
-          href={product.investType === INVEST_TYPE.recur ? RECURRING_STRATEGY_LINK : DUAL_INVESTMENT_LINK}
+          href={
+            product.investType === INVEST_TYPE.dov
+              ? DEFI_OPTION_VAULT_LINK
+              : product.investType === INVEST_TYPE.recur
+              ? RECURRING_STRATEGY_LINK
+              : DUAL_INVESTMENT_LINK
+          }
           underline="always"
         >
-          {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
+          {product.investType === INVEST_TYPE.dov
+            ? 'Defi Option Vault'
+            : product.investType === INVEST_TYPE.recur
+            ? 'Recurring Strategy'
+            : 'Dual Investment'}
         </ExternalLink>,
-        <Link
-          key={0}
-          style={{ color: theme.palette.text.primary }}
-          to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
-        >
-          {product.productId}
-        </Link>,
+        product.investType === 3 ? (
+          <ExternalLink
+            href={DEFI_OPTION_VAULT_LINK}
+            underline="always"
+            style={{ color: theme.palette.text.primary, textDecorationColor: theme.palette.text.primary }}
+          >
+            Vault
+          </ExternalLink>
+        ) : (
+          <Link
+            key={0}
+            style={{ color: theme.palette.text.primary }}
+            to={routes.explorerProduct.replace(':productId', `${product.productId}`)}
+          >
+            {product.productId}
+          </Link>
+        ),
         <LogoText
           key={0}
           gapSize={'8px'}
@@ -132,8 +164,8 @@ export default function Home() {
         <StatusTag
           width={isDownMd ? '100%' : undefined}
           key={0}
-          type={+product.ts > Date.now() ? 'pending' : 'success'}
-          text={+product.ts > Date.now() ? 'Progressing' : 'Exercised'}
+          type={+product.expiredAt * 1000 > Date.now() ? 'pending' : 'success'}
+          text={+product.expiredAt * 1000 > Date.now() ? 'Progressing' : 'Exercised'}
         />
       ]
     })
@@ -142,7 +174,8 @@ export default function Home() {
   const tableTabs = useMemo(() => {
     return [
       <LogoText key={0} logo={BSCLogo} text={'BNB Chain'} />,
-      <LogoText key={0} logo={AVAXLogo} text={'AVAX Chain'} />
+      <LogoText key={1} logo={AVAXLogo} text={'AVAX Chain'} />,
+      <LogoText key={2} logo={ETHLogo} text={'Ethereum'} />
     ]
   }, [])
 
@@ -287,25 +320,72 @@ export default function Home() {
             padding="24px"
           />
         </Box>
-        <Card padding={isDownSm ? '32px 16px 80px' : '35px 24px 111px'}>
-          <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
-          <Box display="flex" gap={8} mt={40} mb={20}>
-            <Typography fontSize={24} fontWeight={700} mr={16}>
-              Top Products
-            </Typography>
-            <LogoText
-              logo={tab == ChainOptions.BSC ? BSCLogo : AVAXLogo}
-              size="28px"
-              text={tab == ChainOptions.BSC ? 'BNB' : 'AVAX'}
-              fontSize={20}
-              fontWeight={600}
-            />
-          </Box>
+        <Box padding={'60px 0 40px'}>
+          <Tabs
+            titles={['Recent Transactions', 'Top Products']}
+            contents={[
+              <Card padding={isDownSm ? '32px 16px 80px' : '40px 24px 111px'} key="txn" style={{ marginTop: 30 }}>
+                <Box>
+                  <Box display="flex" gap={8} mt={40} mb={20}>
+                    <Typography fontSize={24} fontWeight={700} mr={16}>
+                      Recent Transactions
+                    </Typography>
+                  </Box>
+                  <RecentTransaction />
+                </Box>
+              </Card>,
+              <Card padding={isDownSm ? '32px 16px 80px' : '40px 24px 111px'} key="products" style={{ marginTop: 30 }}>
+                <Box>
+                  <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
+                  <Box display="flex" gap={8} mt={40} mb={20}>
+                    <Typography fontSize={24} fontWeight={700} mr={16}>
+                      Top Products
+                    </Typography>
+                    <LogoText
+                      logo={tab == ChainOptions.BSC ? BSCLogo : AVAXLogo}
+                      size="28px"
+                      text={tab == ChainOptions.BSC ? 'BNB' : 'AVAX'}
+                      fontSize={20}
+                      fontWeight={600}
+                    />
+                  </Box>
 
-          <Table fontSize="16px" header={TableHeader} rows={dataRows} />
-          {products && products.length === 0 && <NoDataCard text={'No data'} />}
-        </Card>
+                  <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+                  {products && products.length === 0 && <NoDataCard text={'No data'} />}
+                </Box>
+              </Card>
+            ]}
+            CustomTab={CustomTab}
+            centered
+          />
+        </Box>
       </Box>
     </Box>
+  )
+}
+
+export function CustomTab(props: TabProps & { selected?: boolean }) {
+  return (
+    <Tab
+      {...props}
+      sx={{
+        textTransform: 'none',
+        borderRadius: 1,
+        // color: theme => theme.palette.primary.main,
+        background: '#ffffff',
+        border: '1px solid #ffffff',
+        margin: '0 5px',
+        borderColor: '#ffffff',
+        opacity: 1,
+        '&.Mui-selected': {
+          color: '#ffffff',
+          borderColor: theme => theme.palette.primary.main,
+          background: theme => theme.palette.primary.main
+        },
+        '&:hover': {
+          borderColor: theme => theme.palette.primary.main
+        }
+      }}
+    />
   )
 }

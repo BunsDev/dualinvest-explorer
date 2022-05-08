@@ -9,14 +9,22 @@ interface Props {
   tabPadding?: string
   CustomTab?: React.FC<TabProps & { selected?: boolean }>
   fontWeight?: number
+  centered?: boolean
 }
 
 function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
   return <div hidden={value !== index}>{value === index && children}</div>
 }
 
-export default function Tabs(props: Props) {
-  const { titles, contents, customCurrentTab, customOnChange, tabPadding, CustomTab } = props
+export default function Tabs({
+  titles,
+  contents,
+  customCurrentTab,
+  customOnChange,
+  tabPadding,
+  CustomTab,
+  centered
+}: Props) {
   const [value, setValue] = React.useState(0)
 
   const onChange = useCallback(
@@ -30,6 +38,7 @@ export default function Tabs(props: Props) {
     <Box sx={{ width: '100%' }}>
       <Box sx={CustomTab ? undefined : { borderBottom: 1, borderColor: 'divider' }}>
         <MuiTabs
+          centered={centered}
           allowScrollButtonsMobile
           scrollButtons="auto"
           value={customCurrentTab !== undefined ? customCurrentTab : value}

@@ -51,7 +51,7 @@ export function useDualStatistics(): DualStatisticsType {
     setStatistics(r.data.data)
   }, [])
 
-  usePollingWithMaxRetries(promistFn, callbackFn, 3000)
+  usePollingWithMaxRetries(promistFn, callbackFn, 120000)
 
   const result = useMemo(() => {
     if (!statistics) return undefined
@@ -89,7 +89,7 @@ export function useRecurStatistics() {
     }
   }, [])
 
-  usePollingWithMaxRetries(promiseFn, callbackFn, 3000)
+  usePollingWithMaxRetries(promiseFn, callbackFn, 120000)
 
   return statistics
 }

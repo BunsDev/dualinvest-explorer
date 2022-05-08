@@ -44,6 +44,9 @@ export function OwnerCell({ url, name }: { url?: string; name: string }) {
 
 const StyledTableContainer = styled(TableContainer)({
   display: 'table',
+  '& *': {
+    fontFamily: 'SF Pro'
+  },
   borderRadius: '40px',
   '& .MuiTableCell-root': {
     borderBottom: 'none',
@@ -72,6 +75,9 @@ const StyledTableHead = styled(TableHead)(({ theme }) => ({
     lineHeight: '12px',
     background: 'rgba(255, 255, 255, 0.08)',
     padding: '12px 20px 12px 0',
+    [theme.breakpoints.down('lg')]: {
+      paddingLeft: '12px 15px 12px 0'
+    },
     color: theme.palette.text.secondary,
     borderBottom: 'none',
     '& .MuiTableSortLabel-root': {
@@ -104,7 +110,7 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
     background: variant === 'outlined' ? 'transparent' : theme.palette.background.default
   },
   '& .MuiTableCell-root': {
-    fontSize: (fontSize ?? '16px') + '!important',
+    fontSize: fontSize ?? '16px',
     justifyContent: 'flex-start',
     paddingLeft: 0,
     border: '1px solid',
@@ -112,7 +118,7 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
     borderRight: 'none',
     borderLeft: 'none',
     '& .MuiTypography-root': {
-      fontSize: (fontSize ?? '16px') + '!important'
+      fontSize: fontSize ?? '16px'
     },
     '&:first-of-type': {
       borderLeft: '1px solid',

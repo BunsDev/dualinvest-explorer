@@ -72,19 +72,22 @@ export function useOrderRecords({
   }, [orderList, pageParams])
 }
 
-const perPage = 8
+const defaultPageSize = 8
+
 export function useDovOrderRecords({
   address,
   orderId,
   productId,
   chainId,
-  currentPage
+  currentPage,
+  pageSize
 }: {
   address?: string
   orderId?: string
   productId?: string
   chainId?: string
   currentPage?: number
+  pageSize?: number
 }) {
   const [orderList, setOrderList] = useState<DovRecordRaw[] | undefined>(undefined)
   const [pageParams, setPageParams] = useState<{ count: number; perPage: number; total: number }>({
@@ -92,7 +95,7 @@ export function useDovOrderRecords({
     perPage: 0,
     total: 0
   })
-
+  const perPage = pageSize ?? defaultPageSize
   const promiseFn = useCallback(() => {
     return Axios.post<{ records: DovRecordRaw[]; pages: string; size: string; total: string }>('vaultOrderList', {
       address,
@@ -103,7 +106,7 @@ export function useDovOrderRecords({
   }, [address, orderId, productId, chainId])
 
   const callbackFn = useCallback(r => {
-    setOrderList(r.data.data)
+    setOrderList(r.data.data.reverse())
   }, [])
 
   useEffect(() => {
@@ -112,17 +115,17 @@ export function useDovOrderRecords({
       perPage: perPage,
       total: orderList ? orderList.length : 0
     })
-  }, [orderList])
+  }, [orderList, perPage])
 
   usePollingWithMaxRetries(promiseFn, callbackFn)
 
   const res = useMemo(() => {
     const curPage = currentPage ?? 1
     return {
-      dovOrderList: orderList?.slice((curPage - 1) * perPage, curPage * perPage - 1),
+      dovOrderList: orderList?.slice((curPage - 1) * perPage, curPage * perPage),
       pageParams
     }
-  }, [currentPage, orderList, pageParams])
+  }, [currentPage, orderList, pageParams, perPage])
 
   return res
 }
