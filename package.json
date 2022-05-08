@@ -106,6 +106,7 @@
     "dayjs-plugin-utc": "^0.1.2",
     "decimal.js-light": "^2.5.1",
     "jsbi": "^4.0.0",
+    "lottie-web": "^5.9.4",
     "toformat": "^2.0.0"
   }
 }

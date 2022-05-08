@@ -14,15 +14,12 @@ import Tag from 'components/Tag'
 import { ExternalLink } from 'theme/components'
 import { ReactComponent as ExternalIcon } from 'assets/svg/external_icon.svg'
 import { routes } from 'constants/routes'
-import { getContract, getEtherscanLink, shortenAddress } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 import { usePrice } from 'hooks/usePriceSet'
 import { ChainListMap } from 'constants/chain'
 import { DEFI_OPTION_VAULT_LINK, DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { PageLayout } from 'components/PageLayout'
-import { DovRecordRaw } from 'utils/fetch/record'
-import { getOtherNetworkLibrary } from 'connectors/multiNetworkConnectors'
-import DEFI_VAULT_ABI from 'constants/abis/defi_vault.json'
 
 dayjs.extend(dayjsPluginUTC)
 
@@ -38,7 +35,7 @@ const TableHeaderActive = [
   ''
 ]
 
-const DovTableHeaderActive = ['Token', 'Invest Amount', 'Settlement Time', 'Strike Price', 'Exercise', '']
+const DovTableHeaderActive = ['Token', 'Invest Amount', 'APY', 'Settlement Time', 'Strike Price', 'Exercise', '']
 
 const TableHeaderInActive = [
   'Product Type',
@@ -50,31 +47,6 @@ const TableHeaderInActive = [
   'Amount of Investing in Progress',
   ''
 ]
-
-const getDovDetails = (record: DovRecordRaw) => {
-  if (!record) return undefined
-  const library = getOtherNetworkLibrary(record.chainId)
-  const contract = record.swapAddress && library ? getContract(record.vaultAddress, DEFI_VAULT_ABI, library) : null
-  return new Promise(async (resolve, reject) => {
-    try {
-      const res = await contract?.vaultParams()
-      const { asset, underlying } = res
-      const assetContract = library ? getContract(asset, DEFI_VAULT_ABI, library) : null
-      const assetSymbol = await assetContract?.symbol()
-      if (asset === underlying) {
-        resolve({ asset: assetSymbol, underlying: assetSymbol })
-        return
-      }
-      const underlyingContract = library ? getContract(underlying, DEFI_VAULT_ABI, library) : null
-      const underlyingSymbol = await underlyingContract?.symbol()
-      resolve({ asset: assetSymbol, underlying: underlyingSymbol })
-      return
-    } catch (e) {
-      reject()
-      return null
-    }
-  })
-}
 
 export default function Order() {
   const theme = useTheme()
@@ -98,14 +70,7 @@ export default function Order() {
       if (!dovOrderList || dovOrderList.length === 0) {
         return
       } else {
-        getDovDetails(dovOrderList[0])?.then((r: any) => {
-          setOrder({
-            ...dovOrderList[0],
-            annualRor: undefined,
-            currency: r.underlying,
-            investCurrency: r.asset
-          })
-        })
+        setOrder(dovOrderList[0])
         return
       }
     } else {
@@ -113,7 +78,7 @@ export default function Order() {
     }
   }, [dovOrderList, orderList])
 
-  const price = usePrice(order?.investCurrency)
+  const price = usePrice(order?.investCurrency ? getMappedSymbol(order.investCurrency) : undefined)
 
   const isActive = useMemo(() => {
     if (!order) return
@@ -216,7 +181,7 @@ export default function Order() {
       ]
       if (isDov) {
         res.splice(7, 1)
-        res.splice(2, 2)
+        res.splice(2, 1)
       }
       return [res]
     }

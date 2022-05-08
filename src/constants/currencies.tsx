@@ -22,7 +22,10 @@ export const SYMBOL_MAP = {
   MATIC: 'MATIC',
   CAKE: 'CAKE',
   WETH: 'ETH',
-  USDC: 'USDC'
+  USDC: 'USDC',
+  WAVAX: 'AVAX',
+  'USDC.e': 'USDC',
+  WMATIC: 'MATIC'
 }
 
 export const getMappedSymbol = (symbol: string) => {

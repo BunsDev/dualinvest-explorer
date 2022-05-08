@@ -12,6 +12,7 @@ import { shortenAddress } from 'utils'
 import { SUPPORTED_NETWORKS } from 'constants/chain'
 import Image from 'components/Image'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
+import { Loader } from 'components/AnimatedSvg/Loader'
 
 dayjs.extend(dayjsPluginUTC)
 
@@ -40,7 +41,7 @@ export default function RecentTransaction() {
   const isDownMd = useBreakpoint('md')
 
   const dataRows = useMemo(() => {
-    if (!orderList && !dovOrderList) return []
+    if (!orderList || !dovOrderList) return []
     const diList = orderList
       ? orderList.map(product => {
           const multiplier = product.type === 'CALL' ? 1 : +product.strikePrice
@@ -120,7 +121,7 @@ export default function RecentTransaction() {
             // 'currency',
             product.type === 'CALL' ? 'Upward' : 'Downward',
             (+product.annualRor * 100).toFixed(2) + '%',
-            (+product.amount * +product.multiplier * multiplier).toFixed(2)
+            (+product.amount * +product.multiplier * multiplier).toFixed(2) + ' ' + product.investCurrency
           ]
         })
       : []
@@ -142,7 +143,8 @@ export default function RecentTransaction() {
   return (
     <>
       <Table fontSize="16px" header={TableHeader} rows={dataRows} />
-      {orderList && dataRows.length === 0 && <NoDataCard text={'No data'} />}
+      {!orderList || (!dovOrderList && <Loader margin="40px auto 0" />)}
+      {orderList?.length === 0 && dovOrderList?.length === 0 && <NoDataCard text={'No data'} />}
     </>
   )
 }

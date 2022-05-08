@@ -2,6 +2,10 @@ import { useState, useCallback, useEffect, useMemo } from 'react'
 import { DovRecordRaw, OrderRecord } from 'utils/fetch/record'
 import { Axios } from 'utils/axios'
 import usePollingWithMaxRetries from './usePollingWithMaxRetries'
+import { getOtherNetworkLibrary } from 'connectors/multiNetworkConnectors'
+import DEFI_VAULT_ABI from 'constants/abis/defi_vault.json'
+import { getContract } from 'utils'
+import { getMappedSymbol } from 'constants/currencies'
 
 export enum InvestStatus {
   Confirming = 1,
@@ -74,6 +78,31 @@ export function useOrderRecords({
 
 const defaultPageSize = 8
 
+export const getDovDetails = (record: DovRecordRaw) => {
+  if (!record) return undefined
+  const library = getOtherNetworkLibrary(record.chainId)
+  const contract = record.swapAddress && library ? getContract(record.vaultAddress, DEFI_VAULT_ABI, library) : null
+  return new Promise(async (resolve, reject) => {
+    try {
+      const res = await contract?.vaultParams()
+      const { asset, underlying } = res
+      const assetContract = library ? getContract(asset, DEFI_VAULT_ABI, library) : null
+      const assetSymbol = await assetContract?.symbol()
+      if (asset === underlying) {
+        resolve({ asset: assetSymbol, underlying: assetSymbol })
+        return
+      }
+      const underlyingContract = library ? getContract(underlying, DEFI_VAULT_ABI, library) : null
+      const underlyingSymbol = await underlyingContract?.symbol()
+      resolve({ asset: assetSymbol, underlying: underlyingSymbol })
+      return
+    } catch (e) {
+      reject()
+      return null
+    }
+  })
+}
+
 export function useDovOrderRecords({
   address,
   orderId,
@@ -105,8 +134,20 @@ export function useDovOrderRecords({
     })
   }, [address, orderId, productId, chainId])
 
-  const callbackFn = useCallback(r => {
-    setOrderList(r.data.data.reverse())
+  const callbackFn = useCallback(async r => {
+    const res: { underlying: string; asset: string }[] = await Promise.all(
+      r.data.data.map((data: DovRecordRaw) => getDovDetails(data))
+    )
+
+    const mapped = r.data.data.map((data: DovRecordRaw, index: number) => {
+      const r: { underlying: string; asset: string } = res[index]
+      return {
+        ...data,
+        currency: getMappedSymbol(r.underlying),
+        investCurrency: getMappedSymbol(r.asset)
+      }
+    })
+    setOrderList(mapped.reverse())
   }, [])
 
   useEffect(() => {
