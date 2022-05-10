@@ -20,10 +20,10 @@ const orderListArgs = { pageNum: 0, pageSize: 5 }
 const dovOrderListArgs = { pageSize: 5 }
 
 const TableHeader = [
+  'Product Type',
   'Chain',
   'Time',
   'Address',
-  'Product Type',
   'Product ID',
   'Order ID',
   // 'Token',
@@ -47,19 +47,6 @@ export default function RecentTransaction() {
           const multiplier = product.type === 'CALL' ? 1 : +product.strikePrice
           const network = SUPPORTED_NETWORKS[+product.chainId as keyof typeof SUPPORTED_NETWORKS]
           return [
-            <Box display="flex" key={product.orderId} alignItems="center" gap={5}>
-              {network ? (
-                <Image
-                  src={SUPPORTED_CURRENCIES[network?.nativeCurrency.symbol]?.logoUrl}
-                  style={{ width: 24, height: 24, display: 'block' }}
-                ></Image>
-              ) : null}
-              <Typography style={{ fontSize: '12px' }}>{network?.chainName}</Typography>
-            </Box>,
-            +product.ts * 1000,
-            <Typography style={{ fontSize: '12px' }} key={product.orderId}>
-              {shortenAddress(product.address)}
-            </Typography>,
             <ExternalLink
               key={0}
               style={{
@@ -75,6 +62,20 @@ export default function RecentTransaction() {
             >
               {product.investType === INVEST_TYPE.recur ? 'Recurring Strategy' : 'Dual Investment'}
             </ExternalLink>,
+            <Box display="flex" key={product.orderId} alignItems="center" gap={5}>
+              {network ? (
+                <Image
+                  src={SUPPORTED_CURRENCIES[network?.nativeCurrency.symbol]?.logoUrl}
+                  style={{ width: 20, height: 20, display: 'block' }}
+                ></Image>
+              ) : null}
+              <Typography style={{ fontSize: '12px' }}>{network?.chainName}</Typography>
+            </Box>,
+            +product.ts * 1000,
+            <Typography style={{ fontSize: '12px' }} key={product.orderId}>
+              {shortenAddress(product.address)}
+            </Typography>,
+
             product.productId,
             product.orderId,
             // product.investCurrency,
@@ -89,18 +90,6 @@ export default function RecentTransaction() {
           const multiplier = product.type === 'CALL' ? 1 : +product.strikePrice
           const network = SUPPORTED_NETWORKS[+product.chainId as keyof typeof SUPPORTED_NETWORKS]
           return [
-            <Box display="flex" key={product.orderId} alignItems="center" gap={5}>
-              {network ? (
-                <Image
-                  src={SUPPORTED_CURRENCIES[network?.nativeCurrency.symbol]?.logoUrl}
-                  style={{ width: 24, height: 24, display: 'block' }}
-                ></Image>
-              ) : null}
-              <Typography style={{ fontSize: '12px' }}>{network?.chainName}</Typography>
-            </Box>,
-            +product.createdAt,
-            // (dayjs(+product.createdAt) as any).utc().format('MMM DD, YYYY hh:mm A') + ' UTC',
-            '--',
             <ExternalLink
               key={0}
               style={{
@@ -116,6 +105,19 @@ export default function RecentTransaction() {
             >
               Defi Option Vault
             </ExternalLink>,
+            <Box display="flex" key={product.orderId} alignItems="center" gap={5}>
+              {network ? (
+                <Image
+                  src={SUPPORTED_CURRENCIES[network?.nativeCurrency.symbol]?.logoUrl}
+                  style={{ width: 24, height: 24, display: 'block' }}
+                ></Image>
+              ) : null}
+              <Typography style={{ fontSize: '12px' }}>{network?.chainName}</Typography>
+            </Box>,
+            +product.createdAt,
+            // (dayjs(+product.createdAt) as any).utc().format('MMM DD, YYYY hh:mm A') + ' UTC',
+            '--',
+
             'Vault',
             product.orderId,
             // 'currency',
@@ -128,11 +130,11 @@ export default function RecentTransaction() {
     return dovList
       ? (diList as any[])
           .concat(dovList)
-          .sort((a, b) => b[1] - a[1])
+          .sort((a, b) => b[2] - a[2])
           .map(item => {
-            item[1] = (
+            item[2] = (
               <Typography style={{ fontSize: '12px' }}>
-                {(dayjs(item[1]) as any).utc().format('MMM DD, YYYY \nhh:mm A') + ' UTC'}
+                {(dayjs(item[2]) as any).utc().format('MMM DD, YYYY \nhh:mm A') + ' UTC'}
               </Typography>
             )
             return item

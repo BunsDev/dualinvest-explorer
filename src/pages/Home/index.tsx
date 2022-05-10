@@ -326,7 +326,7 @@ export default function Home() {
             contents={[
               <Card padding={isDownSm ? '32px 16px 80px' : '40px 24px 111px'} key="txn" style={{ marginTop: 30 }}>
                 <Box>
-                  <Box display="flex" gap={8} mt={40} mb={20}>
+                  <Box display="flex" gap={8} mt={10} mb={20}>
                     <Typography fontSize={24} fontWeight={700} mr={16}>
                       Recent Transactions
                     </Typography>
@@ -337,7 +337,7 @@ export default function Home() {
               <Card padding={isDownSm ? '32px 16px 80px' : '40px 24px 111px'} key="products" style={{ marginTop: 30 }}>
                 <Box>
                   <ButtonTabs width="136px" titles={tableTabs} current={tab} onChange={setTab} />
-                  <Box display="flex" gap={8} mt={40} mb={20}>
+                  <Box display="flex" gap={8} mt={10} mb={20}>
                     <Typography fontSize={24} fontWeight={700} mr={16}>
                       Top Products
                     </Typography>
