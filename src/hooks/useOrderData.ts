@@ -135,6 +135,10 @@ export function useDovOrderRecords({
   }, [address, orderId, productId, chainId])
 
   const callbackFn = useCallback(async r => {
+    if (!r.data.data) {
+      setOrderList([])
+      return
+    }
     const res: { underlying: string; asset: string }[] = await Promise.all(
       r.data.data.map((data: DovRecordRaw) => getDovDetails(data))
     )
@@ -158,10 +162,15 @@ export function useDovOrderRecords({
     })
   }, [orderList, perPage])
 
-  usePollingWithMaxRetries(promiseFn, callbackFn)
+  const errorCb = useCallback(() => {
+    setOrderList([])
+  }, [])
+
+  usePollingWithMaxRetries(promiseFn, callbackFn, 60000, 5, errorCb)
 
   const res = useMemo(() => {
     const curPage = currentPage ?? 1
+
     return {
       dovOrderList: orderList?.slice((curPage - 1) * perPage, curPage * perPage),
       pageParams

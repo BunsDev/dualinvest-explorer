@@ -304,6 +304,11 @@ export default createTheme({
   ...theme,
   components: {
     ...override
+  },
+  typography: {
+    allVariants: {
+      fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif'
+    }
   }
 })
 

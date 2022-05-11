@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
 import { routes } from 'constants/routes'
-import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { DUAL_INVESTMENT_LINK, DUAL_INVEST_PRODUCT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import useBreakpoint from 'hooks/useBreakpoint'
 import LogoText from 'components/LogoText'
 import FilteredBy from 'components/FilteredBy'
@@ -10,7 +10,6 @@ import StatusTag from 'components/StatusTag'
 import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useApproveProduct } from 'hooks/useApproveProduct'
-import Button from 'components/Button/Button'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import { INVEST_TYPE } from 'hooks/useOrderData'
 import { OrderRecord } from 'utils/fetch/record'
@@ -22,6 +21,8 @@ import GoBack from 'components/GoBack'
 import { ExternalLink } from 'theme/components'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import { PageLayout } from 'components/PageLayout'
+import { DovVault } from './DovVault'
+import Button from 'components/Button/Button'
 
 enum TableOptions {
   Details,
@@ -31,13 +32,16 @@ enum TableOptions {
 const OrdersTableHeader = ['Product Type', 'Product ID', 'Order ID', 'Token', 'Exercise', 'APY', 'Invest Amount', '']
 
 const DetailsTableHeader = ['Token', 'APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
+export default function ProductPage() {
+  const { productId } = useParams<{ productId: string }>()
+  return productId.toLowerCase() === 'vault' ? <DovVault /> : <Page productId={productId} />
+}
 
-export default function Page() {
+export function Page({ productId }: { productId: string }) {
   const theme = useTheme()
   const isDownMd = useBreakpoint('md')
   const [page, setPage] = useState(1)
   const [tab, setTab] = useState(TableOptions.Details)
-  const { productId } = useParams<{ productId: string }>()
   const { product, orderList, pageParams } = useApproveProduct(productId, page)
 
   const data = useMemo(() => {
@@ -96,19 +100,27 @@ export default function Page() {
           key={0}
           type={product?.isActive ? 'pending' : 'success'}
           text={product?.isActive ? 'Progressing' : 'Finished'}
+          width={isDownMd ? '100%' : undefined}
         />,
-        <Button
+        <ExternalLink
+          href={DUAL_INVEST_PRODUCT_LINK.replace(':productId', productId)}
           key={0}
-          height="36px"
-          width={isDownMd ? '100%' : '120px'}
-          style={{ borderRadius: 50, fontSize: 14, marginLeft: 'auto' }}
-          onClick={() => {}}
+          style={{
+            width: isDownMd ? '100%' : '120px'
+          }}
         >
-          Subscribe now
-        </Button>
+          <Button
+            disabled={!product?.isActive}
+            height="36px"
+            width={'100%'}
+            style={{ borderRadius: 50, fontSize: 14, marginLeft: 'auto' }}
+          >
+            Subscribe now
+          </Button>
+        </ExternalLink>
       ]
     ]
-  }, [product, isDownMd])
+  }, [product, productId, isDownMd])
 
   const ordersDataRows = useMemo(() => {
     if (!orderList) return []
@@ -197,7 +209,7 @@ export default function Page() {
             <Typography sx={{ opacity: '0.5' }} fontSize={16}>
               Product ID
             </Typography>
-            <Typography fontWeight={'700'} fontSize={'24px'}>
+            <Typography fontWeight={'700'} fontSize={'24px'} mt={6}>
               #{productId}
             </Typography>
           </Box>

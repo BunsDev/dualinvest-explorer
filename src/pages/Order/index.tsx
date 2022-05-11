@@ -2,13 +2,11 @@ import { useMemo, useCallback, useState, useEffect } from 'react'
 import { useParams, Link, useHistory } from 'react-router-dom'
 import { Box, Typography, useTheme } from '@mui/material'
 import dayjs from 'dayjs'
-import dayjsPluginUTC from 'dayjs-plugin-utc'
 import LogoText from 'components/LogoText'
 import Table from 'components/Table'
 import { useOrderRecords, INVEST_TYPE, InvestStatus, useDovOrderRecords } from 'hooks/useOrderData'
 import OrderStatusTag from 'components/StatusTag/OrderStatusTag'
 import NoDataCard from 'components/Card/NoDataCard'
-import Spinner from 'components/Spinner'
 import { getMappedSymbol, SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
 import { ExternalLink } from 'theme/components'
@@ -20,8 +18,8 @@ import { ChainListMap } from 'constants/chain'
 import { DEFI_OPTION_VAULT_LINK, DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { PageLayout } from 'components/PageLayout'
-
-dayjs.extend(dayjsPluginUTC)
+import { Loader } from 'components/AnimatedSvg/Loader'
+import GoBack from 'components/GoBack'
 
 const TableHeaderActive = [
   'Token',
@@ -272,6 +270,31 @@ export default function Order() {
     history.push(routes.explorerAddress.replace(':address', order.address))
   }, [order, history])
 
+  if (isNaN(+orderId))
+    return (
+      <Box
+        display="grid"
+        width="100%"
+        alignContent="flex-start"
+        marginBottom="auto"
+        justifyItems="center"
+        gap={40}
+        padding={{ xs: '24px 20px', md: 0 }}
+      >
+        <GoBack backLink="/explorer" />
+        <NoDataCard text=" ">
+          <Box display="flex" flexDirection="column">
+            <Typography sx={{ opacity: '0.5' }} fontSize={16}>
+              Order ID
+            </Typography>
+            <Typography fontWeight={'700'} fontSize={'24px'} mt={6}>
+              #{orderId} is invalid
+            </Typography>
+          </Box>
+        </NoDataCard>
+      </Box>
+    )
+
   return (
     <PageLayout
       backLink="/explorer"
@@ -332,7 +355,7 @@ export default function Order() {
           ) : (
             <Table fontSize="16px" header={TableHeaderInActive} rows={dataRows} />
           )}
-          {!orderList && (
+          {!orderList && !dovOrderList && (
             <Box
               display="flex"
               justifyContent="center"
@@ -345,7 +368,7 @@ export default function Order() {
                 borderRadius: 2
               }}
             >
-              <Spinner size={60} />
+              <Loader />
             </Box>
           )}
           {!isDov && orderList && orderList.length === 0 && <NoDataCard text={'Not Found'} />}

@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { Box, Typography, useTheme } from '@mui/material'
 import dayjs from 'dayjs'
-import dayjsPluginUTC from 'dayjs-plugin-utc'
 import NoDataCard from 'components/Card/NoDataCard'
 import Table from 'components/Table'
 import { DEFI_OPTION_VAULT_LINK, DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
@@ -13,8 +12,6 @@ import { SUPPORTED_NETWORKS } from 'constants/chain'
 import Image from 'components/Image'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import { Loader } from 'components/AnimatedSvg/Loader'
-
-dayjs.extend(dayjsPluginUTC)
 
 const orderListArgs = { pageNum: 0, pageSize: 5 }
 const dovOrderListArgs = { pageSize: 5 }

@@ -4,7 +4,8 @@ export default function usePollingWithMaxRetries(
   fn: (() => Promise<any>) | undefined,
   callback: (r: any) => void,
   delay = 60000,
-  retries = 5
+  retries = 5,
+  errorCb?: () => void
 ) {
   const savedFn = useRef(fn)
   const savedCallback = useRef(callback)
@@ -29,13 +30,14 @@ export default function usePollingWithMaxRetries(
           }
         })
         .catch(e => {
+          errorCb && errorCb()
           console.error(e)
         })
 
     return () => {
       isMounted = false
     }
-  }, [fn, callback])
+  }, [fn, callback, errorCb])
 
   useEffect(() => {
     let isMounted = true
@@ -66,6 +68,7 @@ export default function usePollingWithMaxRetries(
           .catch(e => {
             retries--
             console.error(e)
+            errorCb && errorCb()
           })
     }, delay)
 
@@ -73,5 +76,5 @@ export default function usePollingWithMaxRetries(
       isMounted = false
       clearInterval(id)
     }
-  }, [fn, callback, delay, retries])
+  }, [fn, callback, delay, retries, errorCb])
 }

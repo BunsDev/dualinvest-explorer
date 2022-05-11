@@ -107,6 +107,7 @@
     "decimal.js-light": "^2.5.1",
     "jsbi": "^4.0.0",
     "lottie-web": "^5.9.4",
+    "qs": "^6.10.3",
     "toformat": "^2.0.0"
   }
 }

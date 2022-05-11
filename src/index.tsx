@@ -3,6 +3,8 @@ import 'inter-ui'
 import { StrictMode } from 'react'
 import { CssBaseline, ThemeProvider as MuiThemeProvider, StyledEngineProvider } from '@mui/material'
 import ReactDOM from 'react-dom'
+import dayjs from 'dayjs'
+import dayjsPluginUTC from 'dayjs-plugin-utc'
 import theme from 'theme/index'
 import { Provider } from 'react-redux'
 import { HashRouter } from 'react-router-dom'
@@ -15,7 +17,9 @@ import ApplicationUpdater from './state/application/updater'
 import MulticallUpdater from './state/multicall/updater'
 import TransactionUpdater from './state/transactions/updater'
 import getLibrary from './utils/getLibrary'
+
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+dayjs.extend(dayjsPluginUTC)
 
 function Updaters() {
   return (

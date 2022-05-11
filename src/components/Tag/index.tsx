@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import Close from '@mui/icons-material/Close'
 import TextButton from 'components/Button/TextButton'
 
 export default function Tag({ text, onClose, onClick }: { text: string; onClose?: () => void; onClick?: () => void }) {
@@ -23,7 +24,7 @@ export default function Tag({ text, onClose, onClick }: { text: string; onClose?
       <Typography sx={{ fontSize: 16 }}>{text}</Typography>
       {onClose && (
         <TextButton onClick={onClose} style={{ color: '#11BF2D' }}>
-          X
+          <Close />
         </TextButton>
       )}
     </Box>

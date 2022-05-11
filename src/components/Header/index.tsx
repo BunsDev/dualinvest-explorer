@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { AppBar, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 // import Web3Status from './Web3Status'
-import { HideOnMobile, ShowOnMobile } from 'theme/index'
+import theme, { HideOnMobile, ShowOnMobile } from 'theme/index'
 import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import antimatter from '../../assets/svg/antimatter.svg'
@@ -73,7 +73,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     opacity: 0.5,
     marginRight: 48,
     paddingBottom: '30px',
-    borderBottom: '1px solid transparent',
+    borderBottom: '2px solid transparent',
     '&.active': {
       opacity: 1,
       borderColor: theme.palette.text.primary
@@ -183,7 +183,10 @@ export default function Header() {
                             <ExternalLink
                               href={sub.link}
                               sx={{
-                                color: '#000000'
+                                color: theme.palette.text.primary + 70,
+                                '&:hover': {
+                                  color: theme.palette.text.primary
+                                }
                               }}
                             >
                               {sub.titleContent ?? sub.title}

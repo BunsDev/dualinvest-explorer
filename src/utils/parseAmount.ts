@@ -1,4 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
+import { ZERO_ADDRESS } from 'constants/index'
 import { CurrencyAmount, Token, TokenAmount, Currency, ETHER } from 'constants/token'
 import JSBI from 'jsbi'
 
@@ -28,7 +29,7 @@ export const absolute = (val: string) => {
   return val
 }
 
-export const parseBalance = (val: string | undefined, token: Token, toSignificant = 6): string => {
+export const parseBalance = (val: string | undefined, token: Token, toSignificant = 18): string => {
   const string = val?.toString()
   const amount = new TokenAmount(token, JSBI.BigInt(absolute(string ?? ''))).toSignificant(toSignificant)
   if (string && string[0] === '-') {
@@ -45,4 +46,8 @@ export const parsedGreaterThan = (userInput: string, balance: string) => {
     return v1 && v2 ? JSBI.greaterThan(v1, v2) : undefined
   }
   return
+}
+
+export const parsePrecision = (value: string, decimals: number | string) => {
+  return new TokenAmount(new Token(1, ZERO_ADDRESS, +decimals), value.toString()).toExact()
 }

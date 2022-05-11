@@ -122,3 +122,25 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008',
   '0x8576aCC5C05D6Ce88f4e49bf65BdF0C62F91353C'
 ]
+
+export const DEFI_VAULT_ADDRESS: {
+  [chainId in ChainId]?: { [currencySymbol: string]: { CALL: string | undefined; PUT: string | undefined } }
+} = {
+  [ChainId.AVAX]: {
+    AVAX: { CALL: '0xF0150cD4c2F597507011cFBC8AF9Ab2ab617a392', PUT: '0x8AB81E5d87b31F179f25dEE10A20b138C7E4f290' }
+  },
+  [ChainId.MAINNET]: {
+    ETH: { CALL: '0xB98d809402Ae20eC28BEdC11d88eF4a7ad75D29d', PUT: '0x6bDf446D6C9DB8AF61A6889F0163EEb235A9CD7a' }
+  }
+}
+
+export const SUPPORTED_DEFI_VAULT: { [chainId in ChainId]?: string[] } = Object.keys(DEFI_VAULT_ADDRESS).reduce(
+  (acc, chainId) => {
+    const id: ChainId = +chainId
+    const network = DEFI_VAULT_ADDRESS[id]
+    if (!id || !network) return acc
+    acc[id] = Object.keys(network)
+    return acc
+  },
+  {} as any
+)

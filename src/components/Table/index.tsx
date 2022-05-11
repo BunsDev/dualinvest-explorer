@@ -223,6 +223,17 @@ export default function Table({
               <Card key={index}>
                 <Box display="flex" flexDirection="column" gap="16px">
                   {header.map((headerString, index) => {
+                    if (header[index] === '' && header[index + 1] === '') {
+                      return null
+                    }
+                    if (header[index] === '' && header[index - 1] === '') {
+                      return (
+                        <Box display="flex" width="100%" justifyContent={'center'} alignItems="center" gap={8}>
+                          {data[index - 1]}
+                          {data[index]}
+                        </Box>
+                      )
+                    }
                     const noHeader = headerString == 'Product Type' || headerString === ''
                     return noHeader ? (
                       <Typography width="100%" component="div" fontSize={12} fontWeight={600} key={'2' + index}>
