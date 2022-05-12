@@ -281,6 +281,9 @@ export default function Home() {
                     <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
                       Recurring Strategy
                     </Typography>
+                    <Typography fontSize={12} fontWeight={400} sx={{ opacity: 0.5 }}>
+                      Defi Option Vault
+                    </Typography>
                   </Box>
                 </Box>
               </OutlinedCard>
