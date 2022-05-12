@@ -7,13 +7,15 @@ export default function ButtonTabs({
   current,
   onChange,
   width,
-  height
+  height,
+  padding
 }: {
   titles: string[] | JSX.Element[]
   current: number
   onChange: (val: number) => void
   width?: string
   height?: string
+  padding?: string
   // onChange?: ((event: SyntheticEvent<Element, Event>, value: any) => void
 }) {
   const handleOnChange = useCallback(
@@ -43,7 +45,7 @@ export default function ButtonTabs({
           label={tab}
           sx={{
             textTransform: 'none',
-            padding: '0px 0px',
+            padding: padding ?? '0px 0px',
             fontSize: 16,
             fontWeight: 400,
             color: 'rgba(37, 37, 37, 0.5)',

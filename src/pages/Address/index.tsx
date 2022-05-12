@@ -9,7 +9,6 @@ import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import { useOrderRecords, INVEST_TYPE, InvestStatus } from 'hooks/useOrderData'
 import { shortenAddress, isAddress } from 'utils'
-import Spinner from 'components/Spinner'
 import { OrderRecord } from 'utils/fetch/record'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Tag from 'components/Tag'
@@ -22,10 +21,13 @@ import { ExternalLink } from 'theme/components'
 import GoBack from 'components/GoBack'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { PageLayout } from 'components/PageLayout'
+import { DovVault } from './DovVault'
+import { Loader } from 'components/AnimatedSvg/Loader'
 
 enum TableOptions {
   Positions,
-  History
+  History,
+  Dov
 }
 
 const TableHeader = ['Product Type', 'Product ID', 'Order ID', 'Token', 'Exercise', 'APY', 'Invest Amount', '']
@@ -57,21 +59,20 @@ export default function Address() {
   const indexPrices = usePriceForAll()
 
   const positionList = useMemo(() => {
-    if (!orderList) return []
+    if (!orderList) return undefined
     return orderList.filter((order: OrderRecord) =>
       [InvestStatus.Ordered, InvestStatus.ReadyToSettle].includes(+order.investStatus)
     )
   }, [orderList])
 
   const historyList = useMemo(() => {
-    if (!orderList) return []
-
+    if (!orderList) return undefined
     return orderList
   }, [orderList])
 
   const filteredOrderList = useMemo(() => {
     if (!positionList || !historyList) {
-      return []
+      return undefined
     }
 
     if (tab === TableOptions.Positions) {
@@ -83,8 +84,8 @@ export default function Address() {
 
   const pageParams = useMemo(() => {
     const perPage = 8
-    const count = Math.ceil(filteredOrderList.length / perPage)
-    const total = filteredOrderList.length
+    const count = filteredOrderList ? Math.ceil(filteredOrderList.length / perPage) : 0
+    const total = filteredOrderList ? filteredOrderList.length : 0
 
     return {
       count,
@@ -94,7 +95,7 @@ export default function Address() {
   }, [filteredOrderList])
 
   const currentPageOrderList = useMemo(() => {
-    if (!filteredOrderList) return
+    if (!filteredOrderList) return undefined
 
     return filteredOrderList.slice((page - 1) * pageParams.perPage, page * pageParams.perPage)
   }, [page, pageParams, filteredOrderList])
@@ -102,20 +103,22 @@ export default function Address() {
   const calcAmount = useCallback(
     orders => {
       return orders
-        .map((order: OrderRecord) => {
-          const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
+        ? orders
+            .map((order: OrderRecord) => {
+              const multiplier = order.type === 'CALL' ? 1 : +order.strikePrice
 
-          return (
-            +order.amount *
-            +order.multiplier *
-            multiplier *
-            +indexPrices[order.investCurrency as keyof typeof indexPrices]
-          )
-        })
-        .reduce(function(acc: number, val: number) {
-          return acc + val
-        }, 0)
-        .toFixed(2)
+              return (
+                +order.amount *
+                +order.multiplier *
+                multiplier *
+                +indexPrices[order.investCurrency as keyof typeof indexPrices]
+              )
+            })
+            .reduce(function(acc: number, val: number) {
+              return acc + val
+            }, 0)
+            .toFixed(2)
+        : '0.00'
     },
     [indexPrices]
   )
@@ -207,7 +210,7 @@ export default function Address() {
   }, [currentPageOrderList, theme, indexPrices, isDownMd])
 
   const tableTabs = useMemo(() => {
-    return ['Positions', 'History']
+    return ['Positions', 'History', 'Defi Option Vault History']
   }, [])
 
   if (!isAddress(address)) {
@@ -289,40 +292,44 @@ export default function Address() {
           </Box>
         </Box>
         <Box paddingTop={isDownMd ? '29px' : '45px'}>
-          <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
+          <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} padding="0 10px" />
         </Box>
-        <Box padding={isDownMd ? '16px 0' : '24px 0'}>
-          <Table fontSize="16px" header={TableHeader} rows={dataRows} />
-          {!currentPageOrderList && (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              sx={{
-                width: '100%',
-                height: 350,
-                background: '#ffffff',
-                zIndex: 3,
-                borderRadius: 2
-              }}
-            >
-              <Spinner size={60} />
-            </Box>
-          )}
-          {currentPageOrderList && currentPageOrderList.length === 0 && (
-            <NoDataCard text={'You don’t have any positions'} />
-          )}
-          {currentPageOrderList && currentPageOrderList.length > 0 && (
-            <Pagination
-              count={pageParams.count}
-              page={page}
-              perPage={pageParams?.perPage}
-              boundaryCount={0}
-              total={pageParams?.total}
-              onChange={(event, value) => setPage(value)}
-            />
-          )}
-        </Box>
+        {tab === TableOptions.Dov ? (
+          <DovVault account={address} />
+        ) : (
+          <Box padding={isDownMd ? '16px 0' : '24px 0'}>
+            <Table fontSize="16px" header={TableHeader} rows={dataRows} />
+            {!currentPageOrderList && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{
+                  width: '100%',
+                  height: 350,
+                  background: '#ffffff',
+                  zIndex: 3,
+                  borderRadius: 2
+                }}
+              >
+                <Loader />
+              </Box>
+            )}
+            {currentPageOrderList && currentPageOrderList.length === 0 && (
+              <NoDataCard text={'You don’t have any positions'} />
+            )}
+            {currentPageOrderList && currentPageOrderList.length > 0 && (
+              <Pagination
+                count={pageParams.count}
+                page={page}
+                perPage={pageParams?.perPage}
+                boundaryCount={0}
+                total={pageParams?.total}
+                onChange={(event, value) => setPage(value)}
+              />
+            )}
+          </Box>
+        )}
       </PageLayout>
     </>
   )

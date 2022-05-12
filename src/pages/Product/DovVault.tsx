@@ -1,10 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Box, Typography } from '@mui/material'
-// import FilteredBy from 'components/FilteredBy'
 import { PageLayout } from 'components/PageLayout'
 import PaginationView from 'components/Pagination'
-// import Table from 'components/Table'
 import ButtonTabs from 'components/Tabs/ButtonTabs'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useHistoryRecords } from 'hooks/useDovHistoryRecords'
@@ -12,7 +10,6 @@ import Tag from 'components/Tag'
 import FilteredBy from 'components/FilteredBy'
 import { useDefiVaultList } from 'hooks/useDefiVault'
 import Table from 'components/Table'
-
 import StatusTag from 'components/StatusTag'
 import { ExternalLink } from 'theme/components'
 import Button from 'components/Button/Button'
@@ -27,6 +24,7 @@ import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Image from 'components/Image'
 import { getPrice } from 'hooks/usePriceSet'
 import { toLocaleNumberString } from 'utils/toLocaleNumberString'
+import { Loader } from 'components/AnimatedSvg/Loader'
 
 enum TableOptions {
   Details,
@@ -203,6 +201,22 @@ export function DovVault() {
             />
             <Table fontSize="16px" header={ActivitiesTableHeader} rows={activitiesRow} />
             {orderList?.length === 0 && <NoDataCard />}
+            {!orderList && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{
+                  width: '100%',
+                  height: 350,
+                  background: '#ffffff',
+                  zIndex: 3,
+                  borderRadius: 2
+                }}
+              >
+                <Loader />
+              </Box>
+            )}
           </>
         )}
         {tab !== TableOptions.Activities && (
