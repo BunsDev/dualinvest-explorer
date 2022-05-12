@@ -142,7 +142,7 @@ export default function RecentTransaction() {
   return (
     <>
       <Table fontSize="16px" header={TableHeader} rows={dataRows} />
-      {!orderList || (!dovOrderList && <Loader margin="40px auto 0" />)}
+      {(!orderList || !dovOrderList) && <Loader margin="40px auto 0" />}
       {orderList?.length === 0 && dovOrderList?.length === 0 && <NoDataCard text={'No data'} />}
     </>
   )

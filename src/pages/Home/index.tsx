@@ -89,7 +89,7 @@ export default function Home() {
   const { totalInvest, totalProgress } = useHomeStatistics()
 
   const dataRows = useMemo(() => {
-    return products.map((product: TopProduct) => {
+    return products.slice(0, 10).map((product: TopProduct) => {
       const multiplier = product.type === 'CALL' ? 1 : +product.strikePrice
       return [
         <ExternalLink
@@ -211,6 +211,7 @@ export default function Home() {
           </Box>
           <Box display={{ xs: 'grid', sm: 'flex' }} gap={isDownMd ? 12 : 24} position="relative" mt={21} width="100%">
             <SelectInput
+              onSearch={onSearch}
               placeholder={`Search by ${searchOption}`}
               options={['Address', 'Order', 'Product']}
               selected={searchOption}

@@ -228,7 +228,14 @@ export default function Table({
                     }
                     if (header[index] === '' && header[index - 1] === '') {
                       return (
-                        <Box display="flex" width="100%" justifyContent={'center'} alignItems="center" gap={8}>
+                        <Box
+                          display="flex"
+                          width="100%"
+                          justifyContent={'center'}
+                          alignItems="center"
+                          gap={8}
+                          key={'3' + index}
+                        >
                           {data[index - 1]}
                           {data[index]}
                         </Box>

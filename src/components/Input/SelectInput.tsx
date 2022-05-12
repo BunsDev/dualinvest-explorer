@@ -11,7 +11,8 @@ export default function SelectInput({
   value,
   onChangeSelect,
   onChangeInput,
-  placeholder
+  placeholder,
+  onSearch
 }: {
   options: string[]
   selected?: string
@@ -19,6 +20,7 @@ export default function SelectInput({
   placeholder: string
   onChangeSelect?: (e: any) => void
   onChangeInput?: (e: ChangeEvent<HTMLInputElement>) => void
+  onSearch?: () => void
 }) {
   const isDownSm = useBreakpoint('sm')
 
@@ -79,6 +81,12 @@ export default function SelectInput({
       {isDownSm && selectEl}
       <InputBase
         onChange={onChangeInput}
+        onKeyDown={e => {
+          const key = e.key
+          if (key === 'Enter') {
+            onSearch && onSearch()
+          }
+        }}
         fullWidth
         sx={{
           [`&.${inputBaseClasses.root}`]: {

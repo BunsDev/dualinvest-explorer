@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { Box, Typography } from '@mui/material'
 // import FilteredBy from 'components/FilteredBy'
@@ -25,6 +25,8 @@ import TransactionTypeIcon from 'components/Icon/TransactionTypeIcon'
 import { shortenAddress } from 'utils'
 import { SUPPORTED_CURRENCIES } from 'constants/currencies'
 import Image from 'components/Image'
+import { getPrice } from 'hooks/usePriceSet'
+import { toLocaleNumberString } from 'utils/toLocaleNumberString'
 
 enum TableOptions {
   Details,
@@ -39,11 +41,13 @@ const chains = Object.keys(SUPPORTED_DEFI_VAULT)
 const ActivitiesTableHeader = ['Address', 'Type', 'Vault', 'Amount', 'Date']
 
 const DetailsTableHeader = ['Token', 'Approximate APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
+const DetailsTableHeaderMobile = ['', 'Approximate APY', 'Delivery Date', 'Strike Price', 'Exercise', '', '']
 
 export function DovVault() {
   const [page, setPage] = useState(1)
   const [tab, setTab] = useState(TableOptions.Details)
   const [chain, setChain] = useState(0)
+  const [totalInvest, setTotalInvest] = useState<undefined | string>(undefined)
 
   const isDownMd = useBreakpoint('md')
   const { pageParams, orderList } = useHistoryRecords(page, undefined, +chains[chain])
@@ -57,11 +61,31 @@ export function DovVault() {
         <Box display="flex" gap={12} alignItems="center">
           <Tag text={'Defi Option Vault'} />
         </Box>
-      )
-      // ['Total Invest Amount:']: totalInvestAmount.toFixed(2) + ' USDT',
+      ),
+      ['Total Invest Amount:']: totalInvest ? totalInvest + ' USDC' : null
       // ['Positions:']: positions
     }
-  }, [])
+  }, [totalInvest])
+
+  useEffect(() => {
+    if (!dovList) return
+    ;(async () => {
+      const usdcPrice = await getPrice('USDC')
+      const prices = await Promise.all(
+        dovList?.map(({ investCurrency }) => (investCurrency === 'USDC' ? null : getPrice(investCurrency)))
+      )
+      const total = dovList.reduce((acc, item, index) => {
+        if (prices[index] === null) {
+          acc += item?.totalBalance ?? 0
+          return acc
+        } else {
+          acc += (item?.totalBalance ?? 0) * prices[index]
+          return acc
+        }
+      }, 0)
+      setTotalInvest(toLocaleNumberString(total * +usdcPrice, 2))
+    })()
+  }, [dovList])
 
   const detailsRow = useMemo(() => {
     if (!dovList) return []
@@ -82,7 +106,7 @@ export function DovVault() {
         item.strikePrice ? item.strikePrice + ' USDC' : '--',
         item.type === 'CALL' ? 'Upward' : 'Downward',
         <StatusTag
-          key=""
+          key="status"
           type={progressing ? 'pending' : 'success'}
           text={progressing ? 'Progressing' : 'Finished'}
           width={isDownMd ? '100%' : undefined}
@@ -149,7 +173,9 @@ export function DovVault() {
         <ButtonTabs titles={tableTabs} current={tab} onChange={setTab} />
       </Box>
       <Box padding={isDownMd ? '16px 0' : '24px 0'}>
-        {tab == TableOptions.Details && <Table fontSize="16px" header={DetailsTableHeader} rows={detailsRow} />}
+        {tab == TableOptions.Details && (
+          <Table fontSize="16px" header={isDownMd ? DetailsTableHeaderMobile : DetailsTableHeader} rows={detailsRow} />
+        )}
         {tab == TableOptions.Activities && (
           <>
             <ButtonTabs

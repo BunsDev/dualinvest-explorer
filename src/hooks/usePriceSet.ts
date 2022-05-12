@@ -1,6 +1,22 @@
 import { useEffect, useState } from 'react'
 import { SUPPORTED_CURRENCY_SYMBOL } from 'constants/currencies'
 
+export const getPrice = async (curSymbol: string) => {
+  try {
+    const res = await fetch(`https://api.binance.com/api/v3/avgPrice?symbol=${curSymbol}USDT`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {}
+    })
+
+    const parsed = await res.clone().json()
+
+    return parsed.price
+  } catch (e) {
+    return undefined
+  }
+}
+
 export function usePrice(symbol: string | undefined, delay = 15000) {
   const [price, setPrice] = useState<undefined | string>(undefined)
 
