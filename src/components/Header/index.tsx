@@ -10,7 +10,7 @@ import antimatter from '../../assets/svg/antimatter.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 // import NetworkSelect from './NetworkSelect'
-import { DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
+import { DEFI_OPTION_VAULT_LINK, DUAL_INVESTMENT_LINK, RECURRING_STRATEGY_LINK } from 'constants/links'
 
 interface TabContent {
   title: string
@@ -28,7 +28,8 @@ export const Tabs: Tab[] = [
     title: 'Invest',
     subTab: [
       { title: 'Dual Investment', link: DUAL_INVESTMENT_LINK },
-      { title: 'Recurring Strategy', link: RECURRING_STRATEGY_LINK }
+      { title: 'Recurring Strategy', link: RECURRING_STRATEGY_LINK },
+      { title: 'Defi Option Vault', link: DEFI_OPTION_VAULT_LINK }
     ]
   },
   { title: 'Docs', link: 'https://docs.antimatter.finance/' },
